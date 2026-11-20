@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gabbypeli</title><link rel="stylesheet" href="./src/styles.css"></head><body>
+<div id="gabby-fi" lang="fi">
+
+<div class="shell">
+<header><p class="eyebrow">Pieniä tassuja, suuria seikkailuja</p><h2>Gabbyn nukketalo</h2><p class="sub">Leikitään yhdessä!</p></header>
+<section id="gf-home">
+<div class="home-top"><div class="picture" role="img" aria-label="Gabby ja Pandi Pörrö värikkään nukketalon edessä"></div><div class="welcome"><p class="eyebrow">Kissankorvat pystyyn!</p><h3>Tule mukaan<br>nukketaloon!</h3><p>Etsi kaveriparit, kokoa kuvia<br>ja auta Gabbyn ystäviä.<br><br>Mitä leikitään ensin?</p></div></div>
+<div class="menu"><button type="button" class="game-link cursor-interaction" id="gf-open-find"><span class="menu-art" aria-hidden="true"><span class="picture"></span></span><span class="game-label">Kuka piilottelee?<small>Tunnista kuvan yksityiskohta</small></span></button><button type="button" class="game-link cursor-interaction" id="gf-open-memory"><span class="menu-art" aria-hidden="true"><span class="picture" data-art="cakey"></span></span><span class="game-label">Muistipeli<small>Etsi samat kaverit</small></span></button><button type="button" class="game-link cursor-interaction" id="gf-open-puzzle"><span class="menu-art" aria-hidden="true"><span class="picture" data-art="fairy"></span></span><span class="game-label">Palapeli<small>Kokoa taikakuva</small></span></button><button type="button" class="game-link cursor-interaction" id="gf-open-learn"><span class="menu-art" aria-hidden="true"><span class="picture" data-art="mercat"></span></span><span class="game-label">Pikku puuhat<small>Värit, muodot ja määrät</small></span></button></div>
+</section>
+<section id="gf-play" hidden>
+<div class="nav"><button type="button" class="tool cursor-interaction" id="gf-home-button">Valitse leikki</button><button type="button" class="tool cursor-interaction" id="gf-repeat">Kuuntele ohje</button></div>
+<div class="game-panel"><div id="gf-content">
+<div class="game-heading"><div class="picture portrait" id="gf-portrait" data-art="cakey" role="img" aria-label="Gabbyn ystävä"></div><div><p class="room-label" id="gf-room"></p><h3 id="gf-title"></h3><p class="instruction" id="gf-instruction"></p></div></div>
+<div id="gf-memory" hidden><div class="settings" id="gf-memory-settings" aria-label="Muistipelin koko"></div><div class="memory four" id="gf-cards" role="group" aria-label="Muistikortit"></div></div>
+<div id="gf-puzzle" hidden><div class="settings" id="gf-puzzle-settings" aria-label="Palapelin koko"></div><div class="scene-choices" id="gf-scenes" aria-label="Valitse palapelin kuva"></div><div class="puzzle-layout"><div><p class="puzzle-label">Kokoa tähän</p><div class="board" id="gf-board" role="group" aria-label="Palapelin paikat"></div></div><div><p class="puzzle-label">Valitse pala</p><div class="piece-tray" id="gf-tray" role="group" aria-label="Palapelin palat"></div></div></div></div>
+<div id="gf-learn" hidden><div class="pattern" id="gf-pattern" hidden aria-hidden="true"><span class="picture"></span><span class="picture" data-art="cakey"></span><span class="picture"></span><span class="question">?</span></div><div class="choice-row" id="gf-choices" role="group" aria-labelledby="gf-title"></div></div>
+<p class="feedback" id="gf-feedback" aria-live="polite"></p><div class="actions"><button type="button" class="primary cursor-interaction" id="gf-action" hidden></button></div>
+</div>
+<div class="win" id="gf-win" hidden><div class="picture" id="gf-win-art" role="img" aria-label="Gabbyn ystävät juhlivat"></div><p class="eyebrow">Kissa-tastisen hienoa!</p><h3 id="gf-win-title">Sinä osasit!</h3><p id="gf-win-text"></p><div class="actions"><button type="button" class="primary cursor-interaction" id="gf-again">Leiki uudestaan</button><button type="button" class="tool cursor-interaction" id="gf-other">Valitse toinen leikki</button></div></div>
+<div class="reward" id="gf-stars" aria-label="Leikin edistyminen"></div>
+</div></section>
+<div class="bottom"><button type="button" class="tool cursor-interaction" id="gf-sound" aria-pressed="true">Äänet päällä</button></div>
+<p class="note" id="gf-audio-note">Leiki yhdessä aikuisen kanssa. Ei kiirettä eikä häviämistä. Puhe käyttää laitteen suomenkielistä ääntä, jos sellainen on saatavilla. Muuten aikuinen voi lukea ohjeet.</p>
+</div>
+
+</div>
+
+<script type="module" src="./src/main.js"></script></body></html>
