@@ -77,6 +77,7 @@ export function initPuzzle() {
         "piece-tray " +
             (state.puzzleSize === 2 ? "two" : state.puzzleSize === 6 ? "six" : "four");
     el("board").replaceChildren();
+    el("board").setAttribute("aria-label", "Palapelialusta");
     el("tray").replaceChildren();
     for (let i = 0; i < state.puzzleSize; i++) {
         const b = button("", () => place(i), "slot");
@@ -156,6 +157,13 @@ export function place(i) {
     progress(state.placed.size, state.puzzleSize);
     ding("piece");
     if (state.placed.size === state.puzzleSize) {
+        const board = el("board");
+        const reveal = document.createElement("div");
+        reveal.className = "puzzle-reveal";
+        reveal.setAttribute("aria-hidden", "true");
+        reveal.innerHTML = picture(scenes[state.puzzleArt].id);
+        board.append(reveal);
+        board.setAttribute("aria-label", "Valmis kuva: " + scenes[state.puzzleArt].name);
         feedback("Kuva on valmis! Sinä kokosit sen!");
         setAction("Juhlitaan!", () => finish("Taikakuva on valmis!", "Kokosit kuvan itse. Annetaan yhdessä ylävitoset!", state.puzzleArt < friends.length ? scenes[state.puzzleArt].id : "fairy"));
         say("Kuva on valmis! Sinä kokosit sen!");
@@ -188,6 +196,17 @@ export function stopPuzzleDrag() {
 function bindPieceDrag(piece, index) {
     let start;
     let ghost;
+    let destination = null;
+    function nearSlot(point) {
+        if (!destination)
+            return false;
+        const rect = destination.getBoundingClientRect();
+        const margin = Math.min(14, rect.width * 0.18, rect.height * 0.18);
+        return (point.x >= rect.left - margin &&
+            point.x <= rect.right + margin &&
+            point.y >= rect.top - margin &&
+            point.y <= rect.bottom + margin);
+    }
     bindStroke(piece, {
         start(point) {
             start = point;
@@ -204,8 +223,11 @@ function bindPieceDrag(piece, index) {
                 ghost.style.height = height + "px";
                 ghost.innerHTML = piece.innerHTML;
                 root.append(ghost);
+                destination = el("board").querySelector(`[data-piece="${index}"]`);
+                piece.classList.add("dragging");
                 select(index);
             }
+            destination?.classList.toggle("snap-ready", nearSlot(to));
             ghost.style.left = to.x + "px";
             ghost.style.top = to.y + "px";
         },
@@ -214,8 +236,16 @@ function bindPieceDrag(piece, index) {
                 return;
             ghost.remove();
             ghost = undefined;
+            piece.classList.remove("dragging");
+            const snap = point && nearSlot(point);
+            destination?.classList.remove("snap-ready");
+            destination = null;
             if (!point)
                 return;
+            if (snap) {
+                place(index);
+                return;
+            }
             const slot = document
                 .elementFromPoint(point.x, point.y)
                 ?.closest("#gf-board .slot");

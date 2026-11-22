@@ -32,6 +32,7 @@ const starters = {
     garden: startGarden,
 };
 export function home() {
+    const previousRoom = state.mode;
     cancelAdvance();
     stopGestures();
     stopSpeech();
@@ -41,6 +42,8 @@ export function home() {
     state.action = null;
     el("home").hidden = false;
     el("play").hidden = true;
+    if (previousRoom)
+        el(`open-${previousRoom}`).focus();
 }
 export function open(which) {
     cancelAdvance();
@@ -72,4 +75,6 @@ export function open(which) {
     feedback("");
     setAction("", null);
     starters[which]();
+    el("title").focus();
+    el("play").scrollIntoView({ block: "start" });
 }

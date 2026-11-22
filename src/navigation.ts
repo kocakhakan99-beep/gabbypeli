@@ -37,6 +37,7 @@ const starters: Record<GameMode, () => void> = {
 };
 
 export function home(): void {
+  const previousRoom = state.mode;
   cancelAdvance();
   stopGestures();
   stopSpeech();
@@ -46,6 +47,7 @@ export function home(): void {
   state.action = null;
   el("home").hidden = false;
   el("play").hidden = true;
+  if (previousRoom) el(`open-${previousRoom}`).focus();
 }
 
 export function open(which: GameMode): void {
@@ -78,4 +80,6 @@ export function open(which: GameMode): void {
   feedback("");
   setAction("", null);
   starters[which]();
+  el("title").focus();
+  el("play").scrollIntoView({ block: "start" });
 }

@@ -2011,3 +2011,161 @@ body {
     animation: none;
   }
 }
+
+/* The open front of the dollhouse is the game map. */
+#gabby-fi .dollhouse {
+  max-width: 730px;
+  margin: 0 auto 28px;
+  filter: drop-shadow(0 12px 12px #673d7629);
+}
+#gabby-fi .dollhouse-roof {
+  display: grid;
+  place-items: end center;
+  height: clamp(100px, 23vw, 206px);
+  clip-path: polygon(0 100%, 42% 10%, 47% 4%, 53% 4%, 58% 10%, 100% 100%);
+  background:
+    repeating-linear-gradient(160deg, #ffffff24 0 2px, transparent 3px 19px),
+    linear-gradient(165deg, #ffabd4, #c85caf 70%, #95448f);
+  border-bottom: 8px solid #914284;
+}
+#gabby-fi .dollhouse-roof .picture {
+  width: clamp(60px, 14vw, 124px);
+  border: 5px solid #fff9e7;
+  border-radius: 50%;
+  background-color: #ffe5f0;
+  margin-bottom: 6px;
+}
+#gabby-fi .dollhouse-rooms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(5px, 1vw, 10px);
+  margin: 0;
+  padding: clamp(5px, 1vw, 10px);
+  background: linear-gradient(
+    90deg,
+    #c67bbb,
+    #ffe1f1 24%,
+    #fff0eb 70%,
+    #b876b6
+  );
+  border: 4px solid #b571ad;
+  border-radius: 4px 4px 22px 22px;
+  box-shadow: 0 8px #995795;
+}
+#gabby-fi .dollhouse-rooms .game-link {
+  --wall: #ffe7f4;
+  --floor: #ebb7cd;
+  height: auto;
+  aspect-ratio: 1.28;
+  border: 2px solid #fff8ed;
+  border-radius: 7px 7px 12px 12px;
+  box-shadow:
+    inset 0 -4px #925d9b35,
+    0 3px #9957955c;
+}
+#gabby-fi .dollhouse-rooms .menu-art {
+  background: linear-gradient(180deg, var(--wall) 72%, var(--floor) 72%);
+}
+#gabby-fi .dollhouse-rooms .menu-art > .picture[data-object] {
+  width: 76%;
+  height: 88%;
+  margin: auto;
+}
+#gabby-fi .dollhouse-rooms .menu-art > .picture[data-cast] {
+  width: clamp(30px, 7vw, 61px);
+  height: auto;
+  right: 3px;
+  bottom: 4px;
+}
+#gabby-fi .dollhouse-rooms .game-link:focus-visible {
+  outline: 4px solid #6c3294;
+  outline-offset: -4px;
+}
+#gabby-fi #gf-open-baking .menu-art,
+#gabby-fi #gf-open-bubbles .menu-art,
+#gabby-fi #gf-open-garden .menu-art {
+  background:
+    linear-gradient(#fff9, #fff3),
+    var(--room-art) center / cover;
+}
+#gabby-fi #gf-open-baking {
+  --room-art: url("../assets/room-kitchen.webp");
+}
+#gabby-fi #gf-open-bubbles {
+  --room-art: url("../assets/room-bathroom.webp");
+}
+#gabby-fi #gf-open-garden {
+  --room-art: url("../assets/room-garden.webp");
+}
+#gabby-fi #gf-open-drawing {
+  --wall: #f5e6ff;
+  --floor: #d5b4ed;
+}
+#gabby-fi #gf-open-memory {
+  --wall: #e2f7ff;
+  --floor: #a6cfe9;
+}
+#gabby-fi #gf-open-puzzle {
+  --wall: #fff2d0;
+  --floor: #f1cb9e;
+}
+#gabby-fi #gf-open-find {
+  --wall: #efddff;
+  --floor: #c9a7e2;
+}
+#gabby-fi #gf-open-sizes {
+  --wall: #dbf6ef;
+  --floor: #abdbc5;
+}
+#gabby-fi #gf-open-learn {
+  --wall: #ffebda;
+  --floor: #f0bdac;
+}
+#gabby-fi .dollhouse-rooms .size-ball.large {
+  width: 30%;
+  height: auto;
+  aspect-ratio: 1;
+  left: 27%;
+  top: 22%;
+}
+#gabby-fi .dollhouse-rooms .size-ball.small {
+  width: 18%;
+  height: auto;
+  aspect-ratio: 1;
+  left: 58%;
+  top: 43%;
+}
+
+#gabby-fi .slot.snap-ready {
+  z-index: 1;
+  outline: 4px solid #71b658;
+  outline-offset: -4px;
+  background: #e5f9cb;
+}
+#gabby-fi .slot.snap-ready .crop {
+  opacity: 0.65;
+}
+#gabby-fi .piece.dragging {
+  opacity: 0.28;
+}
+#gabby-fi .puzzle-reveal {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: #fff7ee;
+  animation: puzzle-reveal 550ms ease-out both;
+}
+#gabby-fi .puzzle-reveal .picture {
+  width: 100%;
+  height: 100%;
+}
+@keyframes puzzle-reveal {
+  from {
+    opacity: 0;
+    filter: brightness(1.25);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gabbypeli</title>
-    <link rel="stylesheet" href="./app/styles.css?v=storybook-cards-1" />
+    <link rel="stylesheet" href="./app/styles.css?v=dollhouse-rooms-1" />
   </head>
   <body>
     <div id="gabby-fi" lang="fi">
@@ -15,170 +15,164 @@
           <p class="sub">Leikitään yhdessä!</p>
         </header>
         <section id="gf-home">
-          <div class="home-top">
-            <div
-              class="picture"
-              role="img"
-              aria-label="Gabby ja Pandi Pörrö värikkään nukketalon edessä"
-            ></div>
-            <div class="welcome">
-              <p class="eyebrow">Kissankorvat pystyyn!</p>
-              <h3>Tule mukaan<br />nukketaloon!</h3>
-              <p>
-                Etsi kaveriparit, kokoa kuvia<br />ja auta Gabbyn ystäviä.<br /><br />Mitä
-                leikitään ensin?
-              </p>
+          <div class="dollhouse">
+            <div class="dollhouse-roof" aria-hidden="true">
+              <span class="picture" data-cast="gabby"></span>
             </div>
-          </div>
-          <div class="menu">
-            <button
-              type="button"
-              class="game-link"
-              id="gf-open-drawing"
-              aria-label="Taidepöytä"
+            <div
+              class="menu dollhouse-rooms"
+              role="group"
+              aria-label="Nukketalon huoneet"
             >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 0%; --tile-y: 0%"
-                ></span
-                ><span class="picture" data-cast="gabby"></span
-              ></span>
-              <span class="game-label"
-                >Taidepöytä<small>Piirrä sormella</small></span
+              <button
+                type="button"
+                class="game-link"
+                id="gf-open-drawing"
+                aria-label="Taidepöytä"
               >
-            </button>
-            <button
-              type="button"
-              class="game-link"
-              id="gf-open-garden"
-              aria-label="Kisukeijun puutarha"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 0%; --tile-y: 50%"
-                ></span
-                ><span class="picture" data-cast="fairy"></span
-              ></span>
-              <span class="game-label"
-                >Kisukeijun puutarha<small>Herätä kukat</small></span
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 0%; --tile-y: 0%"
+                  ></span
+                  ><span class="picture" data-cast="gabby"></span
+                ></span>
+                <span class="game-label"
+                  >Taidepöytä<small>Piirrä sormella</small></span
+                >
+              </button>
+              <button
+                type="button"
+                class="game-link"
+                id="gf-open-garden"
+                aria-label="Kisukeijun puutarha"
               >
-            </button>
-            <button
-              type="button"
-              class="game-link cursor-interaction featured-game"
-              id="gf-open-baking"
-              aria-label="Hileen leipomo"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 50%; --tile-y: 0%"
-                ></span
-                ><span class="picture" data-cast="cakey"></span></span
-              ><span class="game-label"
-                >Hileen leipomo<small>Leivo ja laske kakkuja</small></span
-              ></button
-            ><button
-              type="button"
-              class="game-link cursor-interaction"
-              id="gf-open-bubbles"
-              aria-label="Kuplataika"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 100%; --tile-y: 0%"
-                ></span
-                ><span class="picture" data-cast="mercat"></span></span
-              ><span class="game-label"
-                >Kuplataika<small>Löydä värit ja muodot</small></span
-              ></button
-            ><button
-              type="button"
-              class="game-link cursor-interaction"
-              id="gf-open-sizes"
-              aria-label="Suuri ja pieni"
-            >
-              <span class="menu-art size-game-art" aria-hidden="true"
-                ><span class="size-ball large"></span
-                ><span class="size-ball small"></span
-                ><span class="picture" data-cast="pandy"></span></span
-              ><span class="game-label"
-                >Suuri ja pieni<small>Vertaile ja löydä</small></span
-              ></button
-            ><button
-              type="button"
-              class="game-link cursor-interaction"
-              id="gf-open-find"
-              aria-label="Kuka piilottelee?"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 50%; --tile-y: 50%"
-                ></span
-                ><span class="picture" data-cast="dj"></span></span
-              ><span class="game-label"
-                >Kuka piilottelee?<small
-                  >Tunnista kuvan yksityiskohta</small
-                ></span
-              ></button
-            ><button
-              type="button"
-              class="game-link cursor-interaction"
-              id="gf-open-memory"
-              aria-label="Muistipeli"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 100%; --tile-y: 50%"
-                ></span
-                ><span class="picture" data-cast="pandy"></span></span
-              ><span class="game-label"
-                >Muistipeli<small>Etsi samat kaverit</small></span
-              ></button
-            ><button
-              type="button"
-              class="game-link cursor-interaction"
-              id="gf-open-puzzle"
-              aria-label="Palapeli"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 0%; --tile-y: 100%"
-                ></span
-                ><span class="picture" data-cast="gabby"></span></span
-              ><span class="game-label"
-                >Palapeli<small>Kokoa taikakuva</small></span
-              ></button
-            ><button
-              type="button"
-              class="game-link cursor-interaction"
-              id="gf-open-learn"
-              aria-label="Pikku puuhat"
-            >
-              <span class="menu-art" aria-hidden="true"
-                ><span
-                  class="picture"
-                  data-object
-                  style="--tile-x: 50%; --tile-y: 100%"
-                ></span
-                ><span class="picture" data-cast="fairy"></span></span
-              ><span class="game-label"
-                >Pikku puuhat<small>Värit, muodot ja määrät</small></span
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 0%; --tile-y: 50%"
+                  ></span
+                  ><span class="picture" data-cast="fairy"></span
+                ></span>
+                <span class="game-label"
+                  >Kisukeijun puutarha<small>Herätä kukat</small></span
+                >
+              </button>
+              <button
+                type="button"
+                class="game-link cursor-interaction featured-game"
+                id="gf-open-baking"
+                aria-label="Hileen leipomo"
               >
-            </button>
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 50%; --tile-y: 0%"
+                  ></span
+                  ><span class="picture" data-cast="cakey"></span></span
+                ><span class="game-label"
+                  >Hileen leipomo<small>Leivo ja laske kakkuja</small></span
+                ></button
+              ><button
+                type="button"
+                class="game-link cursor-interaction"
+                id="gf-open-bubbles"
+                aria-label="Kuplataika"
+              >
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 100%; --tile-y: 0%"
+                  ></span
+                  ><span class="picture" data-cast="mercat"></span></span
+                ><span class="game-label"
+                  >Kuplataika<small>Löydä värit ja muodot</small></span
+                ></button
+              ><button
+                type="button"
+                class="game-link cursor-interaction"
+                id="gf-open-sizes"
+                aria-label="Suuri ja pieni"
+              >
+                <span class="menu-art size-game-art" aria-hidden="true"
+                  ><span class="size-ball large"></span
+                  ><span class="size-ball small"></span
+                  ><span class="picture" data-cast="pandy"></span></span
+                ><span class="game-label"
+                  >Suuri ja pieni<small>Vertaile ja löydä</small></span
+                ></button
+              ><button
+                type="button"
+                class="game-link cursor-interaction"
+                id="gf-open-find"
+                aria-label="Kuka piilottelee?"
+              >
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 50%; --tile-y: 50%"
+                  ></span
+                  ><span class="picture" data-cast="dj"></span></span
+                ><span class="game-label"
+                  >Kuka piilottelee?<small
+                    >Tunnista kuvan yksityiskohta</small
+                  ></span
+                ></button
+              ><button
+                type="button"
+                class="game-link cursor-interaction"
+                id="gf-open-memory"
+                aria-label="Muistipeli"
+              >
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 100%; --tile-y: 50%"
+                  ></span
+                  ><span class="picture" data-cast="pandy"></span></span
+                ><span class="game-label"
+                  >Muistipeli<small>Etsi samat kaverit</small></span
+                ></button
+              ><button
+                type="button"
+                class="game-link cursor-interaction"
+                id="gf-open-puzzle"
+                aria-label="Palapeli"
+              >
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 0%; --tile-y: 100%"
+                  ></span
+                  ><span class="picture" data-cast="gabby"></span></span
+                ><span class="game-label"
+                  >Palapeli<small>Kokoa taikakuva</small></span
+                ></button
+              ><button
+                type="button"
+                class="game-link cursor-interaction"
+                id="gf-open-learn"
+                aria-label="Pikku puuhat"
+              >
+                <span class="menu-art" aria-hidden="true"
+                  ><span
+                    class="picture"
+                    data-object
+                    style="--tile-x: 50%; --tile-y: 100%"
+                  ></span
+                  ><span class="picture" data-cast="fairy"></span></span
+                ><span class="game-label"
+                  >Pikku puuhat<small>Värit, muodot ja määrät</small></span
+                >
+              </button>
+            </div>
           </div>
           <section class="sticker-book" aria-labelledby="gf-sticker-title">
             <h3 id="gf-sticker-title">Minun tarrakirjani</h3>
@@ -228,7 +222,7 @@
                 ></div>
                 <div>
                   <p class="room-label" id="gf-room"></p>
-                  <h3 id="gf-title"></h3>
+                  <h3 id="gf-title" tabindex="-1"></h3>
                   <p class="instruction" id="gf-instruction"></p>
                 </div>
               </div>
