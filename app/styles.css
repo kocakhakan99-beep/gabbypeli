@@ -1518,3 +1518,73 @@ body {
     linear-gradient(#fff8, #fff3),
     url("../assets/room-garden.webp") center / cover;
 }
+
+/* Room art fills the play panel so it is visible around the activities too. */
+#gabby-fi #gf-play .game-panel {
+  background:
+    linear-gradient(#fff8f2ba, #fff8f2b8),
+    url("../assets/room-kitchen.webp") center / cover;
+}
+#gabby-fi #gf-play[data-room="mercat"] .game-panel {
+  background:
+    linear-gradient(#f5fbffad, #fff9f5b8),
+    url("../assets/room-bathroom.webp") center / cover;
+}
+#gabby-fi #gf-play[data-room="fairy"] .game-panel {
+  background:
+    linear-gradient(#f8fff0b8, #fff8f4b8),
+    url("../assets/room-garden.webp") center / cover;
+}
+#gabby-fi .game-heading,
+#gabby-fi .feedback {
+  background: #fffaf0d9;
+  border-radius: 20px;
+  padding: 10px 14px;
+}
+/* Slow, gentle motion makes the toys feel alive without blocking touch. */
+#gabby-fi .bubble-button:not(.popped) .bubble-shape {
+  animation: bubble-float 2.6s ease-in-out infinite;
+}
+#gabby-fi .bubble-button:nth-child(even):not(.popped) .bubble-shape {
+  animation-delay: -1.2s;
+}
+#gabby-fi .bubble-target .bubble-shape {
+  animation: target-pulse 1.8s ease-in-out infinite;
+}
+#gabby-fi .garden-flower:not(.bloomed) .garden-bud {
+  animation: bud-sway 2.4s ease-in-out infinite;
+}
+#gabby-fi .bubble-button.popped .bubble-shape {
+  animation: bubble-pop 800ms ease-out;
+}
+#gabby-fi .choice.correct,
+#gabby-fi .memory-card.matched,
+#gabby-fi .slot.filled {
+  animation: playful-success 800ms ease-out;
+}
+@keyframes bubble-float {
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
+}
+@keyframes target-pulse {
+  50% {
+    transform: scale(1.17);
+  }
+}
+@keyframes bud-sway {
+  50% {
+    transform: translate(-50%, -50%) rotate(12deg) scale(1.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .bubble-button:not(.popped) .bubble-shape,
+  #gabby-fi .bubble-button.popped .bubble-shape,
+  #gabby-fi .bubble-target .bubble-shape,
+  #gabby-fi .garden-flower:not(.bloomed) .garden-bud,
+  #gabby-fi .choice.correct,
+  #gabby-fi .memory-card.matched,
+  #gabby-fi .slot.filled {
+    animation: none;
+  }
+}
