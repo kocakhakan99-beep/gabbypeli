@@ -3,7 +3,7 @@ import { heading, progress, feedback, finish, setAction } from "../ui.js";
 import { say, ding } from "../audio.js";
 import { bindStroke, type Point } from "./stroke.js";
 
-type Stroke = { color: string; width: number; points: Point[] };
+type Stroke = { color: string; width: number; stamp: boolean; points: Point[] };
 let strokes: Stroke[] = [];
 
 export function startDrawing(): void {
@@ -18,12 +18,14 @@ export function startDrawing(): void {
   if (!context) return;
   const palette = el("drawing-colors");
   const brush = el("drawing-brush");
+  const stamp = el("drawing-stamp");
   const undo = el("drawing-undo");
   const colors = Array.from(
     palette.querySelectorAll<HTMLButtonElement>("button"),
   );
   let color = colors[0].value;
   let wide = false;
+  let stamping = false;
   let active: Stroke | undefined;
   strokes = [];
   progress(0, 1);
@@ -32,6 +34,30 @@ export function startDrawing(): void {
 
   function paint(stroke: Stroke, from: Point, to: Point): void {
     if (!context) return;
+    if (stroke.stamp) {
+      context.fillStyle = stroke.color;
+      const radius = stroke.width;
+      for (const [x, y, w, h] of [
+        [0, 0.24, 0.58, 0.43],
+        [-0.66, -0.28, 0.25, 0.31],
+        [-0.24, -0.68, 0.25, 0.32],
+        [0.24, -0.68, 0.25, 0.32],
+        [0.66, -0.28, 0.25, 0.31],
+      ]) {
+        context.beginPath();
+        context.ellipse(
+          to.x + x * radius,
+          to.y + y * radius,
+          w * radius,
+          h * radius,
+          0,
+          0,
+          Math.PI * 2,
+        );
+        context.fill();
+      }
+      return;
+    }
     context.strokeStyle = stroke.color;
     context.lineWidth = stroke.width;
     context.lineCap = "round";
@@ -67,6 +93,14 @@ export function startDrawing(): void {
     wide = !wide;
     brush.setAttribute("aria-pressed", String(wide));
   };
+  stamp.setAttribute("aria-pressed", "false");
+  stamp.onclick = () => {
+    stamping = !stamping;
+    stamp.setAttribute("aria-pressed", String(stamping));
+    el("instruction").textContent = stamping
+      ? "Napauta paperia tai piirrä tassupolku."
+      : "Valitse väri ja liu’uta sormea paperilla.";
+  };
   undo.onclick = () => {
     active = undefined;
     strokes.pop();
@@ -92,7 +126,12 @@ export function startDrawing(): void {
     start(point) {
       if (strokes.length >= 300) return;
       const first = toCanvas(point);
-      active = { color, width: wide ? 36 : 14, points: [first] };
+      active = {
+        color,
+        width: wide ? 36 : stamping ? 23 : 14,
+        stamp: stamping,
+        points: [first],
+      };
       strokes.push(active);
       paint(active, first, first);
       if (strokes.length === 1) {
@@ -103,8 +142,28 @@ export function startDrawing(): void {
     move(_from, to) {
       if (!active || active.points.length >= 3000) return;
       const next = toCanvas(to);
-      paint(active, active.points.at(-1)!, next);
-      active.points.push(next);
+      const previous = active.points.at(-1)!;
+      if (!active.stamp) {
+        paint(active, previous, next);
+        active.points.push(next);
+        return;
+      }
+      const dx = next.x - previous.x;
+      const dy = next.y - previous.y;
+      const distance = Math.hypot(dx, dy);
+      const spacing = active.width * 2.4;
+      for (
+        let offset = spacing;
+        offset <= distance && active.points.length < 3000;
+        offset += spacing
+      ) {
+        const point = {
+          x: previous.x + (dx * offset) / distance,
+          y: previous.y + (dy * offset) / distance,
+        };
+        paint(active, point, point);
+        active.points.push(point);
+      }
     },
     end() {
       active = undefined;
