@@ -49,7 +49,6 @@ test("stored values are checked before use", () => {
   assert.equal(saved.completed.puzzle, 9999);
   assert.equal(saved.preferences.volume, 1);
   assert.equal(saved.preferences.speech, false);
-  assert.equal(saved.preferences.voice, "");
 });
 
 test("shuffling preserves each card and the original input", () => {

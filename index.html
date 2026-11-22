@@ -147,7 +147,7 @@
               class="tool cursor-interaction"
               id="gf-repeat"
             >
-              Kuuntele ohje
+              Toista ohje
             </button>
           </div>
           <div class="game-panel">
@@ -167,6 +167,12 @@
                 </div>
               </div>
               <div id="gf-memory" hidden>
+                <div
+                  class="settings"
+                  id="gf-memory-packs"
+                  role="group"
+                  aria-label="Muistipelin kuvat"
+                ></div>
                 <div
                   class="settings"
                   id="gf-memory-settings"
@@ -428,16 +434,7 @@
             ><input type="checkbox" id="gf-effects-enabled" /> Leikin
             äänitehosteet</label
           ><label for="gf-volume">Äänenvoimakkuus</label
-          ><input
-            type="range"
-            id="gf-volume"
-            min="0"
-            max="100"
-            value="65"
-          /><label for="gf-voice">Laitteen varapuheääni</label
-          ><select id="gf-voice">
-            <option value="">Laitteen oletus</option>
-          </select>
+          ><input type="range" id="gf-volume" min="0" max="100" value="65" />
           <p id="gf-voice-status"></p>
           <button
             type="button"
@@ -447,9 +444,8 @@
             Kokeile ääntä
           </button>
           <p class="note">
-            Tarrat ja ääniasetukset tallennetaan tähän selaimeen. Valmiit
-            puheäänitteet voivat olla tekoälyllä tuotettuja. Puheääni valitaan
-            saatavilla olevista laitteen äänistä.
+            Tarrat ja ääniasetukset tallennetaan tähän selaimeen. Hahmojen
+            valmiit puheäänitteet on tuotettu tekoälyllä.
           </p>
         </section>
         <p class="note" id="gf-audio-note">

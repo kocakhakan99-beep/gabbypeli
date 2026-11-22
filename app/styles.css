@@ -2,6 +2,7 @@
   --ink: #59306f;
   --pink: #e7479f;
   --atlas: url("../assets/characters.webp");
+  --object-atlas: url("../assets/play-objects.webp");
   max-width: 760px;
   margin: auto;
   color: var(--ink);
@@ -377,12 +378,9 @@
 #gabby-fi .crop {
   position: absolute;
   inset: 0;
-  background-image: var(--atlas);
-  background-size: 400% 400%;
+  background-image: var(--puzzle-image, var(--atlas));
+  background-size: var(--puzzle-columns) var(--puzzle-rows);
   background-position: var(--bx) var(--by);
-}
-#gabby-fi .two .crop {
-  background-size: 400% 200%;
 }
 #gabby-fi .two .slot,
 #gabby-fi .two .piece {
@@ -715,9 +713,6 @@
 }
 #gabby-fi .menu {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-#gabby-fi .six .crop {
-  background-size: 400% 600%;
 }
 #gabby-fi .board.six,
 #gabby-fi .piece-tray.six {
@@ -1307,4 +1302,10 @@ body {
   border: 2px solid #fff;
   border-radius: 10px;
   box-shadow: 0 7px 18px #63397866;
+}
+
+#gabby-fi .picture[data-object] {
+  background-image: var(--object-atlas);
+  background-size: 300% 300%;
+  background-position: var(--tile-x) var(--tile-y);
 }

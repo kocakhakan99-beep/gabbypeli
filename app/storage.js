@@ -14,7 +14,6 @@ const defaults = {
     speech: true,
     effects: true,
     volume: 0.65,
-    voice: "",
 };
 export function readProgress() {
     const fallback = {
@@ -43,8 +42,6 @@ export function readProgress() {
                 typeof preferences.speech === "boolean" ? preferences.speech : true;
             fallback.preferences.effects =
                 typeof preferences.effects === "boolean" ? preferences.effects : true;
-            fallback.preferences.voice =
-                typeof preferences.voice === "string" ? preferences.voice : "";
             fallback.preferences.volume =
                 typeof preferences.volume === "number" &&
                     Number.isFinite(preferences.volume)

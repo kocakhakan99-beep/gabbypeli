@@ -1,3 +1,4 @@
+import { playObjects } from "../play-objects.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
 import { root } from "../dom.js";
 import {
@@ -15,16 +16,25 @@ import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
+const scenes = [
+  ...friends,
+  ...playObjects.map((object) => ({ ...object, room: "Esinepalapelit" })),
+];
+
 export function cropPosition(piece: number) {
-  const ax = state.puzzleArt % 2,
-    ay = Math.floor(state.puzzleArt / 2),
+  const isObject = state.puzzleArt >= friends.length;
+  const grid = isObject ? 3 : 2;
+  const tile = isObject ? state.puzzleArt - friends.length : state.puzzleArt;
+  const ax = tile % grid,
+    ay = Math.floor(tile / grid),
     cols = 2,
     rows = state.puzzleSize / 2,
     x = piece % 2,
     y = Math.floor(piece / 2);
   return {
-    x: (100 * (ax * cols + x)) / (2 * cols - 1),
-    y: (100 * (ay * rows + y)) / (2 * rows - 1),
+    x: (100 * (ax * cols + x)) / (grid * cols - 1),
+    y: (100 * (ay * rows + y)) / (grid * rows - 1),
+    grid,
   };
 }
 
@@ -35,7 +45,12 @@ export function crop(piece: number) {
     p.x +
     "%;--by:" +
     p.y +
-    '%" aria-hidden="true"></span>'
+    "%;--puzzle-columns:" +
+    p.grid * 2 * 100 +
+    "%;--puzzle-rows:" +
+    p.grid * state.puzzleSize * 50 +
+    (p.grid === 3 ? "%;--puzzle-image:var(--object-atlas)" : "%") +
+    '" aria-hidden="true"></span>'
   );
 }
 
@@ -43,10 +58,12 @@ export function initPuzzle() {
   stopPuzzleDrag();
   state.selected = null;
   state.placed = new Set();
-  const f = friends[state.puzzleArt];
+  const f = scenes[state.puzzleArt];
   heading(
-    f.id,
-    "Kokoa taikakuva",
+    state.puzzleArt < friends.length ? f.id : "fairy",
+    state.puzzleArt < friends.length
+      ? "Kokoa taikakuva"
+      : "Kokoa kuva: " + f.name,
     "Raahaa pala paikalleen tai kosketa ensin palaa ja sitten sen paikkaa.",
     f.room,
   );
@@ -60,7 +77,7 @@ export function initPuzzle() {
     el("puzzle-settings").append(b);
   });
   el("scenes").replaceChildren();
-  friends.forEach((f, i) => {
+  scenes.forEach((f, i) => {
     const b = button(
       "",
       () => {
@@ -176,7 +193,7 @@ export function place(i: number) {
       finish(
         "Taikakuva on valmis!",
         "Kokosit kuvan itse. Annetaan yhdessä ylävitoset!",
-        friends[state.puzzleArt].id,
+        state.puzzleArt < friends.length ? scenes[state.puzzleArt].id : "fairy",
       ),
     );
     say("Kuva on valmis! Sinä kokosit sen!");

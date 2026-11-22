@@ -1,4 +1,4 @@
-import type { Friend, Lesson } from "./types.js";
+import type { Choice, Friend, Lesson } from "./types.js";
 import { picture } from "./ui.js";
 
 export const friends: Friend[] = [
@@ -81,3 +81,42 @@ export const lessons: Lesson[] = [
     ],
   },
 ];
+
+const objectChoice = (name: string, id: string, correct: boolean): Choice => [
+  name,
+  '<span class="mini">' + picture(id) + "</span>",
+  correct,
+];
+
+lessons.push(
+  {
+    art: 3,
+    title: "Millä kastellaan kukkia?",
+    speech: "Millä kastellaan kukkia?",
+    win: "Kastelukannulla! Kukat saavat vettä.",
+    options: [
+      objectChoice("Kastelukannu", "watering", true),
+      objectChoice("Juna", "train", false),
+    ],
+  },
+  {
+    art: 2,
+    title: "Mikä kulkee vedessä?",
+    speech: "Mikä kulkee vedessä?",
+    win: "Vene! Se kelluu vedessä.",
+    options: [
+      objectChoice("Palikat", "blocks", false),
+      objectChoice("Vene", "boat", true),
+    ],
+  },
+  {
+    art: 1,
+    title: "Missä kuvassa on kaksi kuppikakkua?",
+    speech: "Missä kuvassa on kaksi kuppikakkua?",
+    win: "Yksi, kaksi. Löysit kuppikakut!",
+    options: [
+      objectChoice("Mansikka", "berry", false),
+      objectChoice("Kuppikakut", "cupcakes", true),
+    ],
+  },
+);

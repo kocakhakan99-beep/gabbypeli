@@ -120,6 +120,9 @@ test("learning and picture hunt still complete after TypeScript migration", asyn
     "Kolme",
     "Keltainen",
     "Hile",
+    "Kastelukannu",
+    "Vene",
+    "Kuppikakut",
   ]) {
     await page
       .locator("#gf-choices")
@@ -166,4 +169,42 @@ test("adult sound preferences persist and a blocked save does not stop play", as
   await page.locator("#gf-speech-enabled").check();
   await page.locator("#gf-open-baking").click();
   await expect(page.locator("#gf-baking")).toBeVisible();
+});
+
+test("object memory and puzzle use the new art without device speech", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.deviceSpeechCalls = 0;
+    if (window.speechSynthesis)
+      window.speechSynthesis.speak = () => window.deviceSpeechCalls++;
+  });
+  await page.goto("/");
+  await page.locator("#gf-open-memory").click();
+  await page
+    .locator("#gf-memory-packs")
+    .getByRole("button", { name: "Esineet" })
+    .click();
+  await expect(page.locator("#gf-cards [data-object]")).toHaveCount(4);
+  await page.locator("#gf-action").click();
+  await page.locator("#gf-cards button").first().click();
+  await expect(page.locator("#gf-feedback")).toContainText("samanlainen");
+  await page.locator("#gf-home-button").click();
+  await page.locator("#gf-open-puzzle").click();
+  await expect(page.locator("#gf-scenes button")).toHaveCount(13);
+  await page
+    .getByRole("button", { name: "Palapeli: Vene", exact: true })
+    .click();
+  await expect(page.locator("#gf-title")).toContainText("Vene");
+  const crop = page.locator("#gf-board .crop").first();
+  await expect(crop).toHaveCSS("background-image", /play-objects\.webp/);
+  await expect(crop).toHaveCSS("background-size", "600% 300%");
+  await page.locator("#gf-tray [data-piece='0']").click();
+  await page.locator("#gf-board [data-piece='0']").click();
+  await expect(page.locator("#gf-board .filled")).toHaveCount(1);
+  await page.locator("#gf-home-button").click();
+  await page.locator("#gf-open-garden").click();
+  await page.locator("#gf-repeat").click();
+  await expect(page.locator("#gf-feedback")).toContainText("Liu");
+  expect(await page.evaluate(() => window.deviceSpeechCalls)).toBe(0);
 });
