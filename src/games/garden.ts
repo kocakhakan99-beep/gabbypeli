@@ -8,7 +8,7 @@ import {
   finish,
   setAction,
 } from "../ui.js";
-import { say, ding } from "../audio.js";
+import { say, ding, unlock } from "../audio.js";
 import { bindStroke, distanceToStroke, type Point } from "./stroke.js";
 
 const beds = [
@@ -30,6 +30,12 @@ function plantBed(level: number): void {
     "Kisukeijun puutarha",
   );
   field.replaceChildren();
+  const wateringCan = document.createElement("span");
+  wateringCan.className = "garden-watering-can";
+  wateringCan.setAttribute("aria-hidden", "true");
+  wateringCan.innerHTML =
+    '<span class="picture" data-object style="--tile-x:0%;--tile-y:50%"></span><span class="garden-drops"></span>';
+  field.append(wateringCan);
   const row = beds[level];
   const grown = new Set<number>();
   const flowers: HTMLButtonElement[] = [];
@@ -40,10 +46,22 @@ function plantBed(level: number): void {
 
   function bloom(index: number): void {
     if (grown.has(index)) return;
+    unlock();
     grown.add(index);
     flowers[index].classList.add("bloomed");
     flowers[index].setAttribute("aria-disabled", "true");
     flowers[index].setAttribute("aria-label", "Avautunut kukka " + (index + 1));
+    const butterfly = document.createElement("span");
+    butterfly.className = "garden-butterfly";
+    butterfly.setAttribute("aria-hidden", "true");
+    butterfly.style.setProperty("--butterfly-x", row[index] + "%");
+    butterfly.style.setProperty("--butterfly-y", (index % 2 ? 28 : 38) + "%");
+    butterfly.style.setProperty(
+      "--butterfly-color",
+      flowerColors[(index + 1) % flowerColors.length],
+    );
+    butterfly.innerHTML = "<span></span><span></span>";
+    field.append(butterfly);
     progress(grown.size, row.length);
     ding("sprinkle");
     if (grown.size !== row.length) return;
@@ -72,6 +90,9 @@ function plantBed(level: number): void {
   });
 
   function water(from: Point, to: Point): void {
+    const bounds = field.getBoundingClientRect();
+    wateringCan.style.left = to.x - bounds.left + "px";
+    wateringCan.style.top = to.y - bounds.top + "px";
     flowers.forEach((flower, index) => {
       if (grown.has(index)) return;
       const rect = flower.getBoundingClientRect();
@@ -89,6 +110,7 @@ function plantBed(level: number): void {
 
   bindStroke(field, {
     start(point) {
+      unlock();
       field.classList.add("watering");
       water(point, point);
     },
