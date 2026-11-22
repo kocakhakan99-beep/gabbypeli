@@ -2,15 +2,17 @@ import { el } from "../dom.js";
 import { heading, progress, feedback, finish, setAction } from "../ui.js";
 import { say, ding } from "../audio.js";
 import { bindStroke, type Point } from "./stroke.js";
+import { friends } from "../data.js";
 
-type Stroke = { color: string; width: number; stamp: boolean; points: Point[] };
+type Stamp = { kind: "paw" } | { kind: "friend"; tile: number } | null;
+type Stroke = { color: string; width: number; stamp: Stamp; points: Point[] };
 let strokes: Stroke[] = [];
 
 export function startDrawing(): void {
   heading(
     "gabby",
     "Piirrä oma taikakuva",
-    "Valitse väri ja liu’uta sormea paperilla.",
+    "Valitse väri tai hahmo ja liu’uta sormea paperilla.",
     "Taidepöytä",
   );
   const canvas = el("drawing-paper");
@@ -20,21 +22,53 @@ export function startDrawing(): void {
   const brush = el("drawing-brush");
   const stamp = el("drawing-stamp");
   const undo = el("drawing-undo");
+  const friendStamps = Array.from(
+    el("drawing").querySelectorAll<HTMLButtonElement>("[data-friend-stamp]"),
+  );
+  const characterAtlas = new Image();
   const colors = Array.from(
     palette.querySelectorAll<HTMLButtonElement>("button"),
   );
   let color = colors[0].value;
   let wide = false;
-  let stamping = false;
+  let selectedStamp: Stamp = null;
   let active: Stroke | undefined;
   strokes = [];
   progress(0, 1);
   feedback("");
-  say("Valitse väri. Piirrä sormella oma kuva.");
+  say("Valitse väri tai hahmo. Piirrä sormella oma kuva.");
 
   function paint(stroke: Stroke, from: Point, to: Point): void {
     if (!context) return;
-    if (stroke.stamp) {
+    if (stroke.stamp?.kind === "friend") {
+      if (!characterAtlas.complete || !characterAtlas.naturalWidth) return;
+      const cell = 512;
+      const size = stroke.width;
+      context.drawImage(
+        characterAtlas,
+        (stroke.stamp.tile % 3) * cell,
+        Math.floor(stroke.stamp.tile / 3) * cell,
+        cell,
+        cell,
+        to.x - size / 2,
+        to.y - size / 2,
+        size,
+        size,
+      );
+      context.fillStyle = "#ffe28a";
+      for (const [x, y] of [
+        [-0.42, -0.4],
+        [0.42, -0.4],
+        [-0.42, 0.4],
+        [0.42, 0.4],
+      ]) {
+        context.beginPath();
+        context.arc(to.x + x * size, to.y + y * size, 4, 0, Math.PI * 2);
+        context.fill();
+      }
+      return;
+    }
+    if (stroke.stamp?.kind === "paw") {
       context.fillStyle = stroke.color;
       const radius = stroke.width;
       for (const [x, y, w, h] of [
@@ -67,6 +101,38 @@ export function startDrawing(): void {
     context.stroke();
   }
 
+  function redraw(): void {
+    if (!context) return;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    for (const stroke of strokes) {
+      let previous = stroke.points[0];
+      for (const point of stroke.points) {
+        paint(stroke, previous, point);
+        previous = point;
+      }
+    }
+  }
+  characterAtlas.addEventListener("load", redraw, { once: true });
+  characterAtlas.src = new URL(
+    "../../assets/gabby-friends.webp",
+    import.meta.url,
+  ).href;
+
+  function updateStampSelection(): void {
+    stamp.setAttribute("aria-pressed", String(selectedStamp?.kind === "paw"));
+    const selectedFriendTile =
+      selectedStamp?.kind === "friend" ? selectedStamp.tile : undefined;
+    const selectedFriendId = friends.find(
+      (friend) => friend.tile === selectedFriendTile,
+    )?.id;
+    friendStamps.forEach((button) =>
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.friendStamp === selectedFriendId),
+      ),
+    );
+  }
+
   function update(): void {
     undo.disabled = strokes.length === 0;
     progress(strokes.length ? 1 : 0, 1);
@@ -95,23 +161,29 @@ export function startDrawing(): void {
   };
   stamp.setAttribute("aria-pressed", "false");
   stamp.onclick = () => {
-    stamping = !stamping;
-    stamp.setAttribute("aria-pressed", String(stamping));
-    el("instruction").textContent = stamping
-      ? "Napauta paperia tai piirrä tassupolku."
-      : "Valitse väri ja liu’uta sormea paperilla.";
+    selectedStamp = selectedStamp?.kind === "paw" ? null : { kind: "paw" };
+    updateStampSelection();
+    el("instruction").textContent =
+      selectedStamp?.kind === "paw"
+        ? "Napauta paperia tai piirrä tassupolku."
+        : "Valitse hahmotarra tai piirrä väreillä.";
   };
+  friendStamps.forEach((button) => {
+    button.onclick = () => {
+      const id = button.dataset.friendStamp;
+      const friend = friends.find((item) => item.id === id);
+      if (!friend || friend.tile === undefined) return;
+      selectedStamp = { kind: "friend", tile: friend.tile };
+      updateStampSelection();
+      el("instruction").textContent =
+        "Liu’uta sormea paperilla ja tee " + friend.name + " -tarrapolku.";
+      feedback("Valittu hahmo ilmestyy paperille sormesi mukana.");
+    };
+  });
   undo.onclick = () => {
     active = undefined;
     strokes.pop();
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    for (const stroke of strokes) {
-      let previous = stroke.points[0];
-      for (const point of stroke.points) {
-        paint(stroke, previous, point);
-        previous = point;
-      }
-    }
+    redraw();
     update();
   };
 
@@ -126,10 +198,20 @@ export function startDrawing(): void {
     start(point) {
       if (strokes.length >= 300) return;
       const first = toCanvas(point);
+      const drawStamp = selectedStamp;
       active = {
         color,
-        width: wide ? 36 : stamping ? 23 : 14,
-        stamp: stamping,
+        width:
+          drawStamp?.kind === "friend"
+            ? wide
+              ? 148
+              : 116
+            : wide
+              ? 36
+              : drawStamp?.kind === "paw"
+                ? 23
+                : 14,
+        stamp: drawStamp,
         points: [first],
       };
       strokes.push(active);
@@ -151,7 +233,10 @@ export function startDrawing(): void {
       const dx = next.x - previous.x;
       const dy = next.y - previous.y;
       const distance = Math.hypot(dx, dy);
-      const spacing = active.width * 2.4;
+      const spacing =
+        active.stamp?.kind === "friend"
+          ? active.width * 1.18
+          : active.width * 2.4;
       for (
         let offset = spacing;
         offset <= distance && active.points.length < 3000;

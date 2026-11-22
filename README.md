@@ -31,7 +31,7 @@ GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikea
 - Suurten ja pienten pallojen vertailu
 - Hileen leipomo, jossa kakut tehdään ja lasketaan itse
 - Merikatin kuplataika, jossa tunnistetaan värejä ja muotoja kuplia napauttamalla tai niiden yli pyyhkäisemällä
-- Taidepöytä sormella piirtämiseen
+- Taidepöytä sormipiirroksiin, tassuleimoihin ja kuuden hahmon tarrapolkuihin
 - Puutarha, jossa kukat avataan pyyhkäisemällä
 
 ## Äänet
