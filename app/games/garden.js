@@ -1,7 +1,7 @@
 import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import { button, heading, progress, feedback, finish, setAction, } from "../ui.js";
-import { say, ding } from "../audio.js";
+import { say, ding, unlock } from "../audio.js";
 import { bindStroke, distanceToStroke } from "./stroke.js";
 const beds = [
     [24, 49, 76],
@@ -15,6 +15,12 @@ function plantBed(level) {
     const field = el("garden-field");
     heading("fairy", "Auta kukat kasvamaan", "Liu’uta sormea nuppujen yli tai kosketa niitä.", "Kisukeijun puutarha");
     field.replaceChildren();
+    const wateringCan = document.createElement("span");
+    wateringCan.className = "garden-watering-can";
+    wateringCan.setAttribute("aria-hidden", "true");
+    wateringCan.innerHTML =
+        '<span class="picture" data-object style="--tile-x:0%;--tile-y:50%"></span><span class="garden-drops"></span>';
+    field.append(wateringCan);
     const row = beds[level];
     const grown = new Set();
     const flowers = [];
@@ -25,10 +31,19 @@ function plantBed(level) {
     function bloom(index) {
         if (grown.has(index))
             return;
+        unlock();
         grown.add(index);
         flowers[index].classList.add("bloomed");
         flowers[index].setAttribute("aria-disabled", "true");
         flowers[index].setAttribute("aria-label", "Avautunut kukka " + (index + 1));
+        const butterfly = document.createElement("span");
+        butterfly.className = "garden-butterfly";
+        butterfly.setAttribute("aria-hidden", "true");
+        butterfly.style.setProperty("--butterfly-x", row[index] + "%");
+        butterfly.style.setProperty("--butterfly-y", (index % 2 ? 28 : 38) + "%");
+        butterfly.style.setProperty("--butterfly-color", flowerColors[(index + 1) % flowerColors.length]);
+        butterfly.innerHTML = "<span></span><span></span>";
+        field.append(butterfly);
         progress(grown.size, row.length);
         ding("sprinkle");
         if (grown.size !== row.length)
@@ -55,6 +70,9 @@ function plantBed(level) {
         field.append(flower);
     });
     function water(from, to) {
+        const bounds = field.getBoundingClientRect();
+        wateringCan.style.left = to.x - bounds.left + "px";
+        wateringCan.style.top = to.y - bounds.top + "px";
         flowers.forEach((flower, index) => {
             if (grown.has(index))
                 return;
@@ -70,6 +88,7 @@ function plantBed(level) {
     }
     bindStroke(field, {
         start(point) {
+            unlock();
             field.classList.add("watering");
             water(point, point);
         },
