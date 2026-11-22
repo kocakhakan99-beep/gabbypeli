@@ -30,6 +30,9 @@ for (const width of [320, 768, 1100]) {
       await page.locator("#gf-baking-plate button").first().click();
       await page.locator("#gf-baking-check").click();
       await page.locator("#gf-baking-bake").click();
+      await expect(page.locator("#gf-baking-toppings")).toBeVisible();
+      for (const cake of await page.locator("#gf-baking-plate button").all())
+        await cake.click();
       await page.locator("#gf-baking-check").click();
       await page.locator("#gf-action").click();
     }

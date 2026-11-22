@@ -5,7 +5,7 @@ import { initMemory, stopMemoryTimers } from "./games/memory.js";
 import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
 import { renderFind } from "./games/find.js";
 import { renderLearn } from "./games/learning.js";
-import { renderSizes } from "./games/sizes.js";
+import { renderSizes, stopSizeGestures } from "./games/sizes.js";
 import { startBaking, stopBakingGestures } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
@@ -19,6 +19,7 @@ function stopGestures(): void {
   stopMemoryTimers();
   stopBakingGestures();
   stopPuzzleDrag();
+  stopSizeGestures();
   stopStroke(el("bubble-field"));
   stopStroke(el("drawing-paper"));
   stopStroke(el("garden-field"));

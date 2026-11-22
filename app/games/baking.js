@@ -17,8 +17,11 @@ let phase = "mix";
 let recipe = 0;
 let served = 0;
 let topping = "berry";
+const stirLength = 105;
+let ovenTimer;
 const decorated = new Map();
 export function stopBakingGestures() {
+    clearTimeout(ovenTimer);
     stopStroke(el("baking-add"));
     stopStroke(el("baking-plate"));
 }
@@ -26,28 +29,39 @@ export function startBaking() {
     recipe = 0;
     const bowl = el("baking-add");
     let distance = 0;
+    let total = 0;
     let skipClick = false;
     bindStroke(bowl, {
         start() {
             distance = 0;
+            total = 0;
         },
         move(from, to) {
-            distance += Math.hypot(to.x - from.x, to.y - from.y);
-            bowl.style.setProperty("--stir-angle", Math.min(distance, 70) / 2 + "deg");
+            if (phase !== "mix")
+                return;
+            const movement = Math.hypot(to.x - from.x, to.y - from.y);
+            distance += movement;
+            total += movement;
+            bowl.style.setProperty("--stir-angle", Math.sin(total / 18) * 25 + "deg");
+            while (distance >= stirLength && served < recipes[recipe]) {
+                distance -= stirLength;
+                addCake();
+            }
+            bowl.style.setProperty("--stir-fill", Math.min(100, (distance / stirLength) * 100) + "%");
         },
         end(point) {
             bowl.style.removeProperty("--stir-angle");
-            if (point && distance >= 25) {
-                skipClick = true;
+            bowl.style.removeProperty("--stir-fill");
+            if (total < 25)
+                return;
+            skipClick = true;
+            if (point && total < stirLength && served < recipes[recipe])
                 addCake();
-                // A pointer click can follow this pointerup. A later tap is a new gesture.
-                setTimeout(() => {
-                    skipClick = false;
-                }, 0);
-            }
+            setTimeout(() => {
+                skipClick = false;
+            }, 0);
         },
     });
-    // The bowl handles both direct taps and gesture-driven mixing.
     bowl.onclick = () => {
         if (!skipClick)
             addCake();
@@ -98,6 +112,7 @@ export function playBakingDialogue() {
 }
 function showPhase(next) {
     phase = next;
+    el("baking-check").classList.remove("ready-to-serve");
     stopStroke(el("baking-plate"));
     if (next === "decorate")
         bindDecorating();
@@ -112,12 +127,16 @@ function showPhase(next) {
         item.classList.toggle("done", index < step || next === "served");
     });
     el("baking-kitchen").hidden = next === "oven";
-    el("baking-oven").hidden = next !== "oven";
+    const oven = el("baking-oven");
+    oven.hidden = next !== "oven";
+    oven.classList.remove("heating");
+    el("baking-bake").disabled = false;
     el("baking-toppings").hidden = next !== "decorate";
     el("baking-add").hidden = next !== "mix";
     el("baking-check").hidden = next === "oven" || next === "served";
     iconButton(el("baking-check"), next === "mix" ? "oven" : "serve", next === "mix" ? "Laita uuniin" : "Tarjoile Hileelle");
     el("baking-reset").hidden = next !== "mix";
+    el("baking-plate").classList.remove("needs-topping");
     el("baking-plate").classList.toggle("decorating", next === "decorate");
     drawPlate();
 }
@@ -137,6 +156,13 @@ function showRecipe() {
 function drawPlate() {
     el("baking-target").textContent = String(recipes[recipe]);
     el("baking-count").textContent = String(served);
+    el("baking")
+        .querySelector(".recipe-pictures")
+        .replaceChildren(...Array.from({ length: recipes[recipe] }, (_, index) => {
+        const cake = document.createElement("span");
+        cake.className = "cupcake" + (index < served ? " counted" : "");
+        return cake;
+    }));
     el("baking-plate").replaceChildren();
     for (let index = 0; index < served; index++) {
         const cake = button("", () => {
@@ -165,8 +191,7 @@ function decorateCake(cake, index) {
     ding("sprinkle");
     if (decorated.size === served) {
         feedback("Kaikki kakut on koristeltu! Nyt voit tarjoilla.");
-        setAction("", checkRecipe);
-        advanceAfterSuccess();
+        el("baking-check").classList.add("ready-to-serve");
     }
 }
 export function addCake() {
@@ -195,7 +220,15 @@ export function resetPlate() {
     say("Lautanen on tyhjä. Leivotaan uudestaan.");
 }
 function bake() {
-    if (phase !== "oven")
+    if (phase !== "oven" || el("baking-bake").disabled)
+        return;
+    el("baking-bake").disabled = true;
+    el("baking-oven").classList.add("heating");
+    feedback("Kakut kohoavat uunissa…");
+    ovenTimer = setTimeout(finishBaking, 1350);
+}
+function finishBaking() {
+    if (state.mode !== "baking" || phase !== "oven")
         return;
     setAction("", null);
     showPhase("decorate");
@@ -223,12 +256,15 @@ export function checkRecipe() {
         feedback("Kakut ovat uunissa.");
         say("Kakut ovat uunissa.");
         ding("piece");
-        setAction("", bake);
-        advanceAfterSuccess();
         return;
     }
     if (phase !== "decorate")
         return;
+    if (decorated.size < served) {
+        feedback("Koristele vielä loput kakut.");
+        el("baking-plate").classList.add("needs-topping");
+        return;
+    }
     setAction("", null);
     showPhase("served");
     el("instruction").textContent = "Hile sai kuppikakut!";

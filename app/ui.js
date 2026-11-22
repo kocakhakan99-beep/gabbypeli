@@ -169,7 +169,12 @@ export function finish(title, text, art) {
     el("win").hidden = false;
     el("win-title").textContent = title;
     el("win-text").textContent = text;
-    el("win-art").dataset.art = art;
+    const winArt = el("win-art");
+    winArt.dataset.art = art;
+    if (friends.some((friend) => friend.id === art))
+        winArt.dataset.cast = art;
+    else
+        delete winArt.dataset.cast;
     el("win-art").classList.remove("pop");
     void el("win-art").offsetWidth;
     el("win-art").classList.add("pop");
