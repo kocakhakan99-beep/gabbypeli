@@ -123,8 +123,15 @@
           </div>
           <section class="sticker-book" aria-labelledby="gf-sticker-title">
             <h3 id="gf-sticker-title">Minun tarrakirjani</h3>
-            <p>Jokaisesta leikistä saat oman tarran.</p>
-            <div class="stickers" id="gf-stickers"></div>
+            <p id="gf-sticker-count"></p>
+            <div id="gf-stickers">
+              <h4>Kaveritarrat</h4>
+              <p>Saat tarran, kun pelaat leikin loppuun.</p>
+              <div class="stickers" id="gf-stickers-first"></div>
+              <h4>Nukketalon aarteet</h4>
+              <p>Pelaa sama leikki loppuun uudestaan ja saat sen kuvatarran.</p>
+              <div class="stickers" id="gf-stickers-bonus"></div>
+            </div>
           </section>
         </section>
         <section id="gf-play" hidden>
@@ -379,6 +386,7 @@
               <p class="eyebrow">Kissa-tastisen hienoa!</p>
               <h3 id="gf-win-title">Sinä osasit!</h3>
               <p id="gf-win-text"></p>
+              <div id="gf-sticker-reward" class="sticker-reward" hidden></div>
               <div class="actions">
                 <button
                   type="button"

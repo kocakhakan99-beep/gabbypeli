@@ -1309,3 +1309,32 @@ body {
   background-size: 300% 300%;
   background-position: var(--tile-x) var(--tile-y);
 }
+
+#gabby-fi #gf-sticker-count {
+  color: #784581;
+  font-weight: 700;
+}
+#gabby-fi .sticker-book h4 {
+  font-size: 17px;
+  margin: 20px 0 4px;
+}
+#gabby-fi .sticker-book h4 + p {
+  margin-bottom: 12px;
+}
+#gabby-fi .picture.bonus-art {
+  background-image: url("../assets/dollhouse-stickers.webp");
+  background-size: 300% 300%;
+  background-position: var(--sticker-x) var(--sticker-y);
+  border-radius: 17px;
+}
+#gabby-fi .sticker-reward {
+  width: fit-content;
+  margin: 18px auto;
+  padding: 12px 20px;
+  border-radius: 18px;
+  background: #fff0d9;
+}
+#gabby-fi .sticker-reward .picture {
+  width: 78px;
+  margin: 10px auto 0;
+}
