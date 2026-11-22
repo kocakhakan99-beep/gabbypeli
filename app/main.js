@@ -1,3 +1,4 @@
+import { cancelAdvance } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
 import { checkRecipe, resetPlate, playBakingDialogue } from "./games/baking.js";
@@ -23,7 +24,12 @@ for (const mode of [
 }
 el("home-button").addEventListener("click", home);
 el("other").addEventListener("click", home);
-el("action").addEventListener("click", () => state.action?.());
+el("action").addEventListener("click", () => {
+    cancelAdvance();
+    const action = state.action;
+    state.action = null;
+    action?.();
+});
 el("again").addEventListener("click", () => {
     if (state.mode)
         open(state.mode);

@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import { state } from "../state.js";
 import { button, feedback, finish, heading, progress, setAction, } from "../ui.js";
@@ -48,6 +49,7 @@ export function renderSizes() {
                 else
                     renderSizes();
             });
+            advanceAfterSuccess();
         }, "choice");
         choice.innerHTML =
             '<span class="ball" aria-hidden="true" style="width:' +

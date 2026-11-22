@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import {
   button,
@@ -27,6 +28,7 @@ export function startBubbles(): void {
 
 function renderRound(): void {
   const task = rounds[round];
+  el("bubble-target").className = "bubble-target " + task.target;
   remaining = task.count;
   completed = false;
   heading(
@@ -87,6 +89,7 @@ function renderRound(): void {
             else renderRound();
           },
         );
+        advanceAfterSuccess();
       },
       "bubble-button " + bubble.kind,
     );

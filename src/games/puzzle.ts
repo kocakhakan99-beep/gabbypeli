@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
 import { root } from "../dom.js";
@@ -197,6 +198,7 @@ export function place(i: number) {
       ),
     );
     say("Kuva on valmis! Sinä kokosit sen!");
+    advanceAfterSuccess();
   } else {
     feedback("Se sopi! Valitse seuraava pala.");
     say("Se sopi! Valitse seuraava pala.");

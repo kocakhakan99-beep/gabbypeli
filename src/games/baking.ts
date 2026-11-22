@@ -7,6 +7,7 @@ import {
   heading,
   progress,
   setAction,
+  advanceAfterSuccess,
 } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import {
@@ -198,8 +199,11 @@ function decorateCake(cake: HTMLButtonElement, index: number): void {
   decorated.set(index, topping);
   cake.dataset.topping = topping;
   ding("sprinkle");
-  if (decorated.size === served)
+  if (decorated.size === served) {
     feedback("Kaikki kakut on koristeltu! Nyt voit tarjoilla.");
+    setAction("", checkRecipe);
+    advanceAfterSuccess();
+  }
 }
 
 export function addCake(): void {
@@ -231,6 +235,7 @@ export function resetPlate(): void {
 
 function bake(): void {
   if (phase !== "oven") return;
+  setAction("", null);
   showPhase("decorate");
   el("instruction").textContent =
     "Valitse kuorrute ja liu’uta sormea kakkujen yli.";
@@ -261,9 +266,12 @@ export function checkRecipe(): void {
     feedback("Kakut ovat uunissa.");
     say("Kakut ovat uunissa.");
     ding("piece");
+    setAction("", bake);
+    advanceAfterSuccess();
     return;
   }
   if (phase !== "decorate") return;
+  setAction("", null);
   showPhase("served");
   el("instruction").textContent = "Hile sai kuppikakut!";
   progress(recipe + 1, recipes.length);
@@ -283,4 +291,5 @@ export function checkRecipe(): void {
       else showRecipe();
     },
   );
+  advanceAfterSuccess();
 }

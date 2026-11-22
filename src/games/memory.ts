@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import {
   button,
@@ -152,6 +153,7 @@ export function flip(i: number) {
         ),
       );
       say("Kaikki parit löytyivät! Hienoa!");
+      advanceAfterSuccess();
     } else {
       feedback("Pari löytyi! Etsi seuraava.");
       say("Pari löytyi! Etsi seuraava.");

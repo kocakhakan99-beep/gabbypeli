@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import type { Choice } from "../types.js";
 import {
   button,
@@ -59,6 +60,7 @@ export function answer(b: HTMLButtonElement, o: Choice) {
         else renderLearn();
       },
     );
+    advanceAfterSuccess();
   } else {
     b.disabled = true;
     feedback("Tutkitaan yhdessä. " + r.title);

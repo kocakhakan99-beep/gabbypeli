@@ -1,6 +1,6 @@
 import type { GameMode } from "./types.js";
 import { el } from "./dom.js";
-import { feedback, setAction } from "./ui.js";
+import { cancelAdvance, feedback, setAction } from "./ui.js";
 import { initMemory } from "./games/memory.js";
 import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
 import { renderFind } from "./games/find.js";
@@ -35,6 +35,7 @@ const starters: Record<GameMode, () => void> = {
 };
 
 export function home(): void {
+  cancelAdvance();
   stopGestures();
   stopSpeech();
   silenceEffects();
@@ -46,6 +47,7 @@ export function home(): void {
 }
 
 export function open(which: GameMode): void {
+  cancelAdvance();
   stopGestures();
   stopSpeech();
   silenceEffects();

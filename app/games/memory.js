@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import { button, cat, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
@@ -116,6 +117,7 @@ export function flip(i) {
                 ? "Kaikki kaverit löytyivät!"
                 : "Kaikki esineparit löytyivät!", "Gabby ja Pandi Pörrö taputtavat sinulle. Hienoa muistamista!", "gabby"));
             say("Kaikki parit löytyivät! Hienoa!");
+            advanceAfterSuccess();
         }
         else {
             feedback("Pari löytyi! Etsi seuraava.");

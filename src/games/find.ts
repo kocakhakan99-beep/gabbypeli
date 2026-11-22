@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import {
   button,
   feedback,
@@ -67,6 +68,7 @@ export function renderFind() {
               else renderFind();
             },
           );
+          advanceAfterSuccess();
         } else {
           b.disabled = true;
           feedback("Tutkitaan vielä. Katso värejä ja korvia.");
