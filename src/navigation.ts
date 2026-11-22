@@ -2,7 +2,7 @@ import type { GameMode } from "./types.js";
 import { el } from "./dom.js";
 import { feedback, setAction } from "./ui.js";
 import { initMemory } from "./games/memory.js";
-import { initPuzzle } from "./games/puzzle.js";
+import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
 import { renderFind } from "./games/find.js";
 import { renderLearn } from "./games/learning.js";
 import { renderSizes } from "./games/sizes.js";
@@ -16,6 +16,7 @@ import { startGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 
 function stopGestures(): void {
+  stopPuzzleDrag();
   stopStroke(el("drawing-paper"));
   stopStroke(el("garden-field"));
 }

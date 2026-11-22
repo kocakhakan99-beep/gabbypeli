@@ -9,14 +9,14 @@ export function bindStroke(surface, handlers) {
         x: event.clientX,
         y: event.clientY,
     });
-    function end() {
+    function end(releasedAt) {
         if (pointer === undefined)
             return;
         const captured = pointer;
         pointer = undefined;
         if (surface.hasPointerCapture(captured))
             surface.releasePointerCapture(captured);
-        handlers.end();
+        handlers.end(releasedAt);
     }
     surface.addEventListener("pointerdown", (event) => {
         if (pointer !== undefined || event.button !== 0)
@@ -37,7 +37,7 @@ export function bindStroke(surface, handlers) {
         if (event.pointerId !== pointer)
             return;
         handlers.move(previous, point(event));
-        end();
+        end(point(event));
     }, { signal });
     for (const name of ["pointercancel", "lostpointercapture"]) {
         surface.addEventListener(name, (event) => {

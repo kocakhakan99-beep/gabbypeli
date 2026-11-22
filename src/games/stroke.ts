@@ -3,7 +3,7 @@ export type Point = { x: number; y: number };
 interface StrokeHandlers {
   start(point: Point): void;
   move(from: Point, to: Point): void;
-  end(): void;
+  end(releasedAt?: Point): void;
 }
 
 const cleanups = new WeakMap<HTMLElement, () => void>();
@@ -22,13 +22,13 @@ export function bindStroke(
     y: event.clientY,
   });
 
-  function end(): void {
+  function end(releasedAt?: Point): void {
     if (pointer === undefined) return;
     const captured = pointer;
     pointer = undefined;
     if (surface.hasPointerCapture(captured))
       surface.releasePointerCapture(captured);
-    handlers.end();
+    handlers.end(releasedAt);
   }
 
   surface.addEventListener(
@@ -57,7 +57,7 @@ export function bindStroke(
     (event) => {
       if (event.pointerId !== pointer) return;
       handlers.move(previous, point(event));
-      end();
+      end(point(event));
     },
     { signal },
   );
