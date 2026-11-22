@@ -68,10 +68,15 @@ export function initMemory() {
     feedback("Käännä kaksi korttia.");
     el("instruction").textContent =
       "Käännä kaksi korttia. Etsi samanlaiset kuvat.";
-    say("Käännä kaksi korttia. Missä on samanlainen kaveri?");
+    say(
+      pack === "friends"
+        ? "Käännä kaksi korttia. Missä on samanlainen kaveri?"
+        : "Käännä kaksi korttia. Etsi samanlaiset esineet.",
+    );
   });
   if (pack === "friends")
     say("Katsotaan kaverit yhdessä. Kun olet valmis, paina Piilota kortit.");
+  else say("Katso esineitä. Kun olet valmis, paina Piilota kortit.");
 }
 
 export function drawCards() {
@@ -121,7 +126,10 @@ export function flip(i: number) {
   if (state.opened.length === 1) {
     if (pack === "friends")
       say(state.mem[i].friend.name + ". Etsi samanlainen kuva.");
-    else feedback("Etsi toinen samanlainen kuva.");
+    else {
+      feedback("Etsi toinen samanlainen kuva.");
+      say("Etsi toinen samanlainen kuva.");
+    }
     return;
   }
   const [a, b] = state.opened;
@@ -136,7 +144,9 @@ export function flip(i: number) {
       feedback("Kaikki parit löytyivät!");
       setAction("Juhlitaan!", () =>
         finish(
-          "Kaikki kaverit löytyivät!",
+          pack === "friends"
+            ? "Kaikki kaverit löytyivät!"
+            : "Kaikki esineparit löytyivät!",
           "Gabby ja Pandi Pörrö taputtavat sinulle. Hienoa muistamista!",
           "gabby",
         ),
@@ -170,13 +180,21 @@ export function showMemoryHint() {
   state.waiting = false;
   state.opened = [];
   drawCards();
-  feedback("Katso kaverien paikat rauhassa.");
-  say("Katsotaan kaverien paikat yhdessä.");
+  feedback("Katso kuvien paikat rauhassa.");
+  say(
+    pack === "friends"
+      ? "Katsotaan kaverien paikat yhdessä."
+      : "Katsotaan esineiden paikat yhdessä.",
+  );
   setAction("Piilota kortit", () => {
     state.preview = false;
     drawCards();
-    feedback("Etsi taas samanlaiset kaverit.");
+    feedback("Etsi taas samanlaiset kuvat.");
     setAction("", null);
-    say("Etsi samanlaiset kaverit.");
+    say(
+      pack === "friends"
+        ? "Etsi samanlaiset kaverit."
+        : "Etsi samanlaiset esineet.",
+    );
   });
 }
