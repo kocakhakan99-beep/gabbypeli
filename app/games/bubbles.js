@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import { button, feedback, finish, heading, progress, setAction, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
@@ -17,6 +18,7 @@ export function startBubbles() {
 }
 function renderRound() {
     const task = rounds[round];
+    el("bubble-target").className = "bubble-target " + task.target;
     remaining = task.count;
     completed = false;
     heading("mercat", "Etsi kaikki " + task.label + ".", "Kosketa sopivia kuplia. Ne poksahtavat!", "Merikatin kuplataika");
@@ -62,6 +64,7 @@ function renderRound() {
                 else
                     renderRound();
             });
+            advanceAfterSuccess();
         }, "bubble-button " + bubble.kind);
         choice.innerHTML = '<span class="bubble-shape" aria-hidden="true"></span>';
         const names = {

@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import { button, heading, progress, feedback, finish, setAction, } from "../ui.js";
 import { say, ding } from "../audio.js";
@@ -40,6 +41,7 @@ function plantBed(level) {
             else
                 finish("Puutarha kukkii!", "Sait puutarhurin tarran!", "fairy");
         });
+        advanceAfterSuccess();
     }
     row.forEach((x, index) => {
         const flower = button("", () => bloom(index), "garden-flower");

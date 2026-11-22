@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import {
   button,
@@ -55,6 +56,7 @@ function plantBed(level: number): void {
         else finish("Puutarha kukkii!", "Sait puutarhurin tarran!", "fairy");
       },
     );
+    advanceAfterSuccess();
   }
 
   row.forEach((x, index) => {

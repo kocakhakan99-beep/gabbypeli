@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { el } from "../dom.js";
 import { state } from "../state.js";
 import {
@@ -69,6 +70,7 @@ export function renderSizes() {
             } else renderSizes();
           },
         );
+        advanceAfterSuccess();
       },
       "choice",
     );

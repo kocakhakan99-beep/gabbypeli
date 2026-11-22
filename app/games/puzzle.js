@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import { bindStroke, stopStroke } from "./stroke.js";
 import { root } from "../dom.js";
@@ -152,6 +153,7 @@ export function place(i) {
         feedback("Kuva on valmis! Sinä kokosit sen!");
         setAction("Juhlitaan!", () => finish("Taikakuva on valmis!", "Kokosit kuvan itse. Annetaan yhdessä ylävitoset!", state.puzzleArt < friends.length ? scenes[state.puzzleArt].id : "fairy"));
         say("Kuva on valmis! Sinä kokosit sen!");
+        advanceAfterSuccess();
     }
     else {
         feedback("Se sopi! Valitse seuraava pala.");

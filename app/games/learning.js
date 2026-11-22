@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { button, feedback, finish, heading, progress, setAction, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
@@ -43,6 +44,7 @@ export function answer(b, o) {
             else
                 renderLearn();
         });
+        advanceAfterSuccess();
     }
     else {
         b.disabled = true;

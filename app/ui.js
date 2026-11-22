@@ -28,6 +28,7 @@ export function cat() {
 }
 export function heading(art, title, instruction, room) {
     el("portrait").dataset.art = art;
+    el("play").dataset.room = art;
     el("portrait").setAttribute("aria-label", friends.find((f) => f.id === art)?.name ?? "Gabbyn ystävä");
     el("title").textContent = title;
     el("instruction").textContent = instruction;
@@ -42,7 +43,27 @@ export function progress(n, total) {
 export function feedback(t) {
     el("feedback").textContent = t;
 }
+let advanceTimer;
+export function cancelAdvance() {
+    if (advanceTimer !== undefined)
+        clearTimeout(advanceTimer);
+    advanceTimer = undefined;
+}
+export function advanceAfterSuccess() {
+    cancelAdvance();
+    const action = state.action;
+    if (!action)
+        return;
+    advanceTimer = setTimeout(() => {
+        advanceTimer = undefined;
+        if (state.action !== action || el("play").hidden)
+            return;
+        state.action = null;
+        action();
+    }, 3500);
+}
 export function setAction(label, fn) {
+    cancelAdvance();
     el("action").textContent = label;
     el("action").hidden = !label;
     state.action = fn;

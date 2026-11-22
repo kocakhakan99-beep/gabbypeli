@@ -1422,3 +1422,99 @@ body {
 #gabby-fi .baking-kitchen:has(.mixing-bowl[hidden]) {
   grid-template-columns: minmax(0, 1fr);
 }
+
+#gabby-fi .bubble-target {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 12px;
+  width: 76px;
+  height: 76px;
+  border: 3px solid #e9c8f0;
+  border-radius: 22px;
+  background: #fff;
+}
+#gabby-fi .bubble-target .bubble-shape {
+  width: 48px;
+  height: 48px;
+}
+#gabby-fi .bubble-target.pink .bubble-shape {
+  border-color: #f6badf;
+  background: radial-gradient(
+    circle at 30% 25%,
+    #fff,
+    #fce2f4 25%,
+    #e69acb 65%,
+    #f7c4e6
+  );
+}
+#gabby-fi .bubble-target.square .bubble-shape {
+  border-radius: 10px;
+  border-color: #cab0ed;
+  background: linear-gradient(140deg, #f4e5ff, #b98ee4);
+}
+#gabby-fi .choice.correct,
+#gabby-fi .memory-card.matched,
+#gabby-fi .slot.filled {
+  animation: playful-success 450ms ease-out;
+}
+#gabby-fi .bubble-button.popped .bubble-shape {
+  animation: bubble-pop 400ms ease-out;
+}
+#gabby-fi .cake-on-plate[data-topping] .cupcake {
+  animation: playful-success 350ms ease-out;
+}
+#gabby-fi .primary:not([hidden]) {
+  animation: action-bounce 650ms ease-out;
+}
+@keyframes playful-success {
+  40% {
+    transform: scale(1.1) rotate(-3deg);
+  }
+  75% {
+    transform: scale(0.98) rotate(1deg);
+  }
+}
+@keyframes bubble-pop {
+  35% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.55);
+    opacity: 0.15;
+  }
+}
+@keyframes action-bounce {
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .choice.correct,
+  #gabby-fi .memory-card.matched,
+  #gabby-fi .slot.filled,
+  #gabby-fi .bubble-button.popped .bubble-shape,
+  #gabby-fi .cake-on-plate[data-topping] .cupcake,
+  #gabby-fi .primary:not([hidden]) {
+    animation: none;
+  }
+}
+
+/* Illustrated rooms give each activity a familiar, playful setting. */
+#gabby-fi .bubble-field {
+  background:
+    linear-gradient(#f4fbff55, #e4f6ff77),
+    url("../assets/room-bathroom.webp") center / cover;
+}
+#gabby-fi .baking-kitchen {
+  background:
+    linear-gradient(#fff8f1bb, #fff2f5bb),
+    url("../assets/room-kitchen.webp") center / cover;
+  border-radius: 24px;
+}
+#gabby-fi #gf-garden-field {
+  background:
+    linear-gradient(#fff8, #fff3),
+    url("../assets/room-garden.webp") center / cover;
+}

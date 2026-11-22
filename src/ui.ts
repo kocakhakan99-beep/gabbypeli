@@ -41,6 +41,7 @@ export function heading(
   room: string,
 ) {
   el("portrait").dataset.art = art;
+  el("play").dataset.room = art;
   el("portrait").setAttribute(
     "aria-label",
     friends.find((f) => f.id === art)?.name ?? "Gabbyn ystävä",
@@ -65,7 +66,24 @@ export function feedback(t: string) {
   el("feedback").textContent = t;
 }
 
+let advanceTimer: ReturnType<typeof setTimeout> | undefined;
+export function cancelAdvance(): void {
+  if (advanceTimer !== undefined) clearTimeout(advanceTimer);
+  advanceTimer = undefined;
+}
+export function advanceAfterSuccess(): void {
+  cancelAdvance();
+  const action = state.action;
+  if (!action) return;
+  advanceTimer = setTimeout(() => {
+    advanceTimer = undefined;
+    if (state.action !== action || el("play").hidden) return;
+    state.action = null;
+    action();
+  }, 3500);
+}
 export function setAction(label: string, fn: (() => void) | null) {
+  cancelAdvance();
   el("action").textContent = label;
   el("action").hidden = !label;
   state.action = fn;

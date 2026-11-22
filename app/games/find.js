@@ -1,3 +1,4 @@
+import { advanceAfterSuccess } from "../ui.js";
 import { button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
@@ -46,6 +47,7 @@ export function renderFind() {
                     else
                         renderFind();
                 });
+                advanceAfterSuccess();
             }
             else {
                 b.disabled = true;
