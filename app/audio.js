@@ -50,7 +50,8 @@ export function stopSpeech() {
     speechVersion++;
     if (recording) {
         recording.pause();
-        recording.src = "";
+        recording.removeAttribute("src");
+        recording.load();
         recording = null;
     }
     try {

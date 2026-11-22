@@ -21,7 +21,7 @@ for (const width of [320, 768, 1100]) {
     await page.locator("#gf-open-baking").click();
     await page.locator("#gf-baking-check").click();
     await expect(page.locator("#gf-feedback")).toContainText("lisää");
-    for (let target = 1; target <= 4; target++) {
+    for (let target of [2, 1, 3, 4]) {
       // An extra cake can be removed directly from the plate.
       for (let i = 0; i < target + 1; i++)
         await page.locator("#gf-baking-add").click();

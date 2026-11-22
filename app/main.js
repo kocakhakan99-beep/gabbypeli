@@ -1,6 +1,6 @@
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
-import { addCake, checkRecipe, resetPlate } from "./games/baking.js";
+import { addCake, checkRecipe, resetPlate, playBakingDialogue, } from "./games/baking.js";
 import { el } from "./dom.js";
 import { home, open } from "./navigation.js";
 import { ding, loadNarration, say, silenceEffects, stopSpeech, unlock, voices, updateVoiceStatus, } from "./audio.js";
@@ -107,3 +107,4 @@ el("audio-test").addEventListener("click", () => {
     ding("sprinkle");
     say("Hei pieni ystävä! Leikitään yhdessä.");
 });
+el("baking-dialogue").addEventListener("click", playBakingDialogue);
