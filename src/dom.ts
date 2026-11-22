@@ -2,6 +2,11 @@ const element = document.getElementById("gabby-fi");
 if (!element) throw new Error("Game root is missing");
 export const root = element;
 interface GameElements {
+  "baking-steps": HTMLElement;
+  "baking-kitchen": HTMLElement;
+  "baking-oven": HTMLElement;
+  "baking-bake": HTMLButtonElement;
+  "baking-toppings": HTMLElement;
   "memory-packs": HTMLElement;
   "baking-dialogue": HTMLButtonElement;
   home: HTMLElement;
@@ -49,6 +54,7 @@ interface GameElements {
   "drawing-paper": HTMLCanvasElement;
   "drawing-colors": HTMLElement;
   "drawing-brush": HTMLButtonElement;
+  "drawing-stamp": HTMLButtonElement;
   "drawing-undo": HTMLButtonElement;
   "garden-field": HTMLElement;
   "bubble-field": HTMLElement;

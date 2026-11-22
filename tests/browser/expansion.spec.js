@@ -29,6 +29,8 @@ for (const width of [320, 768, 1100]) {
       await expect(page.locator("#gf-feedback")).toContainText("liikaa");
       await page.locator("#gf-baking-plate button").first().click();
       await page.locator("#gf-baking-check").click();
+      await page.locator("#gf-baking-bake").click();
+      await page.locator("#gf-baking-check").click();
       await page.locator("#gf-action").click();
     }
     await expect(page.locator("#gf-win")).toBeVisible();

@@ -1338,3 +1338,87 @@ body {
   width: 78px;
   margin: 10px auto 0;
 }
+
+#gabby-fi .baking-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 18px 0;
+}
+#gabby-fi .baking-steps li {
+  border-radius: 16px;
+  background: #f2e6f5;
+  padding: 7px 12px;
+  font-weight: 700;
+}
+#gabby-fi .baking-steps li[aria-current="step"] {
+  background: #f5c6eb;
+  color: #4e285e;
+}
+#gabby-fi .baking-steps li.done {
+  background: #dbf3d9;
+}
+#gabby-fi .mixing-bowl,
+#gabby-fi .plate.decorating {
+  touch-action: none;
+}
+#gabby-fi .mixing-bowl .bowl-art::after {
+  transform: rotate(calc(25deg + var(--stir-angle, 0deg)));
+}
+#gabby-fi .baking-oven {
+  margin: 16px auto;
+  width: min(270px, 100%);
+  padding: 16px;
+  border-radius: 22px;
+  border: 4px solid #d995bd;
+  background: #f4bde1;
+  display: grid;
+  gap: 12px;
+}
+#gabby-fi .oven-window {
+  min-height: 108px;
+  border-radius: 12px;
+  background: linear-gradient(25deg, #935265, #e89269);
+  box-shadow: inset 0 0 16px #62334488;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12%;
+}
+#gabby-fi .oven-window span {
+  width: 7px;
+  height: 30px;
+  border-radius: 8px 0 8px 0;
+  background: #ffd7a0cc;
+  transform: skew(-12deg);
+}
+#gabby-fi .baking-toppings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px;
+}
+#gabby-fi .baking-toppings button[aria-pressed="true"] {
+  outline: 2px solid #703791;
+  outline-offset: 1px;
+}
+#gabby-fi .cake-on-plate[data-topping] .cupcake::before {
+  background:
+    radial-gradient(circle at 26% 52%, #fff 0 2px, transparent 2.5px),
+    radial-gradient(circle at 68% 38%, #fff 0 2px, transparent 2.5px),
+    var(--frosting, #ff91b9);
+}
+#gabby-fi .cake-on-plate[data-topping="sun"] {
+  --frosting: #ffe072;
+}
+#gabby-fi .cake-on-plate[data-topping="violet"] {
+  --frosting: #bd9cf9;
+}
+
+#gabby-fi .baking-kitchen:has(.mixing-bowl[hidden]) {
+  grid-template-columns: minmax(0, 1fr);
+}

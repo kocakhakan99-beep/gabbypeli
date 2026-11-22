@@ -5,7 +5,7 @@ import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
 import { renderFind } from "./games/find.js";
 import { renderLearn } from "./games/learning.js";
 import { renderSizes } from "./games/sizes.js";
-import { startBaking } from "./games/baking.js";
+import { startBaking, stopBakingGestures } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
@@ -13,6 +13,7 @@ import { startDrawing } from "./games/drawing.js";
 import { startGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 function stopGestures() {
+    stopBakingGestures();
     stopPuzzleDrag();
     stopStroke(el("drawing-paper"));
     stopStroke(el("garden-field"));

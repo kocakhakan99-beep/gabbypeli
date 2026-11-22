@@ -108,3 +108,67 @@ test("a puzzle piece follows a finger and lands in its matching slot", async ({
   await expect(slot).toHaveClass(/filled/);
   await expect(page.locator(".puzzle-ghost")).toHaveCount(0);
 });
+
+test("a finger mixes the batter and paints frosting across two cupcakes", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.locator("#gf-sound").click();
+  await page.locator("#gf-open-baking").click();
+  const bowl = page.locator("#gf-baking-add");
+  await bowl.scrollIntoViewIfNeeded();
+  const box = await bowl.boundingBox();
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+  await swipe(page, [
+    { x: x - 22, y },
+    { x, y: y - 24 },
+    { x: x + 22, y },
+  ]);
+  await expect(page.locator("#gf-baking-count")).toHaveText("1");
+  await bowl.click();
+  await page.locator("#gf-baking-check").click();
+  await page.locator("#gf-baking-bake").click();
+  await page.getByRole("button", { name: "Mustikka" }).click();
+  const plate = page.locator("#gf-baking-plate");
+  await plate.scrollIntoViewIfNeeded();
+  const points = [];
+  for (const cake of await plate.locator("button").all()) {
+    const spot = await cake.boundingBox();
+    points.push({ x: spot.x + spot.width / 2, y: spot.y + spot.height / 2 });
+  }
+  await swipe(page, points);
+  await expect(plate.locator("[data-topping=violet]")).toHaveCount(2);
+  await page.getByRole("button", { name: "Tarjoile Hileelle" }).click();
+  await expect(page.locator("#gf-action")).toHaveText("Seuraava resepti");
+});
+
+test("a swipe leaves a row of colored paw stamps that can be undone", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.locator("#gf-sound").click();
+  await page.locator("#gf-open-drawing").click();
+  await page.locator("#gf-drawing-stamp").click();
+  const paper = page.locator("#gf-drawing-paper");
+  await paper.scrollIntoViewIfNeeded();
+  const { x, y } = await paper.boundingBox();
+  await swipe(page, [
+    { x: x + 30, y: y + 45 },
+    { x: x + 145, y: y + 45 },
+  ]);
+  const ink = () =>
+    paper.evaluate((canvas) => {
+      const pixels = canvas
+        .getContext("2d")
+        .getImageData(0, 0, canvas.width, canvas.height).data;
+      return pixels.reduce(
+        (total, channel, index) =>
+          total + (index % 4 === 3 && channel > 0 ? 1 : 0),
+        0,
+      );
+    });
+  expect(await ink()).toBeGreaterThan(4000);
+  await page.locator("#gf-drawing-undo").click();
+  await expect.poll(ink).toBe(0);
+});

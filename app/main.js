@@ -1,6 +1,6 @@
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
-import { addCake, checkRecipe, resetPlate, playBakingDialogue, } from "./games/baking.js";
+import { checkRecipe, resetPlate, playBakingDialogue } from "./games/baking.js";
 import { el } from "./dom.js";
 import { home, open } from "./navigation.js";
 import { ding, loadNarration, say, silenceEffects, stopSpeech, unlock, } from "./audio.js";
@@ -40,7 +40,6 @@ el("hint").addEventListener("click", () => {
     if (state.mode === "puzzle")
         showPuzzleHint();
 });
-el("baking-add").addEventListener("click", addCake);
 el("baking-check").addEventListener("click", checkRecipe);
 el("baking-reset").addEventListener("click", resetPlate);
 el("sound").addEventListener("click", () => {
