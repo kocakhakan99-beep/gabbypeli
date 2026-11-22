@@ -11,6 +11,15 @@ import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
 
+import { startDrawing } from "./games/drawing.js";
+import { startGarden } from "./games/garden.js";
+import { stopStroke } from "./games/stroke.js";
+
+function stopGestures(): void {
+  stopStroke(el("drawing-paper"));
+  stopStroke(el("garden-field"));
+}
+
 const starters: Record<GameMode, () => void> = {
   memory: initMemory,
   puzzle: initPuzzle,
@@ -19,9 +28,12 @@ const starters: Record<GameMode, () => void> = {
   sizes: renderSizes,
   baking: startBaking,
   bubbles: startBubbles,
+  drawing: startDrawing,
+  garden: startGarden,
 };
 
 export function home(): void {
+  stopGestures();
   stopSpeech();
   silenceEffects();
   state.currentPrompt = "Tervetuloa Gabbyn nukketaloon! Valitse leikki.";
@@ -32,6 +44,7 @@ export function home(): void {
 }
 
 export function open(which: GameMode): void {
+  stopGestures();
   stopSpeech();
   silenceEffects();
   unlock();
@@ -50,6 +63,8 @@ export function open(which: GameMode): void {
     "learn",
     "baking",
     "bubbles",
+    "drawing",
+    "garden",
   ] as const) {
     el(panel).hidden = panel !== which;
   }

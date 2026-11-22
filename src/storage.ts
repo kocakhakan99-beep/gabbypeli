@@ -9,6 +9,8 @@ const modes: GameMode[] = [
   "sizes",
   "baking",
   "bubbles",
+  "drawing",
+  "garden",
 ];
 const defaults: Preferences = {
   speech: true,
@@ -89,8 +91,20 @@ export function renderStickers(): void {
     "Vertailija",
     "Pikku leipuri",
     "Kuplataikuri",
+    "Taiteilija",
+    "Puutarhuri",
   ];
-  const art = ["gabby", "fairy", "mercat", "gabby", "fairy", "cakey", "mercat"];
+  const art = [
+    "gabby",
+    "fairy",
+    "mercat",
+    "gabby",
+    "fairy",
+    "cakey",
+    "mercat",
+    "gabby",
+    "fairy",
+  ];
   modes.forEach((mode, index) => {
     const earned = Boolean(savedProgress.completed[mode]);
     const sticker = document.createElement("div");

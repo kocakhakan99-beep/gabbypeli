@@ -31,6 +31,8 @@ for (const mode of [
     "sizes",
     "baking",
     "bubbles",
+    "drawing",
+    "garden",
 ]) {
     el(`open-${mode}`).addEventListener("click", () => open(mode));
 }
