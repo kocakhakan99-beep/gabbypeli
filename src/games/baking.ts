@@ -201,7 +201,7 @@ function decorateCake(cake: HTMLButtonElement, index: number): void {
   ding("sprinkle");
   if (decorated.size === served) {
     feedback("Kaikki kakut on koristeltu! Nyt voit tarjoilla.");
-    setAction("Tarjoile Hileelle", checkRecipe);
+    setAction("", checkRecipe);
     advanceAfterSuccess();
   }
 }
@@ -266,7 +266,7 @@ export function checkRecipe(): void {
     feedback("Kakut ovat uunissa.");
     say("Kakut ovat uunissa.");
     ding("piece");
-    setAction("Paista kakut", bake);
+    setAction("", bake);
     advanceAfterSuccess();
     return;
   }
