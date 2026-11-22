@@ -1158,3 +1158,11 @@ body {
     height: 65px;
   }
 }
+/* Preserve the square artwork while cropping room-card thumbnails. */
+#gabby-fi .menu-art {
+  align-items: center;
+}
+#gabby-fi .menu-art .picture {
+  align-self: center;
+  height: auto;
+}
