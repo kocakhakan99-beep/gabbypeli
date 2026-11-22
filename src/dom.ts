@@ -41,6 +41,15 @@ interface GameElements {
   "baking-check": HTMLButtonElement;
   "baking-reset": HTMLButtonElement;
   bubbles: HTMLElement;
+  "open-drawing": HTMLButtonElement;
+  "open-garden": HTMLButtonElement;
+  drawing: HTMLElement;
+  garden: HTMLElement;
+  "drawing-paper": HTMLCanvasElement;
+  "drawing-colors": HTMLElement;
+  "drawing-brush": HTMLButtonElement;
+  "drawing-undo": HTMLButtonElement;
+  "garden-field": HTMLElement;
   "bubble-field": HTMLElement;
   feedback: HTMLElement;
   action: HTMLButtonElement;

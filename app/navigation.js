@@ -1,7 +1,7 @@
 import { el } from "./dom.js";
 import { feedback, setAction } from "./ui.js";
 import { initMemory } from "./games/memory.js";
-import { initPuzzle } from "./games/puzzle.js";
+import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
 import { renderFind } from "./games/find.js";
 import { renderLearn } from "./games/learning.js";
 import { renderSizes } from "./games/sizes.js";
@@ -9,6 +9,14 @@ import { startBaking } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
+import { startDrawing } from "./games/drawing.js";
+import { startGarden } from "./games/garden.js";
+import { stopStroke } from "./games/stroke.js";
+function stopGestures() {
+    stopPuzzleDrag();
+    stopStroke(el("drawing-paper"));
+    stopStroke(el("garden-field"));
+}
 const starters = {
     memory: initMemory,
     puzzle: initPuzzle,
@@ -17,8 +25,11 @@ const starters = {
     sizes: renderSizes,
     baking: startBaking,
     bubbles: startBubbles,
+    drawing: startDrawing,
+    garden: startGarden,
 };
 export function home() {
+    stopGestures();
     stopSpeech();
     silenceEffects();
     state.currentPrompt = "Tervetuloa Gabbyn nukketaloon! Valitse leikki.";
@@ -28,6 +39,7 @@ export function home() {
     el("play").hidden = true;
 }
 export function open(which) {
+    stopGestures();
     stopSpeech();
     silenceEffects();
     unlock();
@@ -46,6 +58,8 @@ export function open(which) {
         "learn",
         "baking",
         "bubbles",
+        "drawing",
+        "garden",
     ]) {
         el(panel).hidden = panel !== which;
     }

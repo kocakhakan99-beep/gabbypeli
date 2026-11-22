@@ -1,3 +1,5 @@
+import { bindStroke, stopStroke } from "./stroke.js";
+import { root } from "../dom.js";
 import { button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
@@ -20,10 +22,11 @@ export function crop(piece) {
         '%" aria-hidden="true"></span>');
 }
 export function initPuzzle() {
+    stopPuzzleDrag();
     state.selected = null;
     state.placed = new Set();
     const f = friends[state.puzzleArt];
-    heading(f.id, "Kokoa taikakuva", "Kosketa palaa. Kosketa sitten sen paikkaa kuvassa.", f.room);
+    heading(f.id, "Kokoa taikakuva", "Raahaa pala paikalleen tai kosketa ensin palaa ja sitten sen paikkaa.", f.room);
     el("puzzle-settings").replaceChildren();
     [2, 4, 6].forEach((n) => {
         const b = button(n + " palaa", () => {
@@ -69,6 +72,7 @@ export function initPuzzle() {
     }
     shuffle(Array.from({ length: state.puzzleSize }, (_, i) => i)).forEach((i) => {
         const b = button("", () => select(i), "piece");
+        bindPieceDrag(b, i);
         b.innerHTML = crop(i);
         b.dataset.piece = String(i);
         b.setAttribute("aria-label", "Kuvan pala " + (i + 1));
@@ -153,4 +157,46 @@ export function showPuzzleHint() {
     });
     feedback("Valittu pala sopii korostettuun paikkaan.");
     say("Kosketa korostettua paikkaa kuvassa.");
+}
+export function stopPuzzleDrag() {
+    el("tray").querySelectorAll("button").forEach(stopStroke);
+}
+function bindPieceDrag(piece, index) {
+    let start;
+    let ghost;
+    bindStroke(piece, {
+        start(point) {
+            start = point;
+        },
+        move(_from, to) {
+            if (!ghost) {
+                if (Math.hypot(to.x - start.x, to.y - start.y) < 8)
+                    return;
+                const { width, height } = piece.getBoundingClientRect();
+                ghost = document.createElement("div");
+                ghost.className = "puzzle-ghost " + el("tray").classList[1];
+                ghost.setAttribute("aria-hidden", "true");
+                ghost.style.width = width + "px";
+                ghost.style.height = height + "px";
+                ghost.innerHTML = piece.innerHTML;
+                root.append(ghost);
+                select(index);
+            }
+            ghost.style.left = to.x + "px";
+            ghost.style.top = to.y + "px";
+        },
+        end(point) {
+            if (!ghost)
+                return;
+            ghost.remove();
+            ghost = undefined;
+            if (!point)
+                return;
+            const slot = document
+                .elementFromPoint(point.x, point.y)
+                ?.closest("#gf-board .slot");
+            if (slot)
+                place(Number(slot.dataset.piece));
+        },
+    });
 }

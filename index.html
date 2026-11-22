@@ -31,6 +31,22 @@
             </div>
           </div>
           <div class="menu">
+            <button type="button" class="game-link" id="gf-open-drawing">
+              <span class="menu-art" aria-hidden="true"
+                ><span class="picture" data-art="gabby"></span
+              ></span>
+              <span class="game-label"
+                >Taidepöytä<small>Piirrä sormella</small></span
+              >
+            </button>
+            <button type="button" class="game-link" id="gf-open-garden">
+              <span class="menu-art" aria-hidden="true"
+                ><span class="picture" data-art="fairy"></span
+              ></span>
+              <span class="game-label"
+                >Kisukeijun puutarha<small>Herätä kukat</small></span
+              >
+            </button>
             <button
               type="button"
               class="game-link cursor-interaction featured-game"
@@ -256,6 +272,78 @@
                     Tyhjennä lautanen
                   </button>
                 </div>
+              </div>
+              <div id="gf-drawing" hidden>
+                <div class="drawing-tools">
+                  <div
+                    class="drawing-colors"
+                    id="gf-drawing-colors"
+                    role="group"
+                    aria-label="Värit"
+                  >
+                    <button
+                      type="button"
+                      value="#ed469a"
+                      style="--ink: #ed469a"
+                      aria-label="Pinkki"
+                    ></button>
+                    <button
+                      type="button"
+                      value="#7351cb"
+                      style="--ink: #7351cb"
+                      aria-label="Violetti"
+                    ></button>
+                    <button
+                      type="button"
+                      value="#127cb9"
+                      style="--ink: #127cb9"
+                      aria-label="Sininen"
+                    ></button>
+                    <button
+                      type="button"
+                      value="#198253"
+                      style="--ink: #198253"
+                      aria-label="Vihreä"
+                    ></button>
+                    <button
+                      type="button"
+                      value="#ec9b1a"
+                      style="--ink: #ec9b1a"
+                      aria-label="Oranssi"
+                    ></button>
+                  </div>
+                  <div class="drawing-colors">
+                    <button
+                      type="button"
+                      class="tool"
+                      id="gf-drawing-brush"
+                      aria-pressed="false"
+                    >
+                      Paksu kynä
+                    </button>
+                    <button
+                      type="button"
+                      class="tool"
+                      id="gf-drawing-undo"
+                      disabled
+                    >
+                      Kumoa
+                    </button>
+                  </div>
+                </div>
+                <canvas
+                  id="gf-drawing-paper"
+                  width="960"
+                  height="720"
+                  aria-label="Piirustuspaperi"
+                ></canvas>
+              </div>
+              <div id="gf-garden" hidden>
+                <div
+                  id="gf-garden-field"
+                  role="group"
+                  aria-label="Kukkapenkki"
+                ></div>
               </div>
               <div id="gf-bubbles" hidden>
                 <div

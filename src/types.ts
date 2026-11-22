@@ -6,7 +6,9 @@ export type GameMode =
   | "find"
   | "sizes"
   | "baking"
-  | "bubbles";
+  | "bubbles"
+  | "drawing"
+  | "garden";
 export interface Friend {
   id: FriendId;
   name: string;

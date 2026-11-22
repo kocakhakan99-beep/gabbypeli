@@ -13,7 +13,7 @@ for (const width of [320, 768, 1100]) {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await mutedGame(page);
-    await expect(page.locator("#gf-stickers .sticker")).toHaveCount(7);
+    await expect(page.locator("#gf-stickers .sticker")).toHaveCount(9);
     await page.screenshot({
       path: testInfo.outputPath("playroom.png"),
       fullPage: true,
