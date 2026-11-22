@@ -4,7 +4,7 @@ import { initMemory, stopMemoryTimers } from "./games/memory.js";
 import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
 import { renderFind } from "./games/find.js";
 import { renderLearn } from "./games/learning.js";
-import { renderSizes } from "./games/sizes.js";
+import { renderSizes, stopSizeGestures } from "./games/sizes.js";
 import { startBaking, stopBakingGestures } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
@@ -16,6 +16,7 @@ function stopGestures() {
     stopMemoryTimers();
     stopBakingGestures();
     stopPuzzleDrag();
+    stopSizeGestures();
     stopStroke(el("bubble-field"));
     stopStroke(el("drawing-paper"));
     stopStroke(el("garden-field"));
@@ -32,6 +33,7 @@ const starters = {
     garden: startGarden,
 };
 export function home() {
+    const previousRoom = state.mode;
     cancelAdvance();
     stopGestures();
     stopSpeech();
@@ -41,6 +43,8 @@ export function home() {
     state.action = null;
     el("home").hidden = false;
     el("play").hidden = true;
+    if (previousRoom)
+        el(`open-${previousRoom}`).focus();
 }
 export function open(which) {
     cancelAdvance();
@@ -72,4 +76,6 @@ export function open(which) {
     feedback("");
     setAction("", null);
     starters[which]();
+    el("title").focus();
+    el("play").scrollIntoView({ block: "start" });
 }
