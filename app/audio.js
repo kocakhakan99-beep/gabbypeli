@@ -2,8 +2,7 @@ import { state } from "./state.js";
 import { savedProgress } from "./storage.js";
 const activeTones = new Set();
 let recording = null;
-let speechVersion = 0;
-let clips = {};
+const clips = Object.create(null);
 const clipRoot = new URL("../assets/audio/", import.meta.url);
 export async function loadNarration() {
     try {
@@ -19,85 +18,34 @@ export async function loadNarration() {
         }
     }
     catch {
-        /* Device speech remains available when recordings cannot load. */
+        /* Written instructions remain available. */
     }
     updateVoiceStatus();
-}
-export function voices() {
-    try {
-        const available = window.speechSynthesis.getVoices();
-        state.voice =
-            available.find((voice) => voice.voiceURI === savedProgress.preferences.voice) ??
-                available.find((voice) => voice.lang.toLowerCase().startsWith("fi")) ??
-                null;
-        return available.filter((voice) => voice.lang.toLowerCase().startsWith("fi"));
-    }
-    catch {
-        return [];
-    }
 }
 export function updateVoiceStatus() {
     const element = document.getElementById("gf-voice-status");
     if (element)
-        element.textContent =
-            Object.keys(clips).length > 0
-                ? "Valmiit puheäänitteet käytössä. Muut ohjeet luetaan laitteen äänellä."
-                : state.voice
-                    ? "Laitteen puheääni: " + state.voice.name
-                    : "Suomenkielistä puheääntä ei löytynyt. Aikuinen voi lukea ohjeet.";
+        element.textContent = Object.keys(clips).length
+            ? "Valmiit puheäänitteet käytössä."
+            : "Ohjeet näkyvät ruudulla.";
 }
 export function stopSpeech() {
-    speechVersion++;
-    if (recording) {
-        recording.pause();
-        recording.removeAttribute("src");
-        recording.load();
-        recording = null;
-    }
-    try {
-        window.speechSynthesis.cancel();
-    }
-    catch {
-        /* Speech API is optional. */
-    }
-}
-function deviceSpeech(text) {
-    try {
-        if (!window.speechSynthesis || !window.SpeechSynthesisUtterance)
-            return;
-        voices();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "fi-FI";
-        if (state.voice)
-            utterance.voice = state.voice;
-        utterance.rate = 0.88;
-        utterance.pitch = 1.08;
-        utterance.volume = savedProgress.preferences.volume;
-        window.speechSynthesis.speak(utterance);
-    }
-    catch {
-        /* Text instructions are always visible. */
-    }
+    if (!recording)
+        return;
+    recording.pause();
+    recording.removeAttribute("src");
+    recording.load();
+    recording = null;
 }
 export function say(text) {
     state.currentPrompt = text;
     stopSpeech();
-    if (!state.sound || !savedProgress.preferences.speech)
-        return;
     const filename = clips[text];
-    if (!filename) {
-        deviceSpeech(text);
+    if (!filename || !state.sound || !savedProgress.preferences.speech)
         return;
-    }
-    const version = speechVersion;
     recording = new Audio(new URL(filename, clipRoot).href);
     recording.volume = savedProgress.preferences.volume;
-    recording.play().catch(() => {
-        if (version === speechVersion &&
-            state.sound &&
-            savedProgress.preferences.speech)
-            deviceSpeech(text);
-    });
+    void recording.play().catch(() => { });
 }
 export function unlock() {
     if (!state.sound || !savedProgress.preferences.effects)

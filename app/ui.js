@@ -1,3 +1,4 @@
+import { playObjects } from "./play-objects.js";
 import { completeGame } from "./storage.js";
 import { ding, say } from "./audio.js";
 import { el } from "./dom.js";
@@ -12,6 +13,14 @@ export function button(label, fn, cls = "tool") {
     return b;
 }
 export function picture(art) {
+    const tile = playObjects.findIndex(({ id }) => id === art);
+    if (tile >= 0) {
+        return ('<span class="picture" data-object aria-hidden="true" style="--tile-x:' +
+            (tile % 3) * 50 +
+            "%;--tile-y:" +
+            Math.floor(tile / 3) * 50 +
+            '%"></span>');
+    }
     return ('<span class="picture" data-art="' + art + '" aria-hidden="true"></span>');
 }
 export function cat() {

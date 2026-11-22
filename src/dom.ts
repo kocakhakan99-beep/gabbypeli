@@ -2,6 +2,7 @@ const element = document.getElementById("gabby-fi");
 if (!element) throw new Error("Game root is missing");
 export const root = element;
 interface GameElements {
+  "memory-packs": HTMLElement;
   "baking-dialogue": HTMLButtonElement;
   home: HTMLElement;
   "open-baking": HTMLButtonElement;
@@ -67,7 +68,6 @@ interface GameElements {
   "speech-enabled": HTMLInputElement;
   "effects-enabled": HTMLInputElement;
   volume: HTMLInputElement;
-  voice: HTMLSelectElement;
   "voice-status": HTMLElement;
   "audio-test": HTMLButtonElement;
   "audio-note": HTMLElement;

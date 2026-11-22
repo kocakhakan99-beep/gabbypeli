@@ -36,7 +36,7 @@ export function answer(b, o) {
         progress(state.learnIndex + 1, lessons.length);
         ding("bubble");
         say(r.win);
-        setAction(state.learnIndex === 5 ? "Juhlitaan!" : "Seuraava puuha", () => {
+        setAction(state.learnIndex === lessons.length - 1 ? "Juhlitaan!" : "Seuraava puuha", () => {
             state.learnIndex++;
             if (state.learnIndex === lessons.length)
                 finish("Kaikki puuhat tehty!", "Auttoit Gabbya ja kaikkia kavereita. Olet taitava pieni apuri!", "gabby");

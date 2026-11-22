@@ -1,3 +1,4 @@
+import { playObjects } from "../play-objects.js";
 import {
   button,
   cat,
@@ -14,10 +15,12 @@ import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
+let pack: "friends" | "objects" = "friends";
+
 export function initMemory() {
   heading(
     "cakey",
-    "Etsi kaveriparit",
+    pack === "friends" ? "Etsi kaveriparit" : "Etsi esineparit",
     "Katso ensin kuvia. Piilota sitten kortit.",
     "Ystävien muistileikki",
   );
@@ -26,11 +29,26 @@ export function initMemory() {
   state.waiting = false;
   state.preview = true;
   state.mem = shuffle(
-    friends.slice(0, state.memoryPairs).flatMap((f) => [
-      { friend: f, found: false },
-      { friend: f, found: false },
-    ]),
+    (pack === "friends" ? friends : shuffle(playObjects))
+      .slice(0, state.memoryPairs)
+      .flatMap((f) => [
+        { friend: f, found: false },
+        { friend: f, found: false },
+      ]),
   );
+  const packSettings = el("memory-packs");
+  packSettings.replaceChildren();
+  for (const [key, label] of [
+    ["friends", "Kaverit"],
+    ["objects", "Esineet"],
+  ] as const) {
+    const choice = button(label, () => {
+      pack = key;
+      initMemory();
+    });
+    choice.setAttribute("aria-pressed", String(pack === key));
+    packSettings.append(choice);
+  }
   el("memory-settings").replaceChildren();
   [2, 3, 4].forEach((n) => {
     const b = button(n + " paria", () => {
@@ -42,7 +60,7 @@ export function initMemory() {
   });
   drawCards();
   progress(0, state.memoryPairs);
-  feedback("Katsotaan, ketkä ovat mukana!");
+  feedback("Katso kuvia. Piilota sitten kortit.");
   setAction("Piilota kortit", () => {
     state.preview = false;
     drawCards();
@@ -50,9 +68,15 @@ export function initMemory() {
     feedback("Käännä kaksi korttia.");
     el("instruction").textContent =
       "Käännä kaksi korttia. Etsi samanlaiset kuvat.";
-    say("Käännä kaksi korttia. Missä on samanlainen kaveri?");
+    say(
+      pack === "friends"
+        ? "Käännä kaksi korttia. Missä on samanlainen kaveri?"
+        : "Käännä kaksi korttia. Etsi samanlaiset esineet.",
+    );
   });
-  say("Katsotaan kaverit yhdessä. Kun olet valmis, paina Piilota kortit.");
+  if (pack === "friends")
+    say("Katsotaan kaverit yhdessä. Kun olet valmis, paina Piilota kortit.");
+  else say("Katso esineitä. Kun olet valmis, paina Piilota kortit.");
 }
 
 export function drawCards() {
@@ -100,7 +124,12 @@ export function flip(i: number) {
   state.opened.push(i);
   drawCards();
   if (state.opened.length === 1) {
-    say(state.mem[i].friend.name + ". Etsi samanlainen kuva.");
+    if (pack === "friends")
+      say(state.mem[i].friend.name + ". Etsi samanlainen kuva.");
+    else {
+      feedback("Etsi toinen samanlainen kuva.");
+      say("Etsi toinen samanlainen kuva.");
+    }
     return;
   }
   const [a, b] = state.opened;
@@ -115,7 +144,9 @@ export function flip(i: number) {
       feedback("Kaikki parit löytyivät!");
       setAction("Juhlitaan!", () =>
         finish(
-          "Kaikki kaverit löytyivät!",
+          pack === "friends"
+            ? "Kaikki kaverit löytyivät!"
+            : "Kaikki esineparit löytyivät!",
           "Gabby ja Pandi Pörrö taputtavat sinulle. Hienoa muistamista!",
           "gabby",
         ),
@@ -127,7 +158,7 @@ export function flip(i: number) {
     }
   } else {
     state.waiting = true;
-    feedback("Kaksi eri kaveria. Katsotaan rauhassa.");
+    feedback("Kaksi eri kuvaa. Katsotaan rauhassa.");
     setAction("Käännä takaisin", () => {
       state.opened = [];
       state.waiting = false;
@@ -136,9 +167,10 @@ export function flip(i: number) {
       feedback("Kokeillaan uudestaan.");
       say("Kokeillaan uudestaan. Etsi samanlaiset kuvat.");
     });
-    say(
-      "Nämä ovat eri kaverit. Katso kuvia rauhassa. Käännetään sitten takaisin.",
-    );
+    if (pack === "friends")
+      say(
+        "Nämä ovat eri kaverit. Katso kuvia rauhassa. Käännetään sitten takaisin.",
+      );
   }
 }
 
@@ -148,13 +180,21 @@ export function showMemoryHint() {
   state.waiting = false;
   state.opened = [];
   drawCards();
-  feedback("Katso kaverien paikat rauhassa.");
-  say("Katsotaan kaverien paikat yhdessä.");
+  feedback("Katso kuvien paikat rauhassa.");
+  say(
+    pack === "friends"
+      ? "Katsotaan kaverien paikat yhdessä."
+      : "Katsotaan esineiden paikat yhdessä.",
+  );
   setAction("Piilota kortit", () => {
     state.preview = false;
     drawCards();
-    feedback("Etsi taas samanlaiset kaverit.");
+    feedback("Etsi taas samanlaiset kuvat.");
     setAction("", null);
-    say("Etsi samanlaiset kaverit.");
+    say(
+      pack === "friends"
+        ? "Etsi samanlaiset kaverit."
+        : "Etsi samanlaiset esineet.",
+    );
   });
 }

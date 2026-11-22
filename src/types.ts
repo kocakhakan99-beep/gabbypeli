@@ -24,14 +24,13 @@ export interface Lesson {
   pattern?: boolean;
 }
 export interface MemoryCard {
-  friend: Friend;
+  friend: Pick<Friend, "name"> & { id: string };
   found: boolean;
 }
 export interface Preferences {
   speech: boolean;
   effects: boolean;
   volume: number;
-  voice: string;
 }
 export interface SavedProgress {
   version: 1;
@@ -42,7 +41,6 @@ export interface GameState {
   mode: GameMode | "";
   sound: boolean;
   ctx: AudioContext | null;
-  voice: SpeechSynthesisVoice | null;
   memoryPairs: number;
   puzzleSize: number;
   puzzleArt: number;

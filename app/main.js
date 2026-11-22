@@ -3,24 +3,9 @@ import { showPuzzleHint } from "./games/puzzle.js";
 import { addCake, checkRecipe, resetPlate, playBakingDialogue, } from "./games/baking.js";
 import { el } from "./dom.js";
 import { home, open } from "./navigation.js";
-import { ding, loadNarration, say, silenceEffects, stopSpeech, unlock, voices, updateVoiceStatus, } from "./audio.js";
+import { ding, loadNarration, say, silenceEffects, stopSpeech, unlock, } from "./audio.js";
 import { state } from "./state.js";
 import { renderStickers, savedProgress, saveProgress } from "./storage.js";
-function listVoices() {
-    const available = voices();
-    el("voice").replaceChildren(new Option("Laitteen oletus", ""));
-    for (const voice of available)
-        el("voice").append(new Option(voice.name, voice.voiceURI));
-    el("voice").value = savedProgress.preferences.voice;
-    updateVoiceStatus();
-}
-listVoices();
-try {
-    window.speechSynthesis.addEventListener("voiceschanged", listVoices);
-}
-catch {
-    /* Optional API. */
-}
 void loadNarration();
 renderStickers();
 for (const mode of [
@@ -45,6 +30,8 @@ el("again").addEventListener("click", () => {
 });
 el("repeat").addEventListener("click", () => {
     unlock();
+    if (el("win").hidden)
+        el("feedback").textContent = state.currentPrompt;
     say(state.currentPrompt);
 });
 el("hint").addEventListener("click", () => {
@@ -73,8 +60,6 @@ el("settings-toggle").addEventListener("click", () => {
     const expanded = el("settings").hidden;
     el("settings").hidden = !expanded;
     el("settings-toggle").setAttribute("aria-expanded", String(expanded));
-    if (expanded)
-        listVoices();
 });
 el("speech-enabled").checked = savedProgress.preferences.speech;
 el("effects-enabled").checked = savedProgress.preferences.effects;
@@ -93,13 +78,6 @@ el("effects-enabled").addEventListener("change", () => {
 el("volume").addEventListener("input", () => {
     savedProgress.preferences.volume = Number(el("volume").value) / 100;
     saveProgress();
-});
-el("voice").addEventListener("change", () => {
-    savedProgress.preferences.voice = el("voice").value;
-    voices();
-    stopSpeech();
-    saveProgress();
-    updateVoiceStatus();
 });
 el("audio-test").addEventListener("click", () => {
     state.sound = true;

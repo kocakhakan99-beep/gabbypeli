@@ -2,7 +2,6 @@ export const state = {
     mode: "",
     sound: true,
     ctx: null,
-    voice: null,
     memoryPairs: 2,
     puzzleSize: 2,
     puzzleArt: 1,

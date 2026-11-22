@@ -1,6 +1,6 @@
 # Gabbypeli
 
-Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Seitsemän leikkiä, suomenkieliset ohjeet, rauhalliset vihjeet ja selaimeen tallentuva tarrakirja.
+Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Yhdeksän leikkiä, suomenkieliset ohjeet, rauhalliset vihjeet ja selaimeen tallentuva tarrakirja.
 
 ## Kehittäminen
 
@@ -20,43 +20,25 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikeat Chromium-selaintestit. Selaintestit kattavat kaikki seitsemän leikkiä, 320–1100 pikselin näkymiä, vihjeet, äänten mykistyksen, asetukset ja tarrakirjan säilymisen. Testiajon kuvat löytyvät browser-results-artefaktista.
+GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikeat Chromium-selaintestit. Selaintestit kattavat pelien päätoiminnot, 320–1100 pikselin näkymiä, vihjeet, äänten mykistyksen, asetukset ja tarrakirjan säilymisen. Testiajon kuvat löytyvät browser-results-artefaktista.
 
 ## Pelit
 
-- Muistipeli 2–4 parilla ja kurkistusvihjeellä
-- Palapelit 2, 4 ja 6 palalla sekä paikkavihjeellä
+- Muistipeli 2–4 parilla, kahdella kuvapakalla ja kurkistusvihjeellä
+- Palapelit 13 kuvalla, 2–6 palalla, raahauksella ja paikkavihjeellä
 - Pikku puuhat, värit, muodot ja laskeminen
 - Kuvanetsintä hahmojen yksityiskohdista
 - Suurten ja pienten pallojen vertailu
 - Hileen leipomo, jossa kakut tehdään ja lasketaan itse
 - Merikatin kuplataika, jossa tunnistetaan värejä ja muotoja
+- Taidepöytä sormella piirtämiseen
+- Puutarha, jossa kukat avataan pyyhkäisemällä
 
 ## Äänet
 
-Aikuiselle-valikossa säädetään puhetta, tehosteita, äänenvoimakkuutta ja laitteen suomenkielistä puheääntä. Asetukset ja tarrat tallentuvat tämän selaimen localStorageen. Peli toimii myös tallennuksen ollessa estettynä.
+Aikuiselle-valikossa voi säätää valmiiden puheäänitteiden ja tehosteiden toistoa sekä äänenvoimakkuutta. Asetukset ja tarrat tallentuvat tähän selaimeen.
 
-`src/audio.ts` toistaa ensisijaisesti `assets/audio/manifest.json`-tiedostoon merkityt MP3-äänitteet. Muut ohjeet luetaan laitteen puhesynteesillä. Manifestissa on 91 valmista suomenkielistä peliääntä ja Gabby–Hile-vuoropuhelu. Osa puheohjeista on äänitetty lyhyempinä. Alkuperäinen ohje ja puhuttu versio on kirjattu assets/audio/script.json-tiedostoon. Sarjan ääninäyttelijöiden äänitteitä ei sisälly projektiin.
-
-### Tuota suomenkieliset puheäänitteet
-
-Puheäänitteet voidaan tuottaa ElevenLabsin APIlla omalla valitulla äänellä. Äänivalinta tehdään ElevenLabs-tilillä. Avaimet kuuluvat vain kehityskoneen ympäristömuuttujiin.
-
-```sh
-npm run audio:plan
-```
-
-Komento näyttää puherepliikit ja merkkimäärän tekemättä API-kutsuja. Seuraava komento vaatii ympäristömuuttujat `ELEVENLABS_API_KEY` ja `ELEVENLABS_VOICE_ID`.
-
-```sh
-npm run audio:generate -- --limit=10
-```
-
-Generointi käyttää oletuksena mallia `eleven_multilingual_v2`, joka tukee suomea. Mallin voi vaihtaa muuttujalla `ELEVENLABS_MODEL_ID`. Kutsut voivat kuluttaa palvelun krediittejä. Skripti tuottaa enintään kymmenen puherepliikkiä kerralla, käyttää jo tuotetut uudelleen ja tallentaa onnistuneet tulokset jokaisen kutsun jälkeen. Puhetta tuottavan palvelun avaimia ei toimiteta selaimeen. Commitoi vain valmiit MP3-tiedostot ja päivitetty manifesti.
-
-Repliikkilista kerätään lähdekoodin kiinteistä puheohjeista ja tärkeimmistä laskemisohjeista. Dynaamiset ohjeet, joille ei ole valmista äänitettä, toimivat laitteen puheäänellä.
-
-API-ohjeet https://elevenlabs.io/docs/api-reference/text-to-speech/convert
+Peli toistaa valmiita MP3-äänitteitä tiedoston `assets/audio/manifest.json` kautta. Ohje ilman äänitiedostoa näkyy tekstinä. Uudet repliikit voidaan tarvittaessa tuoda valmiina äänitiedostoina yhtenäisellä, nykyistä Gabby-peliääntä vastaavalla äänellä. Automaattista puhesynteesiä ei käytetä pelissä.
 
 ## Tiedostot
 
