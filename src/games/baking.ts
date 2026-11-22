@@ -10,7 +10,7 @@ import {
 } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 
-const recipes = [1, 2, 3, 4];
+const recipes = [2, 1, 3, 4];
 let recipe = 0;
 let served = 0;
 let checked = false;
@@ -18,9 +18,17 @@ let checked = false;
 export function startBaking(): void {
   recipe = 0;
   showRecipe();
+  playBakingDialogue();
+}
+
+export function playBakingDialogue(): void {
+  say(
+    "Hei, pieni ystävä! Minä olen Gabby. Hile, mitä leivotaan tänään? Hei, Gabby! Leivotaan kaksi kuppikakkua. Yksi... kaksi. Haluatko auttaa? Leivotaan yhdessä.",
+  );
 }
 
 function showRecipe(): void {
+  el("baking-dialogue").hidden = recipe !== 0;
   served = 0;
   checked = false;
   heading(

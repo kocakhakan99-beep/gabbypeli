@@ -36,7 +36,7 @@ GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikea
 
 Aikuiselle-valikossa säädetään puhetta, tehosteita, äänenvoimakkuutta ja laitteen suomenkielistä puheääntä. Asetukset ja tarrat tallentuvat tämän selaimen localStorageen. Peli toimii myös tallennuksen ollessa estettynä.
 
-`src/audio.ts` toistaa ensisijaisesti `assets/audio/manifest.json`-tiedostoon merkityt MP3-äänitteet. Muut ohjeet luetaan laitteen puhesynteesillä. Manifesti on aluksi tyhjä. Uusia puheäänitteitä ei ole vielä tuotettu. Sarjan ääninäyttelijöiden äänitteitä ei sisälly projektiin.
+`src/audio.ts` toistaa ensisijaisesti `assets/audio/manifest.json`-tiedostoon merkityt MP3-äänitteet. Muut ohjeet luetaan laitteen puhesynteesillä. Manifestissa on 91 valmista suomenkielistä peliääntä ja Gabby–Hile-vuoropuhelu. Osa puheohjeista on äänitetty lyhyempinä. Alkuperäinen ohje ja puhuttu versio on kirjattu assets/audio/script.json-tiedostoon. Sarjan ääninäyttelijöiden äänitteitä ei sisälly projektiin.
 
 ### Tuota suomenkieliset puheäänitteet
 
