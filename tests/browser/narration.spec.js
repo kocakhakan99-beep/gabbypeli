@@ -12,7 +12,7 @@ test("real recorded instructions play and stop when muted", async ({
   });
   await page.goto("/");
   await expect(page.locator("#gf-voice-status")).toContainText(
-    "Valmiit puheäänitteet",
+    "Gabbyn puheäänitteet",
   );
   await page.locator("#gf-open-memory").click();
   await expect

@@ -12,17 +12,47 @@ import {
 } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
-import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
 let pack: "friends" | "objects" = "friends";
+let previewTimer: ReturnType<typeof setTimeout> | undefined;
+let mismatchTimer: ReturnType<typeof setTimeout> | undefined;
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
+const memoryFriends = [
+  { id: "gabby", name: "Gabby" },
+  { id: "pandy", name: "Pandi Pörrö" },
+  { id: "cakey", name: "Hile" },
+  { id: "mercat", name: "Merikatti" },
+  { id: "fairy", name: "Kisukeiju" },
+  { id: "dj", name: "DJ Catnip" },
+];
+
+export function stopMemoryTimers(): void {
+  clearTimeout(previewTimer);
+  clearTimeout(mismatchTimer);
+  clearTimeout(closeTimer);
+  previewTimer = mismatchTimer = closeTimer = undefined;
+}
+
+function hidePreview(announce = true): void {
+  if (!state.preview) return;
+  clearTimeout(previewTimer);
+  previewTimer = undefined;
+  state.preview = false;
+  setAction("", null);
+  drawCards();
+  feedback("Etsi kaksi samanlaista kuvaa.");
+  if (announce) say("Käännä kaksi korttia. Missä on samanlainen kaveri?");
+}
 
 export function initMemory() {
+  stopMemoryTimers();
   heading(
     "cakey",
     pack === "friends" ? "Etsi kaveriparit" : "Etsi esineparit",
-    "Katso ensin kuvia. Piilota sitten kortit.",
+    "Katso kuvia hetki. Kortit kääntyvät itsestään.",
     "Ystävien muistileikki",
   );
   state.matched = 0;
@@ -30,7 +60,7 @@ export function initMemory() {
   state.waiting = false;
   state.preview = true;
   state.mem = shuffle(
-    (pack === "friends" ? friends : shuffle(playObjects))
+    (pack === "friends" ? shuffle(memoryFriends) : shuffle(playObjects))
       .slice(0, state.memoryPairs)
       .flatMap((f) => [
         { friend: f, found: false },
@@ -61,23 +91,10 @@ export function initMemory() {
   });
   drawCards();
   progress(0, state.memoryPairs);
-  feedback("Katso kuvia. Piilota sitten kortit.");
-  setAction("Piilota kortit", () => {
-    state.preview = false;
-    drawCards();
-    setAction("", null);
-    feedback("Käännä kaksi korttia.");
-    el("instruction").textContent =
-      "Käännä kaksi korttia. Etsi samanlaiset kuvat.";
-    say(
-      pack === "friends"
-        ? "Käännä kaksi korttia. Missä on samanlainen kaveri?"
-        : "Käännä kaksi korttia. Etsi samanlaiset esineet.",
-    );
-  });
-  if (pack === "friends")
-    say("Katsotaan kaverit yhdessä. Kun olet valmis, paina Piilota kortit.");
-  else say("Katso esineitä. Kun olet valmis, paina Piilota kortit.");
+  feedback("Katso kuvat rauhassa.");
+  setAction("Piilota kortit", () => hidePreview());
+  previewTimer = setTimeout(() => hidePreview(), 5200);
+  if (pack === "friends") say("Katsotaan kaverien paikat yhdessä.");
 }
 
 export function drawCards() {
@@ -96,7 +113,18 @@ export function drawCards() {
       () => flip(i),
       "memory-card" + (m.found ? " matched" : up ? " faceup" : ""),
     );
-    b.innerHTML = picture(m.friend.id) + cat();
+    const front =
+      pack === "friends"
+        ? '<span class="picture" data-cast="' +
+          m.friend.id +
+          '" aria-hidden="true"></span>'
+        : picture(m.friend.id);
+    b.innerHTML =
+      '<span class="memory-inner"><span class="memory-side memory-back">' +
+      cat() +
+      '</span><span class="memory-side memory-front">' +
+      front +
+      "</span></span>";
     b.setAttribute(
       "aria-label",
       "Kortti " +
@@ -114,13 +142,8 @@ export function drawCards() {
 }
 
 export function flip(i: number) {
-  if (
-    state.preview ||
-    state.waiting ||
-    state.mem[i].found ||
-    state.opened.includes(i)
-  )
-    return;
+  if (state.preview) hidePreview(false);
+  if (state.waiting || state.mem[i].found || state.opened.includes(i)) return;
   unlock();
   state.opened.push(i);
   drawCards();
@@ -161,23 +184,34 @@ export function flip(i: number) {
   } else {
     state.waiting = true;
     feedback("Kaksi eri kuvaa. Katsotaan rauhassa.");
-    setAction("Käännä takaisin", () => {
-      state.opened = [];
-      state.waiting = false;
-      drawCards();
-      setAction("", null);
-      feedback("Kokeillaan uudestaan.");
-      say("Kokeillaan uudestaan. Etsi samanlaiset kuvat.");
-    });
+    setAction("", null);
     if (pack === "friends")
       say(
         "Nämä ovat eri kaverit. Katso kuvia rauhassa. Käännetään sitten takaisin.",
       );
+    mismatchTimer = setTimeout(() => {
+      if (state.mode !== "memory" || !state.waiting) return;
+      state.opened.forEach((index) => {
+        el("cards")
+          .querySelector(`[data-index="${index}"]`)
+          ?.classList.add("closing");
+      });
+      closeTimer = setTimeout(() => {
+        if (state.mode !== "memory" || !state.waiting) return;
+        state.opened = [];
+        state.waiting = false;
+        drawCards();
+        feedback("Etsi kaksi samanlaista kuvaa.");
+        if (pack === "friends")
+          say("Kokeillaan uudestaan. Etsi samanlaiset kuvat.");
+      }, 420);
+    }, 1450);
   }
 }
 
 export function showMemoryHint() {
   if (state.matched === state.memoryPairs) return;
+  stopMemoryTimers();
   state.preview = true;
   state.waiting = false;
   state.opened = [];
@@ -188,15 +222,6 @@ export function showMemoryHint() {
       ? "Katsotaan kaverien paikat yhdessä."
       : "Katsotaan esineiden paikat yhdessä.",
   );
-  setAction("Piilota kortit", () => {
-    state.preview = false;
-    drawCards();
-    feedback("Etsi taas samanlaiset kuvat.");
-    setAction("", null);
-    say(
-      pack === "friends"
-        ? "Etsi samanlaiset kaverit."
-        : "Etsi samanlaiset esineet.",
-    );
-  });
+  setAction("Piilota kortit", () => hidePreview());
+  previewTimer = setTimeout(() => hidePreview(), 5200);
 }

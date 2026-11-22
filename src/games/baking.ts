@@ -5,6 +5,7 @@ import {
   feedback,
   finish,
   heading,
+  iconButton,
   progress,
   setAction,
   advanceAfterSuccess,
@@ -117,9 +118,7 @@ function showToppingSelection(): void {
 }
 
 export function playBakingDialogue(): void {
-  say(
-    "Hei, pieni ystävä! Minä olen Gabby. Hile, mitä leivotaan tänään? Hei, Gabby! Leivotaan kaksi kuppikakkua. Yksi... kaksi. Haluatko auttaa? Leivotaan yhdessä.",
-  );
+  say("Hei pieni ystävä! Leikitään yhdessä.");
 }
 
 function showPhase(next: Phase): void {
@@ -139,8 +138,11 @@ function showPhase(next: Phase): void {
   el("baking-toppings").hidden = next !== "decorate";
   el("baking-add").hidden = next !== "mix";
   el("baking-check").hidden = next === "oven" || next === "served";
-  el("baking-check").textContent =
-    next === "mix" ? "Laita uuniin" : "Tarjoile Hileelle";
+  iconButton(
+    el("baking-check"),
+    next === "mix" ? "oven" : "serve",
+    next === "mix" ? "Laita uuniin" : "Tarjoile Hileelle",
+  );
   el("baking-reset").hidden = next !== "mix";
   el("baking-plate").classList.toggle("decorating", next === "decorate");
   drawPlate();

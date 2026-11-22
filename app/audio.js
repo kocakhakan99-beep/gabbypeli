@@ -6,13 +6,24 @@ const clips = Object.create(null);
 const clipRoot = new URL("../assets/audio/", import.meta.url);
 export async function loadNarration() {
     try {
-        const response = await fetch(new URL("manifest.json", clipRoot));
-        if (!response.ok)
+        const [response, scriptResponse] = await Promise.all([
+            fetch(new URL("manifest.json", clipRoot)),
+            fetch(new URL("script.json", clipRoot)),
+        ]);
+        if (!response.ok || !scriptResponse.ok)
             return;
-        const data = await response.json();
+        const [data, script] = await Promise.all([
+            response.json(),
+            scriptResponse.json(),
+        ]);
+        const lines = script && typeof script === "object" && "lines" in script
+            ? script.lines
+            : {};
         if (data && typeof data === "object") {
             for (const [text, filename] of Object.entries(data)) {
-                if (typeof filename === "string" && /^[a-z0-9-]+\.mp3$/.test(filename))
+                if (lines[text]?.character === "gabby" &&
+                    typeof filename === "string" &&
+                    /^[a-z0-9-]+\.mp3$/.test(filename))
                     clips[text] = filename;
             }
         }
@@ -26,7 +37,7 @@ export function updateVoiceStatus() {
     const element = document.getElementById("gf-voice-status");
     if (element)
         element.textContent = Object.keys(clips).length
-            ? "Valmiit puheäänitteet käytössä."
+            ? "Gabbyn puheäänitteet käytössä."
             : "Ohjeet näkyvät ruudulla.";
 }
 export function stopSpeech() {

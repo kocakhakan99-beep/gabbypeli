@@ -10,9 +10,11 @@ const script = JSON.parse(
   fs.readFileSync(new URL("script.json", root), "utf8"),
 );
 
-test("all prepared game lines resolve to permanent MP3 files", () => {
-  assert.equal(Object.keys(script.lines).length, 91);
+test("only current Gabby voice clips are available to the game", () => {
+  assert.equal(Object.keys(script.lines).length, 32);
+  assert.equal(Object.keys(manifest).length, 32);
   for (const text of Object.keys(script.lines)) {
+    assert.equal(script.lines[text].character, "gabby", text);
     assert.ok(manifest[text], text);
     assert.match(manifest[text], /^[a-z0-9-]+\.mp3$/);
     const bytes = fs.readFileSync(new URL(manifest[text], root));
@@ -22,5 +24,5 @@ test("all prepared game lines resolve to permanent MP3 files", () => {
       text,
     );
   }
-  assert.ok(Object.values(manifest).includes("baking-dialogue.mp3"));
+  assert.ok(!Object.values(manifest).includes("baking-dialogue.mp3"));
 });

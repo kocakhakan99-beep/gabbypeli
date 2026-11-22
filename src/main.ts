@@ -1,4 +1,4 @@
-import { cancelAdvance } from "./ui.js";
+import { cancelAdvance, iconButton } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
 import { checkRecipe, resetPlate, playBakingDialogue } from "./games/baking.js";
@@ -17,6 +17,33 @@ import { renderStickers, savedProgress, saveProgress } from "./storage.js";
 
 void loadNarration();
 renderStickers();
+
+iconButton(el("home-button"), "home", "Takaisin nukketaloon");
+iconButton(el("hint"), "hint", "Näytä vihje");
+iconButton(el("repeat"), "voice", "Kuuntele Gabbyn ohje uudelleen");
+iconButton(el("again"), "replay", "Leiki uudestaan");
+iconButton(el("other"), "home", "Takaisin nukketaloon");
+iconButton(el("sound"), "voice", "Äänet päällä");
+iconButton(el("baking-dialogue"), "voice", "Kuuntele Gabbya");
+iconButton(el("baking-bake"), "oven", "Paista kakut");
+iconButton(el("baking-check"), "oven", "Laita uuniin");
+iconButton(el("baking-reset"), "undo", "Tyhjennä lautanen");
+iconButton(el("drawing-brush"), "brush", "Paksu kynä");
+iconButton(el("drawing-stamp"), "paw", "Tassuleimasin");
+iconButton(el("drawing-undo"), "undo", "Kumoa viimeisin piirto");
+el("baking-toppings")
+  .querySelectorAll<HTMLButtonElement>("button")
+  .forEach((choice) =>
+    iconButton(
+      choice,
+      choice.value === "sun"
+        ? "sun"
+        : choice.value === "violet"
+          ? "blueberry"
+          : "berry",
+      choice.getAttribute("aria-label") ?? choice.textContent ?? "Kuorrute",
+    ),
+  );
 
 for (const mode of [
   "memory",
@@ -56,8 +83,12 @@ el("baking-reset").addEventListener("click", resetPlate);
 
 el("sound").addEventListener("click", () => {
   state.sound = !state.sound;
+  iconButton(
+    el("sound"),
+    state.sound ? "voice" : "mute",
+    state.sound ? "Äänet päällä" : "Äänet pois",
+  );
   el("sound").setAttribute("aria-pressed", String(state.sound));
-  el("sound").textContent = state.sound ? "Äänet päällä" : "Äänet pois";
   if (state.sound) {
     unlock();
     say(state.currentPrompt || "Tervetuloa Gabbyn nukketaloon!");
@@ -91,7 +122,7 @@ el("volume").addEventListener("input", () => {
 });
 el("audio-test").addEventListener("click", () => {
   state.sound = true;
-  el("sound").textContent = "Äänet päällä";
+  iconButton(el("sound"), "voice", "Äänet päällä");
   el("sound").setAttribute("aria-pressed", "true");
   unlock();
   ding("sprinkle");

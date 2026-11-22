@@ -1,4 +1,4 @@
-export type FriendId = "gabby" | "cakey" | "mercat" | "fairy";
+export type FriendId = "gabby" | "pandy" | "cakey" | "mercat" | "fairy" | "dj";
 export type GameMode =
   | "memory"
   | "puzzle"
@@ -13,6 +13,7 @@ export interface Friend {
   id: FriendId;
   name: string;
   room: string;
+  tile?: number;
 }
 export type Choice = [label: string, markup: string, correct: boolean];
 export interface Lesson {
