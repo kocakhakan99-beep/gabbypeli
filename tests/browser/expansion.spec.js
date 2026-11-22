@@ -136,10 +136,12 @@ test("learning and picture hunt still complete after TypeScript migration", asyn
   await page.locator("#gf-other").click();
   await page.locator("#gf-open-find").click();
   for (const friend of [
-    "Gabby ja Pandi Pörrö",
+    "Gabby",
     "Hile",
     "Merikatti",
     "Kisukeiju",
+    "Pandi Pörrö",
+    "DJ Catnip",
   ]) {
     await page
       .locator("#gf-choices")
@@ -193,7 +195,7 @@ test("object memory and puzzle use the new art without device speech", async ({
   await expect(page.locator("#gf-feedback")).toContainText("samanlainen");
   await page.locator("#gf-home-button").click();
   await page.locator("#gf-open-puzzle").click();
-  await expect(page.locator("#gf-scenes button")).toHaveCount(13);
+  await expect(page.locator("#gf-scenes button")).toHaveCount(15);
   await page
     .getByRole("button", { name: "Palapeli: Vene", exact: true })
     .click();

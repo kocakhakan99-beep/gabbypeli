@@ -2,10 +2,12 @@ import type { Choice, Friend, Lesson } from "./types.js";
 import { picture } from "./ui.js";
 
 export const friends: Friend[] = [
-  { id: "gabby", name: "Gabby ja Pandi Pörrö", room: "Gabbyn nukketalo" },
-  { id: "cakey", name: "Hile", room: "Hileen keittiö" },
-  { id: "mercat", name: "Merikatti", room: "Merikatin kylpyhuone" },
-  { id: "fairy", name: "Kisukeiju", room: "Kisukeijun puutarha" },
+  { id: "gabby", name: "Gabby", room: "Gabbyn nukketalo", tile: 0 },
+  { id: "cakey", name: "Hile", room: "Hileen keittiö", tile: 2 },
+  { id: "mercat", name: "Merikatti", room: "Merikatin kylpyhuone", tile: 3 },
+  { id: "fairy", name: "Kisukeiju", room: "Kisukeijun puutarha", tile: 4 },
+  { id: "pandy", name: "Pandi Pörrö", room: "Pandin leikkihuone", tile: 1 },
+  { id: "dj", name: "DJ Catnip", room: "DJ Catnipin musiikkihuone", tile: 5 },
 ];
 export const cakes = (n: number) =>
   '<span class="cupcakes" aria-hidden="true">' +

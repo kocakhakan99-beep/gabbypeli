@@ -1,6 +1,6 @@
 import { el } from "../dom.js";
 import { state } from "../state.js";
-import { button, feedback, finish, heading, progress, setAction, advanceAfterSuccess, } from "../ui.js";
+import { button, feedback, finish, heading, iconButton, progress, setAction, advanceAfterSuccess, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import { bindStroke, distanceToStroke, stopStroke, } from "./stroke.js";
 const recipes = [2, 1, 3, 4];
@@ -94,7 +94,7 @@ function showToppingSelection() {
     });
 }
 export function playBakingDialogue() {
-    say("Hei, pieni ystävä! Minä olen Gabby. Hile, mitä leivotaan tänään? Hei, Gabby! Leivotaan kaksi kuppikakkua. Yksi... kaksi. Haluatko auttaa? Leivotaan yhdessä.");
+    say("Hei pieni ystävä! Leikitään yhdessä.");
 }
 function showPhase(next) {
     phase = next;
@@ -116,8 +116,7 @@ function showPhase(next) {
     el("baking-toppings").hidden = next !== "decorate";
     el("baking-add").hidden = next !== "mix";
     el("baking-check").hidden = next === "oven" || next === "served";
-    el("baking-check").textContent =
-        next === "mix" ? "Laita uuniin" : "Tarjoile Hileelle";
+    iconButton(el("baking-check"), next === "mix" ? "oven" : "serve", next === "mix" ? "Laita uuniin" : "Tarjoile Hileelle");
     el("baking-reset").hidden = next !== "mix";
     el("baking-plate").classList.toggle("decorating", next === "decorate");
     drawPlate();

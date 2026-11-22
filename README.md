@@ -24,13 +24,13 @@ GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikea
 
 ## Pelit
 
-- Muistipeli 2–4 parilla, kahdella kuvapakalla ja kurkistusvihjeellä
-- Palapelit 13 kuvalla, 2–6 palalla, raahauksella ja paikkavihjeellä
+- Muistipeli 2–4 parilla, kahdella kuvapakalla, animoidulla käännöllä ja automaattisesti sulkeutuvilla väärillä pareilla
+- Palapelit 15 kuvalla, 2–6 palalla, raahauksella ja paikkavihjeellä
 - Pikku puuhat, värit, muodot ja laskeminen
-- Kuvanetsintä hahmojen yksityiskohdista
+- Kuvanetsintä kuuden hahmon yksityiskohdista
 - Suurten ja pienten pallojen vertailu
 - Hileen leipomo, jossa kakut tehdään ja lasketaan itse
-- Merikatin kuplataika, jossa tunnistetaan värejä ja muotoja
+- Merikatin kuplataika, jossa tunnistetaan värejä ja muotoja kuplia napauttamalla tai niiden yli pyyhkäisemällä
 - Taidepöytä sormella piirtämiseen
 - Puutarha, jossa kukat avataan pyyhkäisemällä
 
@@ -38,7 +38,7 @@ GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikea
 
 Aikuiselle-valikossa voi säätää valmiiden puheäänitteiden ja tehosteiden toistoa sekä äänenvoimakkuutta. Asetukset ja tarrat tallentuvat tähän selaimeen.
 
-Peli toistaa valmiita MP3-äänitteitä tiedoston `assets/audio/manifest.json` kautta. Ohje ilman äänitiedostoa näkyy tekstinä. Uudet repliikit voidaan tarvittaessa tuoda valmiina äänitiedostoina yhtenäisellä, nykyistä Gabby-peliääntä vastaavalla äänellä. Automaattista puhesynteesiä ei käytetä pelissä.
+Peli toistaa vain nykyiset Gabby-äänitteet. Äänitteet on luetteloitu tiedostoissa `assets/audio/manifest.json` ja `assets/audio/script.json`; muiden hahmojen repliikit eivät ole pelin käytössä. Automaattista laitepuhesynteesiä ei käytetä. Jos Gabby-äänitettä ei ole, ohje välittyy kuvasta ja animaatiosta.
 
 ## Tiedostot
 
@@ -48,6 +48,6 @@ Peli toistaa valmiita MP3-äänitteitä tiedoston `assets/audio/manifest.json` k
 - `src/storage.ts` tallentaa asetukset ja ansaitut tarrat
 - `src/navigation.ts` vaihtaa leikkejä
 - `src/styles.css` sisältää ulkoasun
-- `assets/characters.webp` sisältää peliä varten tuotetun kuvituksen
+- `assets/characters.webp`, `assets/gabby-friends.webp` ja `assets/play-objects.webp` sisältävät hahmo- ja esinekuvitukset
 
 Peliä kehitetään henkilökohtaisena faniprojektina. Projektiin ei ole lisätty avointa lisenssiä.

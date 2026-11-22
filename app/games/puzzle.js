@@ -14,13 +14,18 @@ const scenes = [
 ];
 export function cropPosition(piece) {
     const isObject = state.puzzleArt >= friends.length;
-    const grid = isObject ? 3 : 2;
-    const tile = isObject ? state.puzzleArt - friends.length : state.puzzleArt;
+    const grid = 3;
+    const atlasRows = isObject ? 3 : 2;
+    const tile = isObject
+        ? state.puzzleArt - friends.length
+        : (friends[state.puzzleArt]?.tile ?? state.puzzleArt);
     const ax = tile % grid, ay = Math.floor(tile / grid), cols = 2, rows = state.puzzleSize / 2, x = piece % 2, y = Math.floor(piece / 2);
     return {
         x: (100 * (ax * cols + x)) / (grid * cols - 1),
-        y: (100 * (ay * rows + y)) / (grid * rows - 1),
-        grid,
+        y: (100 * (ay * rows + y)) / (atlasRows * rows - 1),
+        columns: grid * cols,
+        rows: atlasRows * rows,
+        image: isObject ? "var(--object-atlas)" : "var(--friend-atlas)",
     };
 }
 export function crop(piece) {
@@ -30,10 +35,11 @@ export function crop(piece) {
         "%;--by:" +
         p.y +
         "%;--puzzle-columns:" +
-        p.grid * 2 * 100 +
+        p.columns * 100 +
         "%;--puzzle-rows:" +
-        p.grid * state.puzzleSize * 50 +
-        (p.grid === 3 ? "%;--puzzle-image:var(--object-atlas)" : "%") +
+        p.rows * 100 +
+        "%;--puzzle-image:" +
+        p.image +
         '" aria-hidden="true"></span>');
 }
 export function initPuzzle() {
