@@ -140,7 +140,10 @@ test("a finger mixes the batter and paints frosting across two cupcakes", async 
   await swipe(page, points);
   await expect(plate.locator("[data-topping=violet]")).toHaveCount(2);
   await page.getByRole("button", { name: "Tarjoile Hileelle" }).click();
-  await expect(page.locator("#gf-action")).toHaveText("Seuraava resepti");
+  await expect(page.locator("#gf-action")).toHaveAttribute(
+    "aria-label",
+    "Seuraava resepti",
+  );
 });
 
 test("a swipe leaves a row of colored paw stamps that can be undone", async ({

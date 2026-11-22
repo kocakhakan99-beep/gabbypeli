@@ -152,6 +152,10 @@ function renderRound(): void {
       dragStart = point;
       dragging = false;
       touched.clear();
+      // The field captures the pointer for swipes, so handle the initial tap
+      // here as well. Keyboard activation still uses the button click handler.
+      suppressClick = true;
+      sweep(point, point);
     },
     move(from, to) {
       if (!dragStart) return;
@@ -163,10 +167,8 @@ function renderRound(): void {
       }
     },
     end() {
-      if (dragging) {
-        suppressClick = true;
-        window.setTimeout(() => (suppressClick = false), 0);
-      }
+      if (dragging) suppressClick = true;
+      window.setTimeout(() => (suppressClick = false), 0);
       dragStart = undefined;
       dragging = false;
       touched.clear();
