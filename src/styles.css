@@ -1418,3 +1418,7 @@ body {
 #gabby-fi .cake-on-plate[data-topping="violet"] {
   --frosting: #bd9cf9;
 }
+
+#gabby-fi .baking-kitchen:has(.mixing-bowl[hidden]) {
+  grid-template-columns: minmax(0, 1fr);
+}

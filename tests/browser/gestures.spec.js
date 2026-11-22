@@ -126,10 +126,10 @@ test("a finger mixes the batter and paints frosting across two cupcakes", async 
     { x: x + 22, y },
   ]);
   await expect(page.locator("#gf-baking-count")).toHaveText("1");
-  await bowl.tap();
-  await page.locator("#gf-baking-check").tap();
-  await page.locator("#gf-baking-bake").tap();
-  await page.getByRole("button", { name: "Mustikka" }).tap();
+  await bowl.click();
+  await page.locator("#gf-baking-check").click();
+  await page.locator("#gf-baking-bake").click();
+  await page.getByRole("button", { name: "Mustikka" }).click();
   const plate = page.locator("#gf-baking-plate");
   await plate.scrollIntoViewIfNeeded();
   const points = [];
@@ -139,7 +139,7 @@ test("a finger mixes the batter and paints frosting across two cupcakes", async 
   }
   await swipe(page, points);
   await expect(plate.locator("[data-topping=violet]")).toHaveCount(2);
-  await page.getByRole("button", { name: "Tarjoile Hileelle" }).tap();
+  await page.getByRole("button", { name: "Tarjoile Hileelle" }).click();
   await expect(page.locator("#gf-action")).toHaveText("Seuraava resepti");
 });
 
@@ -149,7 +149,7 @@ test("a swipe leaves a row of colored paw stamps that can be undone", async ({
   await page.goto("/");
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-drawing").click();
-  await page.locator("#gf-drawing-stamp").tap();
+  await page.locator("#gf-drawing-stamp").click();
   const paper = page.locator("#gf-drawing-paper");
   await paper.scrollIntoViewIfNeeded();
   const { x, y } = await paper.boundingBox();
@@ -169,6 +169,6 @@ test("a swipe leaves a row of colored paw stamps that can be undone", async ({
       );
     });
   expect(await ink()).toBeGreaterThan(4000);
-  await page.locator("#gf-drawing-undo").tap();
-  expect(await ink()).toBe(0);
+  await page.locator("#gf-drawing-undo").click();
+  await expect.poll(ink).toBe(0);
 });
