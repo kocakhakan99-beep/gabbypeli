@@ -1,50 +1,71 @@
 # Gabbypeli
 
-Suomenkielinen, henkilökohtaiseen käyttöön tehty Gabbyn nukketalo -fanipeli.
+Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Seitsemän leikkiä, suomenkieliset ohjeet, rauhalliset vihjeet ja selaimeen tallentuva tarrakirja.
 
-## Käynnistys
+## Kehittäminen
 
-Vaatii Node.js 20+ testeihin ja Python 3:n paikalliseen palvelimeen.
+Tarvitset Node.js 22:n ja Python 3:n.
 
 ```sh
+npm ci
 npm start
 ```
 
-Avaa http://127.0.0.1:8000. ES-moduulit tarvitsevat HTTP-palvelimen; index.html-tiedoston kaksoisnapsautus ei riitä. Ei asennettavia npm-riippuvuuksia.
+Avaa http://127.0.0.1:8000. Lähdekoodi on `src/`-hakemiston TypeScript-tiedostoissa. `npm run build` tarkistaa tyypit ja tuottaa selaimessa käytettävät tiedostot `app/`-hakemistoon. `app/` on versioitu, jotta nykyinen GitHub Pagesin main-haaran juurihakemiston julkaisu toimii ilman erillistä palvelinta. Aja build aina lähdekoodimuutosten jälkeen ennen commitia.
 
 ```sh
+npm run typecheck
 npm test
+npx playwright install chromium
+npm run test:browser
 ```
 
-## Rakenne
+GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikeat Chromium-selaintestit. Selaintestit kattavat kaikki seitsemän leikkiä, 320–1100 pikselin näkymiä, vihjeet, äänten mykistyksen, asetukset ja tarrakirjan säilymisen. Testiajon kuvat löytyvät browser-results-artefaktista.
 
-- `src/main.js`: käynnistys ja yhteisten painikkeiden tapahtumat
-- `src/navigation.js`: leikin vaihto ja paluu alkuun
-- `src/games/`: muistipeli, palapeli, pikku puuhat ja kuvanetsintä
-- `src/audio.js`: suomenkielinen puhesynteesi ja äänitehosteet
-- `src/ui.js`: yhteiset käyttöliittymän apufunktiot
-- `src/state.js`: yhteinen pelitila
-- `src/data.js`: hahmot ja suomenkieliset tehtävät
-- `src/dom.js`: juurielementti ja rajattu elementtihaku
-- `src/utils.js`: sekoittaminen
-- `src/styles.css`: ulkoasu ja responsiivisuus
-- `assets/characters.webp`: pelin kuvitus
-- `tests/game.test.js`: pelien toiminnalliset regressiotestit kevyellä DOM-mallilla
+## Pelit
 
-Moduulijako säilyttää nykyisen pelin: muistipeli 2–4 parilla, palapeli 2/4/6 palalla, kuvanetsintä ja kuusi oppimistehtävää. Ei ajastettuja rangaistuksia tai emojeita.
-
-Testit kattavat pelikulut, väärät valinnat, uusinnan, suomenkielisen puheen valinnan ja mykistyksen. Ne eivät korvaa selaimen visuaalista tarkistusta tai oikean laitteen äänen testausta.
+- Muistipeli 2–4 parilla ja kurkistusvihjeellä
+- Palapelit 2, 4 ja 6 palalla sekä paikkavihjeellä
+- Pikku puuhat, värit, muodot ja laskeminen
+- Kuvanetsintä hahmojen yksityiskohdista
+- Suurten ja pienten pallojen vertailu
+- Hileen leipomo, jossa kakut tehdään ja lasketaan itse
+- Merikatin kuplataika, jossa tunnistetaan värejä ja muotoja
 
 ## Äänet
 
-Puhe käyttää selaimen `speechSynthesis`-rajapintaa ja ensisijaisesti fi-FI-ääntä. Erillisiä sarjan hahmoäänitteitä ei ole. Äänitoiminnot on erotettu tulevia äänitiedostoja varten.
+Aikuiselle-valikossa säädetään puhetta, tehosteita, äänenvoimakkuutta ja laitteen suomenkielistä puheääntä. Asetukset ja tarrat tallentuvat tämän selaimen localStorageen. Peli toimii myös tallennuksen ollessa estettynä.
 
-## Yksityinen GitHub-repo
+`src/audio.ts` toistaa ensisijaisesti `assets/audio/manifest.json`-tiedostoon merkityt MP3-äänitteet. Muut ohjeet luetaan laitteen puhesynteesillä. Manifesti on aluksi tyhjä. Uusia puheäänitteitä ei ole vielä tuotettu. Sarjan ääninäyttelijöiden äänitteitä ei sisälly projektiin.
 
-Kun GitHub CLI on kirjautunut omalle tilillesi, voit luoda yksityisen repon ja siirtää tämän commitin:
+### Tuota suomenkieliset puheäänitteet
+
+Puheäänitteet voidaan tuottaa ElevenLabsin APIlla omalla valitulla äänellä. Äänivalinta tehdään ElevenLabs-tilillä. Avaimet kuuluvat vain kehityskoneen ympäristömuuttujiin.
 
 ```sh
-gh repo create gabbypeli --private --source=. --remote=origin --push
+npm run audio:plan
 ```
 
-Kuvitus on tätä henkilökohtaista fanipeliä varten tuotettua kuvitusta. Projektiin ei ole lisätty avointa lisenssiä.
+Komento näyttää puherepliikit ja merkkimäärän tekemättä API-kutsuja. Seuraava komento vaatii ympäristömuuttujat `ELEVENLABS_API_KEY` ja `ELEVENLABS_VOICE_ID`.
+
+```sh
+npm run audio:generate -- --limit=10
+```
+
+Generointi käyttää oletuksena mallia `eleven_multilingual_v2`, joka tukee suomea. Mallin voi vaihtaa muuttujalla `ELEVENLABS_MODEL_ID`. Kutsut voivat kuluttaa palvelun krediittejä. Skripti tuottaa enintään kymmenen puherepliikkiä kerralla, käyttää jo tuotetut uudelleen ja tallentaa onnistuneet tulokset jokaisen kutsun jälkeen. Puhetta tuottavan palvelun avaimia ei toimiteta selaimeen. Commitoi vain valmiit MP3-tiedostot ja päivitetty manifesti.
+
+Repliikkilista kerätään lähdekoodin kiinteistä puheohjeista ja tärkeimmistä laskemisohjeista. Dynaamiset ohjeet, joille ei ole valmista äänitettä, toimivat laitteen puheäänellä.
+
+API-ohjeet https://elevenlabs.io/docs/api-reference/text-to-speech/convert
+
+## Tiedostot
+
+- `src/games/` sisältää erilliset leikkimoduulit
+- `src/types.ts` määrittelee pelitilan ja tehtävien tietotyypit
+- `src/audio.ts` huolehtii puheesta, äänitiedostoista ja tehosteista
+- `src/storage.ts` tallentaa asetukset ja ansaitut tarrat
+- `src/navigation.ts` vaihtaa leikkejä
+- `src/styles.css` sisältää ulkoasun
+- `assets/characters.webp` sisältää peliä varten tuotetun kuvituksen
+
+Peliä kehitetään henkilökohtaisena faniprojektina. Projektiin ei ole lisätty avointa lisenssiä.
