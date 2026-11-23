@@ -48,6 +48,6 @@ Peli toistaa vain nykyiset Gabby-äänitteet. Äänitteet on luetteloitu tiedost
 - `src/storage.ts` tallentaa asetukset ja ansaitut tarrat
 - `src/navigation.ts` vaihtaa leikkejä
 - `src/styles.css` sisältää ulkoasun
-- `assets/characters.webp`, `assets/gabby-friends.webp` ja `assets/play-objects.webp` sisältävät hahmo- ja esinekuvitukset
+- `assets/friends/`, `assets/objects/`, `assets/menu/` ja `assets/stickers/` sisältävät erilliset hahmo-, esine-, valikko- ja tarrakuvat
 
 Peliä kehitetään henkilökohtaisena faniprojektina. Projektiin ei ole lisätty avointa lisenssiä.

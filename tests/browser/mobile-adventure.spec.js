@@ -9,7 +9,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   const rooms = page.locator(".dollhouse-rooms");
   await expect(rooms.locator(".game-link:visible")).toHaveCount(6);
   await expect(rooms.locator("button:visible")).toHaveCount(5);
-  const images = page.locator("#gf-free-games img");
+  const images = page.locator(".home-house img, .dollhouse-rooms img");
   await expect(images).toHaveCount(7);
   await expect.poll(() => images.evaluateAll((elements) =>
     elements.every((image) => image.complete && image.naturalWidth > 0)
@@ -26,11 +26,13 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   await navigation.getByRole("button", { name: "Tarrakirja" }).tap();
   await expect(page.locator("#gf-sticker-book")).toBeVisible();
   await expect(page.locator("#gf-free-games")).toBeHidden();
-  await navigation.getByRole("button", { name: "Leikit" }).tap();
+  await navigation.getByRole("button", { name: "Hiekkalaatikko" }).tap();
   await expect(page.locator("#gf-free-games")).toBeVisible();
   await expect(page.locator("#gf-sticker-book")).toBeHidden();
   await navigation.getByRole("button", { name: "Koti" }).tap();
   await expect(page.locator(".home-house img")).toBeVisible();
+  await expect(page.locator("#gf-free-toggle")).toHaveText("Hiekkalaatikko");
+  await expect(page.locator("#gf-campaign-toggle")).toContainText("Seikkailu");
   await page.locator("#gf-campaign-toggle").tap();
   for (const game of ["memory", "puzzle", "find", "garden", "baking"]) {
     await page.locator(`#gf-map-${game}`).tap();

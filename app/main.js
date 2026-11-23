@@ -59,6 +59,7 @@ function showDestination(destination) {
     roomPanel.hidden = destination !== "home" && destination !== "free";
     stickerPanel.hidden = destination !== "stickers";
     document.querySelector("#gf-campaign-toggle").setAttribute("aria-expanded", String(!mapPanel.hidden));
+    document.querySelector("#gf-free-toggle").setAttribute("aria-pressed", String(destination === "free"));
     for (const button of navigation)
         button.setAttribute("aria-pressed", String(button.dataset.destination === destination));
     updateMap();

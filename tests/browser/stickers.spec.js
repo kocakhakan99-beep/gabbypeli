@@ -57,6 +57,6 @@ test("a returning player earns an illustrated sticker on their second completion
   await expect(page.locator("#gf-coins")).toHaveText("25");
   await expect(bonus).toHaveClass(/earned/);
   await expect(page.locator("#gf-sticker-count")).toHaveText("2 / 24 tarraa");
-  const asset = await page.request.get("/assets/dollhouse-stickers.webp");
+  const asset = await page.request.get("/assets/stickers/bonus-1.webp");
   expect(asset.ok()).toBe(true);
 });
