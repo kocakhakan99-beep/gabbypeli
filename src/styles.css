@@ -2682,3 +2682,65 @@ body {
 #gabby-fi .hide-spot.opened .hiding-friend .picture[data-object] {
   width: 72%;
 }
+
+#gabby-fi .picture.character-sticker-art {
+  background-image: url("../assets/character-stickers.webp");
+  background-size: 300% 300%;
+  background-position: var(--sticker-x) var(--sticker-y);
+  border-radius: 17px;
+}
+#gabby-fi .sticker.earned[role="button"] {
+  cursor: pointer;
+}
+#gabby-fi .sticker.earned[role="button"]:focus-visible {
+  outline: 4px solid #9c55ba;
+  border-radius: 18px;
+}
+#gabby-fi .album-workspace {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0 26px;
+}
+#gabby-fi .sticker-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  grid-column: 1 / -1;
+  min-height: 90px;
+  color: #713982;
+  font-weight: 700;
+}
+#gabby-fi .sticker-preview .picture {
+  width: 100px;
+  box-shadow: 0 3px 12px #73487933;
+}
+#gabby-fi .sticker-page {
+  position: relative;
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 260px;
+  aspect-ratio: 1.7;
+  overflow: hidden;
+  border: 8px solid #fff;
+  border-radius: 20px;
+  box-shadow: 0 5px #d3aadd;
+  background:
+    radial-gradient(circle at 20% 20%, #fff8 0 3px, transparent 4px) 0 0 / 36px
+      36px,
+    linear-gradient(145deg, #fff3d8, #f5e1ff);
+  cursor: crosshair;
+}
+#gabby-fi .album-sticker.picture {
+  position: absolute;
+  width: clamp(50px, 16%, 115px);
+  translate: -50% -50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 9px #64447c55;
+  pointer-events: none;
+}
+#gabby-fi #gf-sticker-undo {
+  grid-column: 2;
+}

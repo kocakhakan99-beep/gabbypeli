@@ -67,6 +67,112 @@ const stickerSets = [
   },
 ] as const;
 type StickerSet = (typeof stickerSets)[number];
+type AlbumItem = { mode: GameMode; bonus: boolean; x: number; y: number };
+const albumKey = "gabbypeli-sticker-page-v1";
+let selectedSticker: { mode: GameMode; bonus: boolean } | null = null;
+let album: AlbumItem[] = [];
+try {
+  const saved: unknown = JSON.parse(localStorage.getItem(albumKey) ?? "[]");
+  if (Array.isArray(saved))
+    album = saved
+      .filter(
+        (item): item is AlbumItem =>
+          item &&
+          stickerSets.some((set) => set.mode === item.mode) &&
+          typeof item.bonus === "boolean" &&
+          Number.isFinite(item.x) &&
+          Number.isFinite(item.y) &&
+          item.x >= 0 &&
+          item.x <= 100 &&
+          item.y >= 0 &&
+          item.y <= 100,
+      )
+      .slice(0, 100);
+} catch {
+  /* The album starts empty if storage is unavailable. */
+}
+
+function saveAlbum(): void {
+  try {
+    localStorage.setItem(albumKey, JSON.stringify(album));
+  } catch {
+    /* Play continues without storage. */
+  }
+}
+
+function stickerImage(set: StickerSet, bonus: boolean): HTMLElement {
+  const image = document.createElement("span");
+  image.className =
+    "picture " + (bonus ? "bonus-art" : "character-sticker-art");
+  image.setAttribute("aria-hidden", "true");
+  image.style.setProperty("--sticker-x", (set.tile % 3) * 50 + "%");
+  image.style.setProperty("--sticker-y", Math.floor(set.tile / 3) * 50 + "%");
+  return image;
+}
+
+function renderAlbum(): void {
+  const page = document.getElementById("gf-sticker-page");
+  if (!page) return;
+  page.replaceChildren();
+  for (const item of album) {
+    const set = stickerSets.find((entry) => entry.mode === item.mode);
+    if (
+      !set ||
+      (savedProgress.completed[item.mode] ?? 0) < (item.bonus ? 2 : 1)
+    )
+      continue;
+    const art = stickerImage(set, item.bonus);
+    art.classList.add("album-sticker");
+    art.style.left = item.x + "%";
+    art.style.top = item.y + "%";
+    page.append(art);
+  }
+}
+
+function selectSticker(set: StickerSet, bonus: boolean): void {
+  selectedSticker = { mode: set.mode, bonus };
+  const preview = document.getElementById("gf-sticker-preview");
+  if (!preview) return;
+  preview.replaceChildren(stickerImage(set, bonus));
+  const label = document.createElement("span");
+  label.textContent = (bonus ? set.bonus : set.label) + " – napauta sivua";
+  preview.append(label);
+}
+
+export function initStickerAlbum(): void {
+  const page = document.getElementById("gf-sticker-page");
+  const undo = document.getElementById("gf-sticker-undo");
+  if (!page || !undo) return;
+  function place(x: number, y: number): void {
+    if (!selectedSticker || album.length >= 100) return;
+    album.push({
+      ...selectedSticker,
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    });
+    saveAlbum();
+    renderAlbum();
+  }
+  page.addEventListener("click", (event) => {
+    const rect = page.getBoundingClientRect();
+    place(
+      ((event.clientX - rect.left) / rect.width) * 100,
+      ((event.clientY - rect.top) / rect.height) * 100,
+    );
+  });
+  page.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      place(50, 50);
+    }
+  });
+  undo.addEventListener("click", () => {
+    album.pop();
+    saveAlbum();
+    renderAlbum();
+  });
+  renderAlbum();
+}
 
 const defaults: Preferences = {
   speech: true,
@@ -158,15 +264,17 @@ function sticker(
           ? ", saat pelaamalla leikin loppuun kahdesti"
           : ", odottaa leikkiä"),
   );
-  const image = document.createElement("span");
-  image.className = "picture";
-  image.setAttribute("aria-hidden", "true");
-  if (bonus) {
-    image.classList.add("bonus-art");
-    image.style.setProperty("--sticker-x", (set.tile % 3) * 50 + "%");
-    image.style.setProperty("--sticker-y", Math.floor(set.tile / 3) * 50 + "%");
-  } else {
-    image.dataset.art = set.art;
+  const image = stickerImage(set, bonus);
+  if (earned) {
+    item.setAttribute("role", "button");
+    item.tabIndex = 0;
+    item.addEventListener("click", () => selectSticker(set, bonus));
+    item.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectSticker(set, bonus);
+      }
+    });
   }
   const name = document.createElement("span");
   name.textContent = label;
@@ -191,4 +299,5 @@ export function renderStickers(): void {
   if (summary)
     summary.textContent =
       earnedCount + " / " + stickerSets.length * 2 + " tarraa";
+  renderAlbum();
 }

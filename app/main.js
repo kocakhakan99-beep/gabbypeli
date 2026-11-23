@@ -6,9 +6,10 @@ import { el } from "./dom.js";
 import { home, open } from "./navigation.js";
 import { ding, loadNarration, say, silenceEffects, stopSpeech, unlock, } from "./audio.js";
 import { state } from "./state.js";
-import { renderStickers, savedProgress, saveProgress } from "./storage.js";
+import { initStickerAlbum, renderStickers, savedProgress, saveProgress, } from "./storage.js";
 void loadNarration();
 renderStickers();
+initStickerAlbum();
 iconButton(el("home-button"), "home", "Takaisin nukketaloon");
 iconButton(el("hint"), "hint", "Näytä vihje");
 iconButton(el("repeat"), "voice", "Kuuntele Gabbyn ohje uudelleen");
@@ -22,6 +23,9 @@ iconButton(el("baking-reset"), "undo", "Tyhjennä lautanen");
 iconButton(el("drawing-brush"), "brush", "Paksu kynä");
 iconButton(el("drawing-stamp"), "paw", "Tassuleimasin");
 iconButton(el("drawing-undo"), "undo", "Kumoa viimeisin piirto");
+const stickerUndo = document.querySelector("#gf-sticker-undo");
+if (stickerUndo)
+    iconButton(stickerUndo, "undo", "Poista viimeisin tarra");
 el("baking-toppings")
     .querySelectorAll("button")
     .forEach((choice) => iconButton(choice, choice.value === "sun"
