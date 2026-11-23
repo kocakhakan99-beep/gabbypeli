@@ -116,6 +116,35 @@ function renderAlbum() {
         art.classList.add("album-sticker");
         art.style.left = item.x + "%";
         art.style.top = item.y + "%";
+        art.setAttribute("aria-hidden", "true");
+        art.addEventListener("click", (event) => event.stopPropagation());
+        art.addEventListener("pointerdown", (event) => {
+            if (event.button !== 0)
+                return;
+            event.stopPropagation();
+            art.setPointerCapture(event.pointerId);
+            art.classList.add("moving");
+        });
+        art.addEventListener("pointermove", (event) => {
+            if (!art.hasPointerCapture(event.pointerId))
+                return;
+            const rect = page.getBoundingClientRect();
+            item.x = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
+            item.y = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
+            art.style.left = item.x + "%";
+            art.style.top = item.y + "%";
+        });
+        art.addEventListener("pointerup", (event) => {
+            event.stopPropagation();
+            if (art.hasPointerCapture(event.pointerId))
+                art.releasePointerCapture(event.pointerId);
+            art.classList.remove("moving");
+            saveAlbum();
+        });
+        art.addEventListener("pointercancel", () => {
+            art.classList.remove("moving");
+            saveAlbum();
+        });
         page.append(art);
     }
 }

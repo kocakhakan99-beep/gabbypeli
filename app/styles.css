@@ -2744,3 +2744,13 @@ body {
 #gabby-fi #gf-sticker-undo {
   grid-column: 2;
 }
+#gabby-fi .album-sticker.picture {
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+#gabby-fi .album-sticker.moving {
+  cursor: grabbing;
+  z-index: 2;
+  filter: drop-shadow(0 7px 6px #693a9277);
+}
