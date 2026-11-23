@@ -37,12 +37,21 @@ function hidePreview(announce = true) {
 }
 export function initMemory() {
     stopMemoryTimers();
-    heading("cakey", pack === "friends" ? "Etsi kaveriparit" : "Etsi esineparit", "Katso kuvia hetki. Kortit kääntyvät itsestään.", "Ystävien muistileikki");
+    heading("cakey", pack === "friends"
+        ? "Etsi kaveriparit"
+        : pack === "mixed"
+            ? "Etsi kuvaparit"
+            : "Etsi esineparit", "Katso kuvia hetki. Kortit kääntyvät itsestään.", "Ystävien muistileikki");
     state.matched = 0;
     state.opened = [];
     state.waiting = false;
     state.preview = true;
-    state.mem = shuffle((pack === "friends" ? shuffle(memoryFriends) : shuffle(playObjects))
+    const deck = pack === "friends"
+        ? memoryFriends
+        : pack === "objects"
+            ? playObjects
+            : [...memoryFriends, ...playObjects];
+    state.mem = shuffle(shuffle(deck)
         .slice(0, state.memoryPairs)
         .flatMap((f) => [
         { friend: f, found: false },
@@ -53,20 +62,26 @@ export function initMemory() {
     for (const [key, label] of [
         ["friends", "Kaverit"],
         ["objects", "Esineet"],
+        ["mixed", "Kaverit ja esineet"],
     ]) {
         const choice = button(label, () => {
             pack = key;
+            if (key === "friends")
+                state.memoryPairs = Math.min(state.memoryPairs, 6);
             initMemory();
         });
         choice.setAttribute("aria-pressed", String(pack === key));
         packSettings.append(choice);
     }
     el("memory-settings").replaceChildren();
-    [2, 3, 4, 5, 6].forEach((n) => {
+    const levels = pack === "friends" ? [2, 3, 4, 5, 6] : [2, 3, 4, 5, 6, 7, 8, 9];
+    levels.forEach((n) => {
         const b = button(n + " paria", () => {
             state.memoryPairs = n;
             initMemory();
         });
+        if (n > 6)
+            b.textContent = String(n);
         b.setAttribute("aria-pressed", String(n === state.memoryPairs));
         el("memory-settings").append(b);
     });

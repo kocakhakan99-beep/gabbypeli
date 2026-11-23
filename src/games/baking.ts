@@ -35,11 +35,13 @@ let served = 0;
 let topping = "berry";
 const stirTurn = Math.PI * 1.5;
 let ovenStep = 0;
+let washTimer: ReturnType<typeof setTimeout> | undefined;
 let ovenTimer: ReturnType<typeof setTimeout> | undefined;
 const decorated = new Map<number, string>();
 
 export function stopBakingGestures(): void {
   clearTimeout(ovenTimer);
+  clearTimeout(washTimer);
   el("baking").querySelector(".baking-wash")?.remove();
   const controls = el("baking-check").parentElement;
   if (controls) controls.hidden = false;
@@ -130,7 +132,7 @@ export function startBaking(): void {
   const wash = document.createElement("div");
   wash.className = "baking-wash";
   wash.innerHTML =
-    '<button type="button" class="wash-soap" aria-label="Ota saippuaa"><span aria-hidden="true"></span></button><button type="button" class="wash-tap" aria-label="Huuhtele kädet" disabled><span aria-hidden="true"></span></button><div class="wash-hands" aria-hidden="true"></div>';
+    '<button type="button" class="wash-soap" aria-label="Ota saippuaa"><img src="./assets/furniture/soap.webp" alt="" draggable="false"></button><button type="button" class="wash-tap" aria-label="Huuhtele kädet" disabled><img src="./assets/furniture/tap.webp" alt="" draggable="false"><span class="wash-stream" aria-hidden="true"></span></button><div class="wash-hands" aria-hidden="true"></div>';
   kitchen.before(wash);
   kitchen.hidden = true;
   if (controls) controls.hidden = true;
@@ -152,12 +154,17 @@ export function startBaking(): void {
     feedback("Nyt huuhdellaan kädet.");
   };
   tap.onclick = () => {
-    wash.remove();
-    if (controls) controls.hidden = false;
-    el("baking-steps").hidden = false;
-    if (recipeCard) recipeCard.hidden = false;
-    showRecipe();
-    playBakingDialogue();
+    tap.disabled = true;
+    wash.classList.add("rinsing");
+    feedback("Vesi huuhtelee saippuan pois.");
+    washTimer = setTimeout(() => {
+      wash.remove();
+      if (controls) controls.hidden = false;
+      el("baking-steps").hidden = false;
+      if (recipeCard) recipeCard.hidden = false;
+      showRecipe();
+      playBakingDialogue();
+    }, 850);
   };
 }
 

@@ -2969,61 +2969,76 @@ body {
   background: #eec87d;
 }
 #gabby-fi .baking-wash {
-  min-height: 240px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 25% 42% 25%;
+  align-items: end;
   justify-content: center;
-  align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
-  background:
-    linear-gradient(#ffffff77, #ffffff55),
-    url("../assets/rooms/bathroom.webp") center / cover;
+  min-height: clamp(250px, 48vw, 360px);
+  padding: 32px 12px 28px;
+  background: url("../assets/rooms/kitchen.webp") center / cover;
   border-radius: 24px;
-  padding: 22px;
+  isolation: isolate;
 }
 #gabby-fi .baking-wash button {
-  width: 95px;
-  height: 110px;
-  border: 4px solid white;
-  border-radius: 24px;
-  background: #f5d6ed;
-  box-shadow: 0 4px #bc93b9;
+  background: transparent;
+  border: 0;
+  padding: 0;
   position: relative;
+  z-index: 2;
+  cursor: pointer;
+  min-height: 48px;
 }
-#gabby-fi .wash-soap span {
+#gabby-fi .baking-wash button img {
   display: block;
-  width: 50px;
-  height: 65px;
-  margin: auto;
-  background: #f4a7d2;
-  border: 3px solid #fff;
-  border-radius: 12px;
+  width: 100%;
+  height: clamp(72px, 18vw, 135px);
+  object-fit: contain;
+  object-position: bottom;
+  pointer-events: none;
+  filter: drop-shadow(0 5px 5px #42264055);
 }
-#gabby-fi .wash-soap span::before {
-  content: "";
+#gabby-fi .wash-soap {
+  grid-area: 1 / 1;
+}
+#gabby-fi .wash-tap {
+  grid-area: 1 / 2;
+  width: min(100%, clamp(72px, 18vw, 135px));
+  justify-self: center;
+}
+#gabby-fi .wash-tap:disabled {
+  cursor: default;
+}
+#gabby-fi .wash-stream {
   position: absolute;
-  width: 28px;
-  height: 8px;
-  background: #b262a9;
-  border-radius: 8px;
-  top: 12px;
-  left: 33px;
+  top: 47%;
+  left: 8%;
+  width: 10%;
+  height: 70%;
+  border-radius: 0 0 40% 40%;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, #d1fbff 0 8px, #64cde8 8px 16px);
+  opacity: 0;
 }
-#gabby-fi .wash-tap span {
-  display: block;
-  width: 58px;
-  height: 40px;
-  border: 10px solid #a5cad8;
-  border-bottom: 0;
-  border-radius: 30px 30px 0 0;
-  margin: auto;
+#gabby-fi .rinsing .wash-stream {
+  opacity: 0.88;
+  animation: rinse-flow 380ms linear infinite;
 }
-#gabby-fi .wash-tap:not(:disabled) span {
-  animation: target-pulse 2s infinite;
+@keyframes rinse-flow {
+  to {
+    background-position-y: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .rinsing .wash-stream {
+    animation: none;
+  }
 }
 #gabby-fi .wash-hands {
-  flex-basis: 100%;
-  height: 30px;
+  grid-area: 2 / 2;
+  height: 48px;
+  border: 5px solid #fff1f9;
+  border-radius: 15px 15px 45% 45%;
+  background: #c0e6eb;
   text-align: center;
 }
 #gabby-fi .soapy .wash-hands::after {
@@ -3092,4 +3107,10 @@ body {
 #gabby-fi .hide-room[data-layout] .hide-spot:nth-child(4) {
   grid-column: 2;
   grid-row: 2;
+}
+#gabby-fi .picture.sticker-image {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border-radius: 17px;
 }

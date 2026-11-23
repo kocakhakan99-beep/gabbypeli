@@ -15,7 +15,7 @@ import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
-let pack: "friends" | "objects" = "friends";
+let pack: "friends" | "objects" | "mixed" = "friends";
 let previewTimer: ReturnType<typeof setTimeout> | undefined;
 let mismatchTimer: ReturnType<typeof setTimeout> | undefined;
 let closeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -51,7 +51,11 @@ export function initMemory() {
   stopMemoryTimers();
   heading(
     "cakey",
-    pack === "friends" ? "Etsi kaveriparit" : "Etsi esineparit",
+    pack === "friends"
+      ? "Etsi kaveriparit"
+      : pack === "mixed"
+        ? "Etsi kuvaparit"
+        : "Etsi esineparit",
     "Katso kuvia hetki. Kortit kääntyvät itsestään.",
     "Ystävien muistileikki",
   );
@@ -59,8 +63,14 @@ export function initMemory() {
   state.opened = [];
   state.waiting = false;
   state.preview = true;
+  const deck =
+    pack === "friends"
+      ? memoryFriends
+      : pack === "objects"
+        ? playObjects
+        : [...memoryFriends, ...playObjects];
   state.mem = shuffle(
-    (pack === "friends" ? shuffle(memoryFriends) : shuffle(playObjects))
+    shuffle(deck)
       .slice(0, state.memoryPairs)
       .flatMap((f) => [
         { friend: f, found: false },
@@ -72,20 +82,25 @@ export function initMemory() {
   for (const [key, label] of [
     ["friends", "Kaverit"],
     ["objects", "Esineet"],
+    ["mixed", "Kaverit ja esineet"],
   ] as const) {
     const choice = button(label, () => {
       pack = key;
+      if (key === "friends") state.memoryPairs = Math.min(state.memoryPairs, 6);
       initMemory();
     });
     choice.setAttribute("aria-pressed", String(pack === key));
     packSettings.append(choice);
   }
   el("memory-settings").replaceChildren();
-  [2, 3, 4, 5, 6].forEach((n) => {
+  const levels =
+    pack === "friends" ? [2, 3, 4, 5, 6] : [2, 3, 4, 5, 6, 7, 8, 9];
+  levels.forEach((n) => {
     const b = button(n + " paria", () => {
       state.memoryPairs = n;
       initMemory();
     });
+    if (n > 6) b.textContent = String(n);
     b.setAttribute("aria-pressed", String(n === state.memoryPairs));
     el("memory-settings").append(b);
   });

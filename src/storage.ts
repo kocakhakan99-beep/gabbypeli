@@ -67,9 +67,30 @@ const stickerSets = [
   },
 ] as const;
 type StickerSet = (typeof stickerSets)[number];
-type AlbumItem = { mode: GameMode; bonus: boolean; x: number; y: number };
+const extraStickers: Partial<
+  Record<GameMode, { name: string; image: string }>
+> = {
+  memory: { name: "Tähtityyny", image: "objects/star" },
+  puzzle: { name: "Purjevene", image: "objects/boat" },
+  find: { name: "Salainen aarrearkku", image: "furniture/box" },
+  baking: { name: "Kuppikakkutalot", image: "objects/cupcakes" },
+  drawing: { name: "Sateenkaaripalikat", image: "objects/blocks" },
+  garden: { name: "Kukkiva satupuu", image: "furniture/tree" },
+};
+type StickerTier = boolean | "extra";
+function requiredPlays(tier: StickerTier): number {
+  return tier === "extra" ? 3 : tier ? 2 : 1;
+}
+function stickerLabel(set: StickerSet, tier: StickerTier): string {
+  return tier === "extra"
+    ? extraStickers[set.mode]!.name
+    : tier
+      ? set.bonus
+      : set.label;
+}
+type AlbumItem = { mode: GameMode; bonus: StickerTier; x: number; y: number };
 const albumKey = "gabbypeli-sticker-page-v1";
-let selectedSticker: { mode: GameMode; bonus: boolean } | null = null;
+let selectedSticker: { mode: GameMode; bonus: StickerTier } | null = null;
 let album: AlbumItem[] = [];
 try {
   const saved: unknown = JSON.parse(localStorage.getItem(albumKey) ?? "[]");
@@ -79,7 +100,8 @@ try {
         (item): item is AlbumItem =>
           item &&
           stickerSets.some((set) => set.mode === item.mode) &&
-          typeof item.bonus === "boolean" &&
+          (typeof item.bonus === "boolean" ||
+            (item.bonus === "extra" && extraStickers[item.mode as GameMode])) &&
           Number.isFinite(item.x) &&
           Number.isFinite(item.y) &&
           item.x >= 0 &&
@@ -100,13 +122,16 @@ function saveAlbum(): void {
   }
 }
 
-function stickerImage(set: StickerSet, bonus: boolean): HTMLElement {
+function stickerImage(set: StickerSet, bonus: StickerTier): HTMLElement {
   const image = document.createElement("span");
   image.className =
-    "picture " + (bonus ? "bonus-art" : "character-sticker-art");
+    "picture sticker-image" + (bonus === true ? " bonus-art" : "");
+  const path =
+    bonus === "extra"
+      ? extraStickers[set.mode]!.image
+      : `stickers/${bonus ? "bonus" : "character"}-${set.tile}`;
+  image.style.backgroundImage = `url("./assets/${path}.webp")`;
   image.setAttribute("aria-hidden", "true");
-  image.style.setProperty("--sticker-x", (set.tile % 3) * 50 + "%");
-  image.style.setProperty("--sticker-y", Math.floor(set.tile / 3) * 50 + "%");
   return image;
 }
 
@@ -118,7 +143,7 @@ function renderAlbum(): void {
     const set = stickerSets.find((entry) => entry.mode === item.mode);
     if (
       !set ||
-      (savedProgress.completed[item.mode] ?? 0) < (item.bonus ? 2 : 1)
+      (savedProgress.completed[item.mode] ?? 0) < requiredPlays(item.bonus)
     )
       continue;
     const art = stickerImage(set, item.bonus);
@@ -162,13 +187,13 @@ function renderAlbum(): void {
   }
 }
 
-function selectSticker(set: StickerSet, bonus: boolean): void {
+function selectSticker(set: StickerSet, bonus: StickerTier): void {
   selectedSticker = { mode: set.mode, bonus };
   const preview = document.getElementById("gf-sticker-preview");
   if (!preview) return;
   preview.replaceChildren(stickerImage(set, bonus));
   const label = document.createElement("span");
-  label.textContent = (bonus ? set.bonus : set.label) + " – napauta sivua";
+  label.textContent = stickerLabel(set, bonus) + " – napauta sivua";
   preview.append(label);
 }
 
@@ -272,20 +297,26 @@ export function completeGame(mode: GameMode): void {
   if (!reward) return;
   const set = stickerSets.find((entry) => entry.mode === mode);
   reward.replaceChildren();
-  reward.hidden = !set || count > 2;
-  if (set && count <= 2) {
+  const tier =
+    count === 3 && extraStickers[mode]
+      ? "extra"
+      : count <= 2
+        ? count === 2
+        : null;
+  reward.hidden = !set || tier === null;
+  if (set && tier !== null) {
     const title = document.createElement("strong");
     title.textContent = "Sait uuden tarran!";
-    reward.append(title, sticker(set, count === 2, true));
+    reward.append(title, sticker(set, tier, true));
   }
 }
 
 function sticker(
   set: StickerSet,
-  bonus: boolean,
+  bonus: StickerTier,
   earned: boolean,
 ): HTMLElement {
-  const label = bonus ? set.bonus : set.label;
+  const label = stickerLabel(set, bonus);
   const item = document.createElement("div");
   item.className = "sticker" + (earned ? " earned" : "");
   item.setAttribute(
@@ -293,9 +324,11 @@ function sticker(
     label +
       (earned
         ? ", ansaittu"
-        : bonus
-          ? ", saat pelaamalla leikin loppuun kahdesti"
-          : ", odottaa leikkiä"),
+        : bonus === "extra"
+          ? ", saat pelaamalla leikin loppuun kolmesti"
+          : bonus
+            ? ", saat pelaamalla leikin loppuun kahdesti"
+            : ", odottaa leikkiä"),
   );
   const image = stickerImage(set, bonus);
   if (earned) {
@@ -318,19 +351,26 @@ function sticker(
 export function renderStickers(): void {
   const first = document.getElementById("gf-stickers-first");
   const bonus = document.getElementById("gf-stickers-bonus");
+  const extra = document.getElementById("gf-stickers-extra");
   if (!first || !bonus) return;
   let earnedCount = 0;
   first.replaceChildren();
   bonus.replaceChildren();
+  extra?.replaceChildren();
   for (const set of stickerSets) {
     const count = savedProgress.completed[set.mode] ?? 0;
     first.append(sticker(set, false, count >= 1));
     bonus.append(sticker(set, true, count >= 2));
-    earnedCount += Math.min(count, 2);
+    if (extraStickers[set.mode])
+      extra?.append(sticker(set, "extra", count >= 3));
+    earnedCount += Math.min(count, extraStickers[set.mode] ? 3 : 2);
   }
   const summary = document.getElementById("gf-sticker-count");
   if (summary)
     summary.textContent =
-      earnedCount + " / " + stickerSets.length * 2 + " tarraa";
+      earnedCount +
+      " / " +
+      (stickerSets.length * 2 + Object.keys(extraStickers).length) +
+      " tarraa";
   renderAlbum();
 }
