@@ -3114,3 +3114,287 @@ body {
   background-repeat: no-repeat;
   border-radius: 17px;
 }
+
+#gabby-fi .bakery-scene {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: clamp(10px, 3vw, 24px);
+  border-radius: 24px;
+  background:
+    linear-gradient(#fff8, #fff5),
+    url("../assets/rooms/kitchen.webp") center / cover;
+}
+#gabby-fi .bakery-scene .baking-wash {
+  width: 100%;
+}
+#gabby-fi .bakery-recipe {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(100%, 240px);
+  padding: 16px;
+  border: 3px solid white;
+  border-radius: 22px;
+  background: #ffedf7;
+  box-shadow: 0 5px #bc87af;
+  font-weight: 800;
+}
+#gabby-fi .bakery-scene [data-gesture] {
+  touch-action: none;
+  position: relative;
+}
+#gabby-fi .bakery-scene [role="button"][data-gesture],
+#gabby-fi .bakery-knob {
+  cursor: grab;
+}
+#gabby-fi .bakery-scene [data-gesture]:active {
+  z-index: 5;
+  cursor: grabbing;
+}
+#gabby-fi .bakery-ingredients,
+#gabby-fi .bakery-dough {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+#gabby-fi .bakery-ingredients > div,
+#gabby-fi .bakery-dough > div {
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  min-height: 54px;
+  padding: 6px;
+  color: #572b49;
+  font-weight: 800;
+}
+#gabby-fi .bakery-flour {
+  background: #fff2d6;
+  border-radius: 6px 6px 14px 14px;
+  border: 3px solid #e7b790;
+}
+#gabby-fi .bakery-egg {
+  background: #ffe9c4;
+  border-radius: 50% 50% 45% 45%;
+  border: 3px solid #ebbd92;
+}
+#gabby-fi .bakery-milk {
+  background: #e6f9ff;
+  border-radius: 12px 12px 5px 5px;
+  border: 3px solid #9bd2ec;
+}
+#gabby-fi .bakery-bowl {
+  width: min(100%, 286px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 12px solid #ffb3d5;
+  background: radial-gradient(circle, #f9e7f2, #d97caf);
+  box-shadow:
+    inset 0 0 0 5px #ffe6f2,
+    0 8px 14px #83436655;
+}
+#gabby-fi .bakery-bowl[data-added],
+#gabby-fi .bakery-bowl.mixing {
+  background: radial-gradient(
+    ellipse at 45% 45%,
+    #ffe9a7 25%,
+    #f0c580 55%,
+    #d69764 75%
+  );
+}
+#gabby-fi .bakery-spoon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 105px;
+  border-radius: 45% 45% 25% 25%;
+  background: linear-gradient(#d58d5d 0 44%, #b96e49 45%);
+  transform: translate(-50%, -25%) rotate(35deg);
+  box-shadow: 4px 6px 7px #91573a66;
+  pointer-events: none;
+}
+#gabby-fi .bakery-progress {
+  width: min(100%, 286px);
+  height: 22px;
+  accent-color: #dc559d;
+}
+#gabby-fi .bakery-paper {
+  width: 90px;
+  height: 58px;
+  background: repeating-linear-gradient(
+    10deg,
+    #fff4d9 0 18px,
+    #f4e2bf 20px 21px
+  );
+  border: 2px solid #d7b897;
+  border-radius: 6px 13px 5px 10px;
+  box-shadow: 0 4px #a6797855;
+}
+#gabby-fi .bakery-tray {
+  width: min(100%, 330px);
+  min-height: 100px;
+  padding: 10px;
+  border: 7px solid #66617e;
+  border-radius: 13px;
+  background: #938eaa;
+  box-shadow: 0 6px #49415d;
+}
+#gabby-fi .bakery-tray.lined {
+  background: #fff0cf;
+}
+#gabby-fi .bakery-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+#gabby-fi .bakery-slot {
+  display: grid;
+  place-items: center;
+  height: 48px;
+  border-radius: 50%;
+  outline: 2px dashed #b3917766;
+}
+#gabby-fi .bakery-piece {
+  display: block;
+  width: 36px;
+  height: 38px;
+  pointer-events: none;
+}
+#gabby-fi .bakery-piece.cookie {
+  border-radius: 40% 45% 38% 45%;
+  background:
+    radial-gradient(circle at 30% 35%, #80442f 0 3px, transparent 4px),
+    radial-gradient(circle at 65% 65%, #80442f 0 3px, #d9a46b 4px);
+  border: 3px solid #c48655;
+}
+#gabby-fi .bakery-piece.cupcake {
+  clip-path: polygon(
+    10% 45%,
+    15% 25%,
+    33% 14%,
+    50% 0,
+    68% 15%,
+    86% 25%,
+    91% 45%,
+    79% 100%,
+    21% 100%
+  );
+  background: linear-gradient(#ffc5e7 0 50%, #b98bdb 51%);
+}
+#gabby-fi .bakery-oven {
+  position: relative;
+  width: min(100%, 320px);
+  height: 230px;
+  padding: 16px;
+  border: 6px solid #fbd4ed;
+  border-radius: 24px;
+  background: linear-gradient(#ffb3ce, #e88bb5);
+  box-shadow: 0 7px #9b537d;
+}
+#gabby-fi .bakery-knob {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #fff3d0;
+  border-radius: 50%;
+  background: #a05d96;
+  rotate: var(--dial, 0deg);
+}
+#gabby-fi .bakery-knob::after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 14px;
+  margin: 4px auto;
+  border-radius: 4px;
+  background: white;
+}
+#gabby-fi .bakery-temp {
+  position: absolute;
+  top: 27px;
+  right: 24px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: #fff4de;
+  color: #5c294c;
+}
+#gabby-fi .bakery-cavity {
+  position: relative;
+  margin-top: 10px;
+  height: 125px;
+  border-radius: 14px;
+  background: #47394b;
+  perspective: 270px;
+}
+#gabby-fi .bakery-door {
+  width: 100%;
+  height: 100%;
+  border: 6px solid #73b9ae;
+  border-radius: 14px;
+  background: linear-gradient(#aee1deb0, #55798cb0);
+  transform-origin: bottom;
+  transform: rotateX(var(--door-angle, 0deg));
+  transition: transform 250ms ease;
+}
+#gabby-fi .bakery-door::before {
+  content: "";
+  display: block;
+  margin: 8px auto;
+  width: 45%;
+  height: 8px;
+  border-radius: 8px;
+  background: #ffe1a5;
+}
+#gabby-fi .door-open .bakery-door {
+  transform: rotateX(var(--door-angle, -53deg));
+}
+#gabby-fi .tray-loaded {
+  background: linear-gradient(#48374a 62%, #c69d71 63% 76%, #48374a 77%);
+}
+#gabby-fi .oven-cooking {
+  background: radial-gradient(#ffe899, #f39c65 50%, #80536a);
+}
+#gabby-fi .oven-tray {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+  min-height: 60px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .bakery-door {
+    transition: none;
+  }
+}
+#gabby-fi .bakery-door:active {
+  transition: none;
+}
+#gabby-fi .bakery-loaded {
+  position: absolute;
+  inset: auto 5% 24%;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+#gabby-fi .bakery-loaded .bakery-piece {
+  width: 13%;
+  height: 22px;
+}
+#gabby-fi .oven-cooking .bakery-loaded {
+  animation: bakery-rise 1.5s ease-out both;
+}
+@keyframes bakery-rise {
+  from {
+    scale: 0.88;
+  }
+  to {
+    scale: 1.06;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .oven-cooking .bakery-loaded {
+    animation: none;
+  }
+}

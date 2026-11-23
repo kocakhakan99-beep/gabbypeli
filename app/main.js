@@ -1,7 +1,6 @@
 import { cancelAdvance, iconButton } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
-import { checkRecipe, resetPlate, playBakingDialogue } from "./games/baking.js";
 import { el } from "./dom.js";
 import { home, open } from "./navigation.js";
 import { ding, loadNarration, say, silenceEffects, stopSpeech, unlock, } from "./audio.js";
@@ -16,23 +15,12 @@ iconButton(el("repeat"), "voice", "Kuuntele Gabbyn ohje uudelleen");
 iconButton(el("again"), "replay", "Leiki uudestaan");
 iconButton(el("other"), "home", "Takaisin nukketaloon");
 iconButton(el("sound"), "voice", "Äänet päällä");
-iconButton(el("baking-dialogue"), "voice", "Kuuntele Gabbya");
-iconButton(el("baking-bake"), "oven", "Paista kakut");
-iconButton(el("baking-check"), "oven", "Laita uuniin");
-iconButton(el("baking-reset"), "undo", "Tyhjennä lautanen");
 iconButton(el("drawing-brush"), "brush", "Paksu kynä");
 iconButton(el("drawing-stamp"), "paw", "Tassuleimasin");
 iconButton(el("drawing-undo"), "undo", "Kumoa viimeisin piirto");
 const stickerUndo = document.querySelector("#gf-sticker-undo");
 if (stickerUndo)
     iconButton(stickerUndo, "undo", "Poista viimeisin tarra");
-el("baking-toppings")
-    .querySelectorAll("button")
-    .forEach((choice) => iconButton(choice, choice.value === "sun"
-    ? "sun"
-    : choice.value === "violet"
-        ? "blueberry"
-        : "berry", choice.getAttribute("aria-label") ?? choice.textContent ?? "Kuorrute"));
 for (const mode of [
     "memory",
     "puzzle",
@@ -70,8 +58,6 @@ el("hint").addEventListener("click", () => {
     if (state.mode === "puzzle")
         showPuzzleHint();
 });
-el("baking-check").addEventListener("click", checkRecipe);
-el("baking-reset").addEventListener("click", resetPlate);
 el("sound").addEventListener("click", () => {
     state.sound = !state.sound;
     iconButton(el("sound"), state.sound ? "voice" : "mute", state.sound ? "Äänet päällä" : "Äänet pois");
@@ -116,4 +102,3 @@ el("audio-test").addEventListener("click", () => {
     ding("sprinkle");
     say("Hei pieni ystävä! Leikitään yhdessä.");
 });
-el("baking-dialogue").addEventListener("click", playBakingDialogue);

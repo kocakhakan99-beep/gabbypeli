@@ -35,8 +35,10 @@ test("baking dialogue matches the first recipe and every clip is served", async 
   await page.goto("/");
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-baking").click();
-  await expect(page.locator("#gf-baking-target")).toHaveText("2");
-  await expect(page.locator("#gf-baking-dialogue")).toBeVisible();
+  await page.getByRole("button", { name: "Piparit" }).click();
+  await expect(
+    page.getByRole("button", { name: "Ota saippuaa" }),
+  ).toBeVisible();
   const manifest = await (
     await request.get("/assets/audio/manifest.json")
   ).json();

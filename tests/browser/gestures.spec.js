@@ -106,46 +106,50 @@ test("a puzzle piece follows a finger and lands in its matching slot", async ({
   await expect(page.locator(".puzzle-ghost")).toHaveCount(0);
 });
 
-test("a finger mixes the batter and paints frosting across two cupcakes", async ({
+test("a finger circles the bowl, drags paper onto the tray and opens the oven", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.locator("#gf-sound").click();
   await page.locator("#gf-open-baking").click();
+  await page.getByRole("button", { name: "Piparit" }).click();
   await page.getByRole("button", { name: "Ota saippuaa" }).click();
   await page.getByRole("button", { name: "Huuhtele kädet" }).click();
-  const bowl = page.locator("#gf-baking-add");
+  for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
+    await page.getByRole("button", { name }).press("Enter");
+  const bowl = page.locator(".bakery-bowl.mixing");
   await bowl.scrollIntoViewIfNeeded();
-  const box = await bowl.boundingBox();
-  const x = box.x + box.width / 2;
-  const y = box.y + box.height / 2;
-  await swipe(page, [
-    { x: x - 22, y },
-    { x, y: y - 24 },
-    { x: x + 22, y },
-    { x, y: y + 24 },
-    { x: x - 22, y },
-  ]);
-  await expect(page.locator("#gf-baking-count")).toHaveText("1");
-  await bowl.click();
-  await page.locator("#gf-baking-check").click();
-  for (let step = 0; step < 5; step++)
-    await page.locator("#gf-baking-bake").click();
-  await page.getByRole("button", { name: "Mustikka" }).click();
-  const plate = page.locator("#gf-baking-plate");
-  await plate.scrollIntoViewIfNeeded();
-  const points = [];
-  for (const cake of await plate.locator("button").all()) {
-    const spot = await cake.boundingBox();
-    points.push({ x: spot.x + spot.width / 2, y: spot.y + spot.height / 2 });
+  const { x, y, width, height } = await bowl.boundingBox();
+  const circle = Array.from({ length: 21 }, (_, i) => ({
+    x: x + width / 2 + (Math.cos((i * Math.PI) / 8) * width) / 3,
+    y: y + height / 2 + (Math.sin((i * Math.PI) / 8) * height) / 3,
+  }));
+  await swipe(page, circle);
+  expect(
+    Number(await page.locator(".bakery-progress").getAttribute("value")),
+  ).toBeGreaterThan(0);
+  await swipe(page, circle);
+  const paper = page.getByRole("button", {
+    name: "Aseta leivinpaperi pellille",
+  });
+  await paper.scrollIntoViewIfNeeded();
+  async function center(locator) {
+    const box = await locator.boundingBox();
+    return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
   }
-  await swipe(page, points);
-  await expect(plate.locator("[data-topping=violet]")).toHaveCount(2);
-  await page.getByRole("button", { name: "Tarjoile Hileelle" }).click();
-  await expect(page.locator("#gf-action")).toHaveAttribute(
-    "aria-label",
-    "Seuraava resepti",
-  );
+  await swipe(page, [
+    await center(paper),
+    await center(page.locator(".bakery-tray")),
+  ]);
+  await expect(page.locator(".bakery-slot")).toHaveCount(6);
+  for (const portion of await page.locator(".bakery-dough > div").all())
+    await portion.press("Enter");
+  const door = page.getByRole("button", { name: "Avaa uunin luukku" });
+  await door.scrollIntoViewIfNeeded();
+  const handle = await center(door);
+  await swipe(page, [handle, { x: handle.x, y: handle.y + 55 }]);
+  await expect(
+    page.getByRole("button", { name: "Siirrä pelti uuniin" }),
+  ).toBeVisible();
 });
 
 test("a swipe leaves a row of colored paw stamps that can be undone", async ({
