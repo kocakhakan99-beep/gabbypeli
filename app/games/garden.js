@@ -19,7 +19,7 @@ function plantBed(level) {
     wateringCan.className = "garden-watering-can";
     wateringCan.setAttribute("aria-hidden", "true");
     wateringCan.innerHTML =
-        '<span class="picture" data-object style="--tile-x:0%;--tile-y:50%"></span><span class="garden-drops"></span>';
+        '<img class="watering-icon" src="./assets/furniture/watering.webp" alt="" draggable="false"><span class="garden-drops"></span>';
     field.append(wateringCan);
     const row = beds[level];
     const grown = new Set();

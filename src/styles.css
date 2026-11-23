@@ -2754,3 +2754,52 @@ body {
   z-index: 2;
   filter: drop-shadow(0 7px 6px #693a9277);
 }
+
+/* Individual transparent objects, positioned separately from the room art. */
+#gabby-fi .hide-spot .furniture-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: left bottom;
+  filter: drop-shadow(0 5px 5px #3a20544d);
+  transition:
+    transform 550ms ease,
+    opacity 400ms ease;
+  pointer-events: none;
+}
+#gabby-fi .hide-spot:not(.opened):not(:disabled) .furniture-image {
+  animation: hide-invitation 2.8s ease-in-out var(--spot-delay) infinite;
+}
+#gabby-fi .hide-spot.opened .furniture-image {
+  transform: translateX(-80%) rotate(-10deg);
+  opacity: 0.25;
+}
+#gabby-fi .watering-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .hide-spot .furniture-image {
+    transition: none;
+    animation: none !important;
+  }
+}
+#gabby-fi .hide-room {
+  background: url("../assets/rooms/kitchen.webp") center / cover;
+}
+#gabby-fi .hide-room[data-room="mercat"] {
+  background: url("../assets/rooms/bathroom.webp") center / cover;
+}
+#gabby-fi .hide-room[data-room="fairy"] {
+  background: url("../assets/rooms/garden.webp") center / cover;
+}
+#gabby-fi .hide-room[data-room="gabby"],
+#gabby-fi .hide-room[data-room="pandy"] {
+  background: url("../assets/rooms/playroom.webp") center / cover;
+}
+#gabby-fi .hide-room[data-room="dj"] {
+  background: url("../assets/rooms/music.webp") center / cover;
+}
