@@ -16,13 +16,14 @@
         </header>
         <section id="gf-home">
           <div class="mode-hub">
-            <div class="mode-header"><strong>Kisukolikot <output id="gf-coins">0</output></strong><span>Kauppa · Tulossa pian</span></div>
+            <div class="mode-header"><strong><span class="coin-icon" aria-hidden="true"></span> Kisukolikot <output id="gf-coins">0</output></strong><span class="shop-label">Kauppa · Tulossa pian</span></div>
             <div class="mode-choices">
-              <button type="button" id="gf-campaign-toggle" aria-expanded="false" aria-controls="gf-campaign-map">Seikkailu</button>
-              <button type="button" id="gf-free-toggle" aria-controls="gf-free-games">Vapaa leikki</button>
+              <button type="button" id="gf-campaign-toggle" aria-expanded="false" aria-controls="gf-campaign-map"><span class="mode-icon adventure-icon" aria-hidden="true"></span><span>Seikkailu</span></button>
+              <button type="button" id="gf-free-toggle" aria-controls="gf-free-games"><span class="mode-icon free-icon" aria-hidden="true"></span><span>Vapaa leikki</span></button>
             </div>
             <section id="gf-campaign-map" hidden>
               <h2>Seikkailukartta</h2>
+              <p class="map-intro">Valitse leikki ja löydä seuraava taso!</p>
               <div class="mode-choices" role="group" aria-label="Seikkailun leikki">
                 <button type="button" id="gf-map-memory">Muistipeli</button>
                 <button type="button" id="gf-map-puzzle">Palapeli</button>

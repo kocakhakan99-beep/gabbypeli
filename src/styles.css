@@ -3577,3 +3577,100 @@ body {
 #gabby-fi #gf-puzzle-settings[hidden], #gabby-fi #gf-scenes[hidden] {
   display: none;
 }
+
+/* Home and adventure map */
+#gabby-fi .mode-hub {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 32px);
+  border: 5px solid #fff4ff;
+  border-radius: 32px;
+  background: linear-gradient(135deg, #fff3fbe8, #e9d9ffe8), url("../assets/rooms/playroom.webp") center / cover;
+  box-shadow: 0 8px 0 #a77ac2, 0 15px 25px #763e8744;
+}
+#gabby-fi .mode-header strong,
+#gabby-fi .shop-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border: 3px solid white;
+  border-radius: 24px;
+  background: #fff5db;
+  box-shadow: 0 3px 0 #dca46c;
+  font-weight: 800;
+}
+#gabby-fi .shop-label { background: #e9dded; color: #6a5372; box-shadow: 0 3px 0 #bca1c5; }
+#gabby-fi .coin-icon {
+  width: 30px;
+  aspect-ratio: 1;
+  display: inline-block;
+  border: 4px solid #ffdb64;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe881 0 37%, #e99508 40% 65%, #ffd342 68%);
+  box-shadow: 0 2px #be7400;
+}
+#gabby-fi .mode-choices { gap: 14px; }
+#gabby-fi .mode-choices button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 82px;
+  padding: 10px 14px;
+  border: 4px solid white;
+  border-radius: 28px;
+  background: linear-gradient(#f5a3fa 0%, #d32ee4 45%, #8e15bd 100%);
+  box-shadow: inset 0 4px #ffffff80, 0 5px #8a41aa, 0 9px 12px #7d3b8f44;
+  color: white;
+  text-shadow: 0 2px 2px #612377;
+}
+#gabby-fi #gf-free-toggle {
+  background: linear-gradient(#7deef1, #05bfc9 52%, #087e99);
+  box-shadow: inset 0 4px #ffffff80, 0 5px #117e92, 0 9px 12px #3f7e8c55;
+}
+#gabby-fi .mode-icon {
+  flex: 0 0 54px;
+  height: 54px;
+  background: center / contain no-repeat;
+  filter: drop-shadow(0 3px 2px #4e236455);
+}
+#gabby-fi .adventure-icon { background-image: url("../assets/stickers/bonus-2.webp"); }
+#gabby-fi .free-icon { background-image: url("../assets/objects/blocks.webp"); }
+#gabby-fi #gf-campaign-map {
+  margin-top: 24px;
+  padding: clamp(14px, 3vw, 24px);
+  border: 4px solid white;
+  border-radius: 26px;
+  background: linear-gradient(#f7e8ffea, #fff2f9ef), url("../assets/rooms/playroom.webp") center / cover;
+}
+#gabby-fi #gf-campaign-map h2 { margin: 0; color: #661b8d; }
+#gabby-fi .map-intro { margin: 5px 0 14px; font-weight: 700; }
+#gabby-fi #gf-campaign-map .mode-choices { gap: 6px; }
+#gabby-fi #gf-campaign-map .mode-choices button {
+  min-height: 48px;
+  flex: 1 1 100px;
+  border-radius: 20px;
+  font-size: .9rem;
+}
+#gabby-fi #gf-levels {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 25px;
+  background: linear-gradient(145deg, #ffe9b7cc, #f7c5e8cc);
+}
+#gabby-fi #gf-levels button {
+  min-height: 62px;
+  border-radius: 40% 40% 45% 45%;
+  font-size: 1.3rem;
+  box-shadow: inset 0 3px #ffffff75, 0 4px #8a59a1;
+}
+#gabby-fi #gf-levels button[data-completed="true"] { border-color: #fff; }
+#gabby-fi #gf-levels button:disabled { opacity: .7; box-shadow: none; }
+#gabby-fi .mode-hub button:focus-visible { outline: 4px solid #512171; outline-offset: 3px; }
+@media (max-width: 480px) {
+  #gabby-fi .mode-icon { flex-basis: 38px; height: 38px; }
+  #gabby-fi .mode-choices button { min-height: 64px; font-size: 1rem; }
+  #gabby-fi #gf-levels { gap: 5px; padding: 10px; }
+  #gabby-fi #gf-levels button { min-height: 48px; }
+}
