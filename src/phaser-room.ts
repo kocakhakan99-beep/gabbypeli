@@ -11,7 +11,7 @@ export interface RoomView {
 }
 
 /** Renders the first hide-and-seek room. The HTML buttons provide accessible input. */
-export function createRoomView(parent: HTMLElement, items: RoomItem[]): RoomView {
+export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: string, surprise: string): RoomView {
   const furniture: Phaser.GameObjects.Image[] = [];
   const surprises: Phaser.GameObjects.Image[] = [];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -49,8 +49,8 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[]): RoomView
     scene: {
       preload() {
         for (const item of items) this.load.image(item.id, `./assets/furniture/${item.id}.webp`);
-        this.load.image("hidden-friend", "./assets/friends/gabby.webp");
-        this.load.image("hidden-surprise", "./assets/objects/star.webp");
+        this.load.image("hidden-friend", `./assets/friends/${friend}.webp`);
+        this.load.image("hidden-surprise", `./assets/objects/${surprise}.webp`);
       },
       create() {
         scene = this;

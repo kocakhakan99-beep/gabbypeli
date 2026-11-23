@@ -141,9 +141,10 @@ export function renderFind(): void {
             : "Seuraava kaveri",
           () => {
             state.learnIndex++;
-            if (state.learnIndex === friends.length)
+            if (state.learnIndex === friends.length) {
+              stopFind();
               finish("Tarkat silmät!", "Löysit kaikki kuusi kaveria!", "gabby");
-            else renderFind();
+            } else renderFind();
           },
         );
         advanceAfterSuccess();
@@ -160,14 +161,14 @@ export function renderFind(): void {
       '.webp" alt="" draggable="false">';
     room.append(spot);
   });
-  if (friend.id === "gabby") {
+  {
     const canvas = document.createElement("div");
     canvas.className = "phaser-room-canvas";
     canvas.setAttribute("aria-hidden", "true");
     room.append(canvas);
     void import("../phaser-room.js").then(({ createRoomView }) => {
       if (generation !== roomGeneration || !room.isConnected) return;
-      roomView = createRoomView(canvas, roomItems);
+      roomView = createRoomView(canvas, roomItems, friend.id, surprise.id);
       room.querySelectorAll<HTMLButtonElement>(".hide-spot").forEach((spot, index) => {
         if (spot.classList.contains("opened")) roomView?.reveal(index);
       });

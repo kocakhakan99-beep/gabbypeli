@@ -43244,20 +43244,20 @@ var i = n(8054), a = n(61061), o = n(60421), s = n(10312), c = n(83388), l = n(2
 r.Q8, r.En, r.Qw, r.gd, r.j$, r.l2, r.Tm, r.Xs, r.iJ, r.XT, r.dv, r.PX, r.B_, r.nl, r.sV, r.SY, r.Cu, r.Zt, r.xS, r.Dh, r.qt, r.pd, r.M3, r.Ae, r.aH, r.zU, r.x3, r.AQ, r.ry, r.NS, r.A4, r.FE, r.zA, r.Z5, r._k, r.AB, r.ho, r.D7, r.O1, r.gX, r.sx, r.Fu, r.UP, r.Aq, r.xv, r.CB;
 var Z = r.Ay;
 // src/phaser-room.ts
-function te(e, t) {
-	let n = [], r = [], i = window.matchMedia("(prefers-reduced-motion: reduce)").matches, a, o = !1, s = /* @__PURE__ */ new Set();
-	function c(e) {
-		if (!o || !a) {
-			s.add(e);
+function te(e, t, n, r) {
+	let i = [], a = [], o = window.matchMedia("(prefers-reduced-motion: reduce)").matches, s, c = !1, l = /* @__PURE__ */ new Set();
+	function u(e) {
+		if (!c || !s) {
+			l.add(e);
 			return;
 		}
-		let t = n[e], c = r[e];
-		if (!t || !c) return;
-		if (c.setVisible(!0), i) {
+		let t = i[e], n = a[e];
+		if (!t || !n) return;
+		if (n.setVisible(!0), o) {
 			t.setAlpha(.2).setX(t.x - 105);
 			return;
 		}
-		a.tweens.add({
+		s.tweens.add({
 			targets: t,
 			x: t.x - 105,
 			angle: -10,
@@ -43265,16 +43265,16 @@ function te(e, t) {
 			duration: 500,
 			ease: "Sine.easeInOut"
 		});
-		let l = c.scaleX, u = c.scaleY;
-		c.setScale(l * .2, u * .2), a.tweens.add({
-			targets: c,
-			scaleX: l,
+		let r = n.scaleX, u = n.scaleY;
+		n.setScale(r * .2, u * .2), s.tweens.add({
+			targets: n,
+			scaleX: r,
 			scaleY: u,
 			duration: 450,
 			ease: "Back.easeOut"
 		});
 	}
-	let l = new Z.Game({
+	let d = new Z.Game({
 		type: Z.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43287,29 +43287,29 @@ function te(e, t) {
 		scene: {
 			preload() {
 				for (let e of t) this.load.image(e.id, `./assets/furniture/${e.id}.webp`);
-				this.load.image("hidden-friend", "./assets/friends/gabby.webp"), this.load.image("hidden-surprise", "./assets/objects/star.webp");
+				this.load.image("hidden-friend", `./assets/friends/${n}.webp`), this.load.image("hidden-surprise", `./assets/objects/${r}.webp`);
 			},
 			create() {
-				a = this;
-				let i = [
+				s = this;
+				let n = [
 					[200, 140],
 					[600, 140],
 					[200, 420],
 					[600, 420]
 				];
 				t.forEach((e, t) => {
-					let [a, o] = i[t], s = this.add.image(a, o, e.hidden ? "hidden-friend" : "hidden-surprise");
-					s.setDisplaySize(135, 135).setVisible(!1), r.push(s);
-					let c = this.add.image(a, o, e.id), l = Math.min(280 / c.width, 235 / c.height);
-					c.setScale(l), n.push(c);
-				}), o = !0, e.parentElement?.classList.add("phaser-ready"), s.forEach(c), s.clear();
+					let [r, o] = n[t], s = this.add.image(r, o, e.hidden ? "hidden-friend" : "hidden-surprise");
+					s.setDisplaySize(135, 135).setVisible(!1), a.push(s);
+					let c = this.add.image(r, o, e.id), l = Math.min(280 / c.width, 235 / c.height);
+					c.setScale(l), i.push(c);
+				}), c = !0, e.parentElement?.classList.add("phaser-ready"), l.forEach(u), l.clear();
 			}
 		}
 	});
 	return {
-		reveal: c,
+		reveal: u,
 		destroy: () => {
-			e.parentElement?.classList.remove("phaser-ready"), l.destroy(!0);
+			e.parentElement?.classList.remove("phaser-ready"), d.destroy(!0);
 		}
 	};
 }

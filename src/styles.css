@@ -3399,7 +3399,7 @@ body {
   }
 }
 
-/* The first hide-and-seek room uses Phaser for its animated objects. */
+/* Hide-and-seek rooms use Phaser for their animated objects. */
 #gabby-fi .hide-room:has(.phaser-room-canvas) {
   position: relative;
   aspect-ratio: 10 / 7;
