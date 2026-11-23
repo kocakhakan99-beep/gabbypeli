@@ -107,7 +107,9 @@ export function renderFind() {
         spot.innerHTML =
             '<span class="hiding-friend">' +
                 picture(isHiding ? friend.id : surprise.id) +
-                '</span><span class="furniture" aria-hidden="true"><span></span></span>';
+                '</span><img class="furniture-image" src="./assets/furniture/' +
+                item.id +
+                '.webp" alt="" draggable="false">';
         room.append(spot);
     });
 }
