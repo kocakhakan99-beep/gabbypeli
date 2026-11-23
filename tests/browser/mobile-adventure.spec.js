@@ -38,6 +38,8 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
     await page.locator(`#gf-open-${game}`).tap();
     await expect(page.locator("#gf-campaign-map")).toBeVisible();
     await expect(page.locator("#gf-levels button")).toHaveCount(10);
+    await expect(page.locator('#gf-levels [aria-current="step"]')).toHaveCount(1);
+    await expect(page.locator("#gf-levels button:disabled .level-mark.locked")).toHaveCount(9);
     if (game === "baking" || game === "garden") {
       const levels = page.locator("#gf-levels button");
       const positions = await levels.evaluateAll((buttons) => buttons.map((button) => {
@@ -75,6 +77,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   await page.locator("#gf-other").tap();
   await expect(page.locator("#gf-map-title")).toContainText("Palapeli");
   await expect(page.locator("#gf-map-progress")).toHaveJSProperty("value", 1);
+  await expect(page.locator('#gf-levels button[data-completed="true"] .level-mark.completed')).toHaveCount(1);
   await expect(page.locator("#gf-coins")).toHaveText("25");
   await page.getByRole("button", { name: "Jatka tasolta 2" }).tap();
   await expect(page.locator("#gf-win")).toBeHidden();

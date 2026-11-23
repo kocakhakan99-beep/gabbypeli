@@ -4183,3 +4183,85 @@ body {
   #gabby-fi #gf-levels[data-game="garden"] button:nth-child(9) { --garden-map-x: 62%; --garden-map-y: 80%; }
   #gabby-fi #gf-levels[data-game="garden"] button:nth-child(10) { --garden-map-x: 42%; --garden-map-y: 75%; }
 }
+
+/* A single illustrated cat marker works with live HTML numbers and states. */
+#gabby-fi #gf-levels button {
+  position: relative;
+  padding: 9px 3px 2px;
+  border: 0;
+  border-radius: 0;
+  color: #fff;
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 4px 2px #53256699);
+  font-size: clamp(1.15rem, 3.4vw, 1.7rem);
+  font-weight: 900;
+  text-shadow: -2px -2px #653078, 2px -2px #653078, -2px 2px #653078, 2px 2px #653078;
+}
+#gabby-fi #gf-levels button[data-completed="true"] {
+  color: white;
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+}
+#gabby-fi #gf-levels button[aria-current="step"] {
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  filter: drop-shadow(0 0 5px #ffe36a) drop-shadow(0 4px 2px #53256699);
+}
+#gabby-fi #gf-levels button:disabled {
+  color: #eee2f4;
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  filter: grayscale(.6) brightness(.72);
+  opacity: .92;
+}
+#gabby-fi #gf-levels .level-mark {
+  display: block;
+  position: absolute;
+  width: 19px;
+  height: 19px;
+  top: 1px;
+  right: -2px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ffcf55;
+  box-shadow: 0 2px 3px #50206788;
+}
+#gabby-fi #gf-levels .level-mark.completed::after {
+  content: "✓";
+  display: block;
+  color: #603000;
+  font-size: 13px;
+  line-height: 15px;
+  text-shadow: none;
+}
+#gabby-fi #gf-levels .level-mark.locked::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #704b0e;
+  border-radius: 6px 6px 0 0;
+}
+#gabby-fi #gf-levels .level-mark.locked::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 9px;
+  height: 7px;
+  border-radius: 2px;
+  background: #704b0e;
+}
+#gabby-fi #gf-levels button:focus-visible {
+  outline: 3px solid #42145c;
+  outline-offset: 3px;
+}
+@media (max-width: 679px) {
+  #gabby-fi #gf-levels[data-game="baking"],
+  #gabby-fi #gf-levels[data-game="garden"] {
+    min-height: max(680px, 165vw);
+    background-size: 100% 100%;
+  }
+  #gabby-fi #gf-levels[data-game="baking"] button,
+  #gabby-fi #gf-levels[data-game="garden"] button { width: clamp(48px, 13vw, 60px); }
+}

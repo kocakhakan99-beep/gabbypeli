@@ -65,7 +65,7 @@ export function renderCampaign(game: CampaignGame, start: (level: number) => voi
       const mark = document.createElement("span");
       mark.className = "level-mark";
       mark.setAttribute("aria-hidden", "true");
-      mark.textContent = button.disabled ? "▣" : "✓";
+      mark.classList.add(button.disabled ? "locked" : "completed");
       button.append(mark);
     }
     button.onclick = () => start(level);
