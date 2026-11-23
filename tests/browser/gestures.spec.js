@@ -117,6 +117,8 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
     await page.getByRole("button", { name }).press("Enter");
   const bowl = page.locator(".bakery-bowl.mixing");
+  await expect(bowl).toHaveClass(/phaser-mixing-ready/);
+  await expect(bowl.locator("canvas")).toBeVisible();
   await bowl.scrollIntoViewIfNeeded();
   const { x, y, width, height } = await bowl.boundingBox();
   const circle = Array.from({ length: 21 }, (_, i) => ({
@@ -131,6 +133,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   const paper = page.getByRole("button", {
     name: "Aseta leivinpaperi pellille",
   });
+  await expect(page.locator(".bakery-bowl.mixing canvas")).toHaveCount(0);
   await paper.scrollIntoViewIfNeeded();
   async function center(locator) {
     const box = await locator.boundingBox();

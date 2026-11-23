@@ -86,3 +86,64 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: s
   });
   return { reveal, drag, destroy: () => { parent.parentElement?.classList.remove("phaser-ready"); game.destroy(true); } };
 }
+
+export interface MixingView {
+  move(x: number, y: number, progress: number): void;
+  destroy(): void;
+}
+
+/** Draws the spoon and batter as the player stirs the mixing bowl. */
+export function createMixingView(parent: HTMLElement): MixingView {
+  let scene: Phaser.Scene | undefined;
+  let spoon: Phaser.GameObjects.Container | undefined;
+  let trails: Phaser.GameObjects.Graphics | undefined;
+  let position = { x: 0.5, y: 0.5, progress: 0 };
+  let alive = true;
+
+  function move(x: number, y: number, progress: number): void {
+    position = {
+      x: Phaser.Math.Clamp(x, 0.15, 0.85),
+      y: Phaser.Math.Clamp(y, 0.15, 0.85),
+      progress: Phaser.Math.Clamp(progress, 0, 1),
+    };
+    if (!scene || !spoon || !trails) return;
+    spoon.setPosition(position.x * 300, position.y * 300);
+    spoon.setRotation(Math.atan2(position.y - 0.5, position.x - 0.5) + 0.8);
+    trails.clear();
+    trails.lineStyle(7, 0xfff3c9, 0.7);
+    trails.beginPath();
+    trails.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + position.progress * Math.PI * 2);
+    trails.strokePath();
+  }
+
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS,
+    parent,
+    transparent: true,
+    width: 300,
+    height: 300,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: {
+      create() {
+        if (!alive) return;
+        scene = this;
+        trails = this.add.graphics();
+        const shadow = this.add.ellipse(8, 50, 38, 85, 0x8b5535, 0.25);
+        const handle = this.add.rectangle(0, 32, 18, 100, 0xae6842).setOrigin(0.5, 0.15);
+        const head = this.add.ellipse(0, 0, 48, 64, 0xd7925c);
+        const highlight = this.add.ellipse(-6, -8, 20, 28, 0xf5bc80, 0.55);
+        spoon = this.add.container(150, 150, [shadow, handle, head, highlight]);
+        parent.classList.add("phaser-mixing-ready");
+        move(position.x, position.y, position.progress);
+      },
+    },
+  });
+  return {
+    move,
+    destroy() {
+      alive = false;
+      parent.classList.remove("phaser-mixing-ready");
+      game.destroy(true);
+    },
+  };
+}

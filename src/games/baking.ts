@@ -9,6 +9,7 @@ import {
   setAction,
 } from "../ui.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
+import type { MixingView } from "../phaser-room.js";
 
 type Recipe = { name: string; piece: string; art: string; heat: number };
 const recipes: Recipe[] = [
@@ -16,8 +17,17 @@ const recipes: Recipe[] = [
   { name: "Kuppikakut", piece: "kuppikakku", art: "cupcake", heat: 200 },
 ];
 let timer: ReturnType<typeof setTimeout> | undefined;
+let mixingView: MixingView | undefined;
+let mixingGeneration = 0;
+
+function stopMixingView(): void {
+  mixingGeneration++;
+  mixingView?.destroy();
+  mixingView = undefined;
+}
 
 export function stopBakingGestures(): void {
+  stopMixingView();
   clearTimeout(timer);
   el("baking")
     .querySelectorAll<HTMLElement>("[data-gesture]")
@@ -40,6 +50,7 @@ export function startBaking(): void {
   progress(0, 6);
 
   function show(step: number, instruction: string, html: string): void {
+    stopMixingView();
     scene.querySelectorAll<HTMLElement>("[data-gesture]").forEach(stopStroke);
     scene.innerHTML = html;
     feedback("");
@@ -181,9 +192,19 @@ export function startBaking(): void {
     const spoon = scene.querySelector<HTMLElement>(".bakery-spoon")!;
     const meter = scene.querySelector<HTMLProgressElement>("progress")!;
     let turns = 0;
+    let spoonPosition = { x: 0.5, y: 0.5 };
+    const generation = mixingGeneration;
+    void import("../phaser-room.js").then(({ createMixingView }) => {
+      if (generation !== mixingGeneration || !bowl.isConnected) return;
+      mixingView = createMixingView(bowl);
+      mixingView.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
+    }).catch(() => {
+      // The existing spoon remains available if the graphics cannot load.
+    });
     function add(amount: number): void {
       turns += amount;
       meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * 4)) * 100);
+      mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
       if (meter.value === 100) tray(recipe);
     }
     gesture(bowl, {
@@ -193,6 +214,11 @@ export function startBaking(): void {
         const x = box.left + box.width / 2;
         const y = box.top + box.height / 2;
         const radius = box.width / 2;
+        spoonPosition = {
+          x: (to.x - box.left) / box.width,
+          y: (to.y - box.top) / box.height,
+        };
+        mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
         spoon.style.left =
           Math.max(15, Math.min(85, ((to.x - box.left) / box.width) * 100)) +
           "%";
