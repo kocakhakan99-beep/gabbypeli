@@ -2665,3 +2665,20 @@ body {
       #b78ccc 21%
     );
 }
+
+/* Explicit columns keep all hiding spots inside narrow screens. */
+#gabby-fi .hide-room .hide-spot:nth-child(1) {
+  grid-column: 1;
+}
+#gabby-fi .hide-room .hide-spot:nth-child(2) {
+  grid-column: 2;
+}
+#gabby-fi .hide-room .hide-spot:nth-child(3) {
+  grid-column: 3;
+}
+#gabby-fi .hide-spot.opened .hiding-friend {
+  filter: drop-shadow(0 4px 6px #52366a55);
+}
+#gabby-fi .hide-spot.opened .hiding-friend .picture[data-object] {
+  width: 72%;
+}

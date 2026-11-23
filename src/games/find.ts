@@ -47,6 +47,15 @@ const roomObjects: Record<string, { id: string; name: string }[]> = {
   ],
 };
 
+const roomSurprises: Record<string, { id: string; name: string }> = {
+  gabby: { id: "star", name: "tähtityyny" },
+  cakey: { id: "cupcakes", name: "kuppikakkuja" },
+  mercat: { id: "shell", name: "simpukka" },
+  fairy: { id: "watering", name: "kastelukannu" },
+  pandy: { id: "yarn", name: "lankakerä" },
+  dj: { id: "train", name: "lelujuna" },
+};
+
 export function renderFind(): void {
   const friend = friends[state.learnIndex];
   state.learnDone = false;
@@ -73,6 +82,7 @@ export function renderFind(): void {
   setAction("", null);
   progress(state.learnIndex, friends.length);
   const furniture = roomObjects[friend.id];
+  const surprise = roomSurprises[friend.id];
   const hidingPlace = Math.floor(Math.random() * furniture.length);
   shuffle(furniture).forEach((item, index) => {
     const isHiding = index === hidingPlace;
@@ -83,8 +93,12 @@ export function renderFind(): void {
         unlock();
         spot.classList.add("opened");
         if (!isHiding) {
-          spot.setAttribute("aria-label", item.name + " on tyhjä");
-          feedback("Täällä ei vielä ollut ketään. Tutkitaan lisää!");
+          spot.setAttribute(
+            "aria-label",
+            item.name + ": löytyi " + surprise.name,
+          );
+          feedback("Löytyi " + surprise.name + "! Missähän kaveri on?");
+          ding("sprinkle");
           return;
         }
         state.learnDone = true;
@@ -116,7 +130,7 @@ export function renderFind(): void {
     spot.setAttribute("aria-label", "Tutki " + item.name.toLowerCase());
     spot.innerHTML =
       '<span class="hiding-friend">' +
-      (isHiding ? picture(friend.id) : "") +
+      picture(isHiding ? friend.id : surprise.id) +
       '</span><span class="furniture" aria-hidden="true"><span></span></span>';
     room.append(spot);
   });
