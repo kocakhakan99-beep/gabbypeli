@@ -13,10 +13,12 @@ import { el } from "../dom.js";
 import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
+import { bindStroke, stopStroke } from "./stroke.js";
 
 export function renderFind() {
   const f = friends[state.learnIndex];
   const portrait = el("portrait");
+  stopStroke(portrait);
   state.learnDone = false;
   heading(
     f.id,
@@ -25,11 +27,38 @@ export function renderFind() {
     f.room,
   );
   portrait.classList.add("find-clue");
+  portrait.setAttribute(
+    "aria-label",
+    "Tutki piilossa olevaa kaveria liikuttamalla sormea kuvan päällä",
+  );
+  let clueScale = 3;
   const tile = f.tile ?? state.learnIndex;
   portrait.style.setProperty(
     "--clue-x",
     ((3 * (tile % 3) + 1) / 8) * 100 + "%",
   );
+  function revealMore(): void {
+    if (state.learnDone || clueScale <= 1.5) return;
+    clueScale = Math.max(1.5, clueScale - 0.5);
+    const x = tile % 3;
+    const y = Math.floor(tile / 3);
+    portrait.style.backgroundSize = `${3 * clueScale * 100}% ${2 * clueScale * 100}%`;
+    portrait.style.backgroundPosition = `${((clueScale * x + (clueScale - 1) / 2) / (3 * clueScale - 1)) * 100}% ${((clueScale * y + (clueScale - 1) / 2) / (2 * clueScale - 1)) * 100}%`;
+  }
+  let travelled = 0;
+  bindStroke(portrait, {
+    start() {
+      travelled = 0;
+    },
+    move(from, to) {
+      travelled += Math.hypot(to.x - from.x, to.y - from.y);
+      if (travelled >= 40) {
+        travelled = 0;
+        revealMore();
+      }
+    },
+    end() {},
+  });
   portrait.style.setProperty(
     "--clue-y",
     ((3 * Math.floor(tile / 3) + 1) / 5) * 100 + "%",
@@ -51,6 +80,7 @@ export function renderFind() {
         unlock();
         if (friend.id === f.id) {
           state.learnDone = true;
+          stopStroke(portrait);
           b.classList.add("correct");
           portrait.classList.remove("find-clue");
           portrait.classList.add("find-reveal");
@@ -84,6 +114,7 @@ export function renderFind() {
           advanceAfterSuccess();
         } else {
           b.disabled = true;
+          revealMore();
           feedback("Tutkitaan vielä. Katso värejä ja korvia.");
           say("Tutkitaan vielä. Katso kuvan värejä ja korvia.");
         }

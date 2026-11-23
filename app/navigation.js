@@ -14,6 +14,7 @@ import { startGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 function stopGestures() {
     stopMemoryTimers();
+    stopStroke(el("portrait"));
     stopBakingGestures();
     stopPuzzleDrag();
     stopSizeGestures();

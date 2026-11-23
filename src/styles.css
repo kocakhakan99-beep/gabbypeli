@@ -2411,3 +2411,16 @@ body {
     animation: none;
   }
 }
+
+#gabby-fi .portrait.find-clue {
+  touch-action: none;
+  cursor: grab;
+  transition:
+    background-size 400ms ease,
+    background-position 400ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .portrait.find-clue {
+    transition: none;
+  }
+}
