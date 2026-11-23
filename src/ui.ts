@@ -96,11 +96,9 @@ export function picture(art: string) {
   const tile = playObjects.findIndex(({ id }) => id === art);
   if (tile >= 0) {
     return (
-      '<span class="picture" data-object aria-hidden="true" style="--tile-x:' +
-      (tile % 3) * 50 +
-      "%;--tile-y:" +
-      Math.floor(tile / 3) * 50 +
-      '%"></span>'
+      '<span class="picture" data-object="' +
+      art +
+      '" aria-hidden="true"></span>'
     );
   }
   if (friends.some((friend) => friend.id === art)) {
