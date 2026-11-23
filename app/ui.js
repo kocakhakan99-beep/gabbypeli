@@ -16,6 +16,7 @@ const glyphs = {
     cards: '<rect x="5" y="8" width="20" height="28" rx="4"/><rect x="23" y="12" width="20" height="28" rx="4"/><path d="M15 19h1m17 7h1"/>',
     cards2: '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="17" cy="24" r="4"/><circle cx="31" cy="24" r="4"/>',
     cards4: '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="17" cy="17" r="3"/><circle cx="31" cy="17" r="3"/><circle cx="17" cy="31" r="3"/><circle cx="31" cy="31" r="3"/>',
+    cards5: '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="15" cy="15" r="3"/><circle cx="33" cy="15" r="3"/><circle cx="24" cy="24" r="3"/><circle cx="15" cy="33" r="3"/><circle cx="33" cy="33" r="3"/>',
     cards6: '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="16" cy="15" r="2.5"/><circle cx="24" cy="15" r="2.5"/><circle cx="32" cy="15" r="2.5"/><circle cx="16" cy="32" r="2.5"/><circle cx="24" cy="32" r="2.5"/><circle cx="32" cy="32" r="2.5"/>',
     puzzle: '<path d="M8 8h9a6 6 0 1 1 12 0h9v12a6 6 0 1 0 0 12v8H25a6 6 0 1 0-12 0H8z"/>',
     cake: '<path d="m8 23 5 19h22l5-19M8 23c0-4 4-7 9-7 0-6 4-10 7-10s7 4 7 10c5 0 9 3 9 7zM19 22v2m10-2v2"/>',
@@ -50,7 +51,7 @@ function iconForLabel(label) {
     if (/esine/.test(text))
         return "objects";
     if (/paria|palaa/.test(text)) {
-        const count = text.match(/\b(2|4|6)\b/)?.[1];
+        const count = text.match(/\b(2|4|5|6)\b/)?.[1];
         return count ? `cards${count}` : "cards";
     }
     if (/kortit/.test(text))

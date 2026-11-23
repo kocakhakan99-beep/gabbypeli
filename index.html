@@ -68,6 +68,7 @@
                 type="button"
                 class="game-link cursor-interaction"
                 id="gf-open-bubbles"
+                hidden
                 aria-label="Kuplataika"
               >
                 <span class="menu-art" aria-hidden="true"
@@ -80,6 +81,7 @@
                 type="button"
                 class="game-link cursor-interaction"
                 id="gf-open-sizes"
+                hidden
                 aria-label="Isot ja pienet"
               >
                 <span class="menu-art size-game-art" aria-hidden="true"
@@ -131,6 +133,7 @@
                 type="button"
                 class="game-link cursor-interaction"
                 id="gf-open-learn"
+                hidden
                 aria-label="Pikku puuhat"
               >
                 <span class="menu-art" aria-hidden="true"
@@ -175,6 +178,9 @@
               <h4>Nukketalon aarteet</h4>
               <p>Pelaa sama leikki loppuun uudestaan ja saat sen kuvatarran.</p>
               <div class="stickers" id="gf-stickers-bonus"></div>
+              <h4>Salaiset aarteet</h4>
+              <p>Pelaa leikki loppuun kolmesti.</p>
+              <div class="stickers" id="gf-stickers-extra"></div>
             </div>
           </section>
         </section>
@@ -282,90 +288,7 @@
                   aria-labelledby="gf-title"
                 ></div>
               </div>
-              <div id="gf-baking" hidden>
-                <button
-                  type="button"
-                  class="tool cursor-interaction"
-                  id="gf-baking-dialogue"
-                >
-                  Kuuntele Gabbya
-                </button>
-                <ol
-                  id="gf-baking-steps"
-                  class="baking-steps"
-                  aria-label="Leipomisen vaiheet"
-                >
-                  <li>Sekoita ja laske</li>
-                  <li>Paista</li>
-                  <li>Koristele</li>
-                </ol>
-                <div class="recipe-card">
-                  Resepti <strong id="gf-baking-target">1</strong> kuppikakkua
-                  <span class="recipe-pictures" aria-hidden="true"></span>
-                </div>
-                <div class="baking-kitchen" id="gf-baking-kitchen">
-                  <button
-                    type="button"
-                    class="mixing-bowl cursor-interaction"
-                    id="gf-baking-add"
-                    aria-label="Leivo yksi kuppikakku"
-                  >
-                    <span class="bowl-art" aria-hidden="true"></span
-                    ><span class="mix-meter" aria-hidden="true"></span>
-                  </button>
-                  <div>
-                    <div
-                      class="plate"
-                      id="gf-baking-plate"
-                      role="group"
-                      aria-label="Kuppikakut lautasella"
-                    ></div>
-                    <p class="plate-label">
-                      Lautasella <strong id="gf-baking-count">0</strong>
-                    </p>
-                  </div>
-                </div>
-                <div id="gf-baking-oven" class="baking-oven" hidden>
-                  <div class="oven-window" aria-hidden="true">
-                    <span></span><span></span><span></span>
-                  </div>
-                  <button type="button" class="primary" id="gf-baking-bake">
-                    Paista kakut
-                  </button>
-                </div>
-                <div
-                  id="gf-baking-toppings"
-                  class="baking-toppings"
-                  role="group"
-                  aria-label="Koristeen väri"
-                  hidden
-                >
-                  <button type="button" class="tool" value="berry">
-                    Mansikka
-                  </button>
-                  <button type="button" class="tool" value="sun">
-                    Sitruuna
-                  </button>
-                  <button type="button" class="tool" value="violet">
-                    Mustikka
-                  </button>
-                </div>
-                <div class="actions">
-                  <button
-                    type="button"
-                    class="primary cursor-interaction"
-                    id="gf-baking-check"
-                  >
-                    Laita uuniin</button
-                  ><button
-                    type="button"
-                    class="tool cursor-interaction"
-                    id="gf-baking-reset"
-                  >
-                    Tyhjennä lautanen
-                  </button>
-                </div>
-              </div>
+              <div id="gf-baking" hidden></div>
               <div id="gf-drawing" hidden>
                 <div class="drawing-tools">
                   <div

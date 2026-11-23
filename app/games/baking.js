@@ -1,283 +1,334 @@
-import { el } from "../dom.js";
-import { state } from "../state.js";
-import { button, feedback, finish, heading, iconButton, progress, setAction, advanceAfterSuccess, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
-import { bindStroke, distanceToStroke, stopStroke, } from "./stroke.js";
-const recipes = [2, 1, 3, 4];
-const counts = [
-    "Ei vielä kakkuja.",
-    "Yksi.",
-    "Kaksi.",
-    "Kolme.",
-    "Neljä.",
-    "Viisi.",
-    "Kuusi.",
+import { el } from "../dom.js";
+import { feedback, finish, heading, progress, } from "../ui.js";
+import { bindStroke, stopStroke } from "./stroke.js";
+const recipes = [
+    { name: "Piparit", piece: "pipari", art: "cookie", heat: 175 },
+    { name: "Kuppikakut", piece: "kuppikakku", art: "cupcake", heat: 200 },
 ];
-let phase = "mix";
-let recipe = 0;
-let served = 0;
-let topping = "berry";
-const stirLength = 105;
-let ovenTimer;
-const decorated = new Map();
+let timer;
 export function stopBakingGestures() {
-    clearTimeout(ovenTimer);
-    stopStroke(el("baking-add"));
-    stopStroke(el("baking-plate"));
+    clearTimeout(timer);
+    el("baking")
+        .querySelectorAll("[data-gesture]")
+        .forEach(stopStroke);
+    el("baking").replaceChildren();
 }
 export function startBaking() {
-    recipe = 0;
-    const bowl = el("baking-add");
-    let distance = 0;
-    let total = 0;
-    let skipClick = false;
-    bindStroke(bowl, {
-        start() {
-            distance = 0;
-            total = 0;
-        },
-        move(from, to) {
-            if (phase !== "mix")
+    stopBakingGestures();
+    const game = el("baking");
+    heading("cakey", "Hileen leipomo", "Valitse mitä haluat leipoa.", "Hileen keittiö");
+    const scene = document.createElement("div");
+    scene.className = "bakery-scene";
+    game.append(scene);
+    progress(0, 6);
+    function show(step, instruction, html) {
+        scene.querySelectorAll("[data-gesture]").forEach(stopStroke);
+        scene.innerHTML = html;
+        feedback("");
+        el("instruction").textContent = instruction;
+        progress(step, 6);
+    }
+    function sound() {
+        unlock();
+        ding("piece");
+    }
+    function gesture(target, handlers) {
+        target.dataset.gesture = "";
+        bindStroke(target, handlers);
+    }
+    function transfer(item, destination, accept) {
+        let start;
+        gesture(item, {
+            start(point) {
+                start = point;
+            },
+            move(_from, point) {
+                item.style.translate =
+                    point.x - start.x + "px " + (point.y - start.y) + "px";
+            },
+            end(point) {
+                item.style.removeProperty("translate");
+                if (!point || Math.hypot(point.x - start.x, point.y - start.y) < 8)
+                    return;
+                const box = destination.getBoundingClientRect();
+                if (point.x >= box.left - 12 &&
+                    point.x <= box.right + 12 &&
+                    point.y >= box.top - 12 &&
+                    point.y <= box.bottom + 12)
+                    accept(point);
+            },
+        });
+        item.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter" && event.key !== " ")
                 return;
-            const movement = Math.hypot(to.x - from.x, to.y - from.y);
-            distance += movement;
-            total += movement;
-            bowl.style.setProperty("--stir-angle", Math.sin(total / 18) * 25 + "deg");
-            while (distance >= stirLength && served < recipes[recipe]) {
-                distance -= stirLength;
-                addCake();
-            }
-            bowl.style.setProperty("--stir-fill", Math.min(100, (distance / stirLength) * 100) + "%");
-        },
-        end(point) {
-            bowl.style.removeProperty("--stir-angle");
-            bowl.style.removeProperty("--stir-fill");
-            if (total < 25)
-                return;
-            skipClick = true;
-            if (point && total < stirLength && served < recipes[recipe])
-                addCake();
-            setTimeout(() => {
-                skipClick = false;
-            }, 0);
-        },
-    });
-    bowl.onclick = () => {
-        if (!skipClick)
-            addCake();
-    };
-    el("baking-bake").onclick = bake;
-    const toppings = el("baking-toppings");
-    toppings.querySelectorAll("button").forEach((choice) => {
-        choice.onclick = () => {
-            topping = choice.value;
-            showToppingSelection();
-        };
-    });
-    showRecipe();
-    playBakingDialogue();
-}
-function bindDecorating() {
-    const plate = el("baking-plate");
-    function sprinkle(from, to) {
-        if (phase !== "decorate")
-            return;
-        plate.querySelectorAll("button").forEach((cake, index) => {
-            const rect = cake.getBoundingClientRect();
-            const center = {
-                x: rect.x + rect.width / 2,
-                y: rect.y + rect.height / 2,
-            };
-            if (distanceToStroke(center, from, to) <=
-                Math.min(rect.width, rect.height) / 2) {
-                decorateCake(cake, index);
-            }
+            event.preventDefault();
+            accept();
         });
     }
-    bindStroke(plate, {
-        start: (point) => sprinkle(point, point),
-        move: sprinkle,
-        end() { },
+    const piece = (recipe) => '<span class="bakery-piece ' + recipe.art + '" aria-hidden="true"></span>';
+    scene.innerHTML = recipes
+        .map((recipe, i) => '<button type="button" class="bakery-recipe" data-recipe="' +
+        i +
+        '">' +
+        piece(recipe) +
+        recipe.name +
+        "</button>")
+        .join("");
+    scene
+        .querySelectorAll(".bakery-recipe")
+        .forEach((choice, i) => {
+        choice.onclick = () => wash(recipes[i]);
     });
-}
-function showToppingSelection() {
-    el("baking-toppings")
-        .querySelectorAll("button")
-        .forEach((choice) => {
-        choice.setAttribute("aria-pressed", String(choice.value === topping));
-    });
-}
-export function playBakingDialogue() {
-    say("Hei pieni ystävä! Leikitään yhdessä.");
-}
-function showPhase(next) {
-    phase = next;
-    el("baking-check").classList.remove("ready-to-serve");
-    stopStroke(el("baking-plate"));
-    if (next === "decorate")
-        bindDecorating();
-    const step = next === "mix" ? 0 : next === "oven" ? 1 : 2;
-    el("baking-steps")
-        .querySelectorAll("li")
-        .forEach((item, index) => {
-        if (index === step)
-            item.setAttribute("aria-current", "step");
-        else
-            item.removeAttribute("aria-current");
-        item.classList.toggle("done", index < step || next === "served");
-    });
-    el("baking-kitchen").hidden = next === "oven";
-    const oven = el("baking-oven");
-    oven.hidden = next !== "oven";
-    oven.classList.remove("heating");
-    el("baking-bake").disabled = false;
-    el("baking-toppings").hidden = next !== "decorate";
-    el("baking-add").hidden = next !== "mix";
-    el("baking-check").hidden = next === "oven" || next === "served";
-    iconButton(el("baking-check"), next === "mix" ? "oven" : "serve", next === "mix" ? "Laita uuniin" : "Tarjoile Hileelle");
-    el("baking-reset").hidden = next !== "mix";
-    el("baking-plate").classList.remove("needs-topping");
-    el("baking-plate").classList.toggle("decorating", next === "decorate");
-    drawPlate();
-}
-function showRecipe() {
-    served = 0;
-    topping = "berry";
-    decorated.clear();
-    showToppingSelection();
-    el("baking-dialogue").hidden = recipe !== 0;
-    heading("cakey", "Leivotaan " + recipes[recipe] + " kuppikakkua!", "Liikuta sormea kulhossa tai napauta. Jokaisesta vedosta tulee yksi kakku.", "Hileen leipomo");
-    showPhase("mix");
-    setAction("", null);
-    feedback("Hile odottaa herkkuja. Leivotaan yhdessä!");
-    progress(recipe, recipes.length);
-    say("Leivotaan " + recipes[recipe] + " kuppikakkua. Kosketa taikinaa.");
-}
-function drawPlate() {
-    el("baking-target").textContent = String(recipes[recipe]);
-    el("baking-count").textContent = String(served);
-    el("baking")
-        .querySelector(".recipe-pictures")
-        .replaceChildren(...Array.from({ length: recipes[recipe] }, (_, index) => {
-        const cake = document.createElement("span");
-        cake.className = "cupcake" + (index < served ? " counted" : "");
-        return cake;
-    }));
-    el("baking-plate").replaceChildren();
-    for (let index = 0; index < served; index++) {
-        const cake = button("", () => {
-            if (phase === "decorate")
-                decorateCake(cake, index);
-            else if (phase === "mix") {
-                served--;
-                drawPlate();
-                say("Nyt lautasella on " + served + " kuppikakkua.");
-            }
-        }, "cake-on-plate");
-        cake.innerHTML = '<span class="cupcake" aria-hidden="true"></span>';
-        cake.setAttribute("aria-label", (phase === "mix" ? "Poista kuppikakku " : "Koristele kuppikakku ") +
-            (index + 1));
-        cake.disabled = phase === "served";
-        if (decorated.has(index))
-            cake.dataset.topping = decorated.get(index);
-        el("baking-plate").append(cake);
+    function wash(recipe) {
+        show(1, "Ota saippuaa ja huuhtele kädet.", `
+      <div class="baking-wash">
+        <button type="button" class="wash-soap" aria-label="Ota saippuaa"><img src="./assets/furniture/soap.webp" alt="" draggable="false"></button>
+        <button type="button" class="wash-tap" aria-label="Huuhtele kädet" disabled><img src="./assets/furniture/tap.webp" alt="" draggable="false"><span class="wash-stream" aria-hidden="true"></span></button>
+        <div class="wash-hands" aria-hidden="true"></div>
+      </div>`);
+        say("Hei pieni ystävä! Leikitään yhdessä.");
+        const soap = scene.querySelector(".wash-soap");
+        const tap = scene.querySelector(".wash-tap");
+        const sink = scene.querySelector(".baking-wash");
+        soap.onclick = () => {
+            sound();
+            sink.classList.add("soapy");
+            soap.disabled = true;
+            tap.disabled = false;
+        };
+        tap.onclick = () => {
+            tap.disabled = true;
+            sink.classList.add("rinsing");
+            timer = setTimeout(() => ingredients(recipe), 850);
+        };
     }
-}
-function decorateCake(cake, index) {
-    if (phase !== "decorate" || decorated.get(index) === topping)
-        return;
-    decorated.set(index, topping);
-    cake.dataset.topping = topping;
-    ding("sprinkle");
-    if (decorated.size === served) {
-        feedback("Kaikki kakut on koristeltu! Nyt voit tarjoilla.");
-        el("baking-check").classList.add("ready-to-serve");
+    function ingredients(recipe) {
+        show(2, "Vedä jauhot, muna ja maito kulhoon.", `
+      <div class="bakery-ingredients">
+        <div class="bakery-flour" role="button" tabindex="0" aria-label="Lisää jauhot">Jauhot</div>
+        <div class="bakery-egg" role="button" tabindex="0" aria-label="Lisää muna">Muna</div>
+        <div class="bakery-milk" role="button" tabindex="0" aria-label="Lisää maito">Maito</div>
+      </div>
+      <div class="bakery-bowl" aria-label="Sekoituskulho"></div>`);
+        const bowl = scene.querySelector(".bakery-bowl");
+        const items = [
+            ...scene.querySelectorAll(".bakery-ingredients > div"),
+        ];
+        let added = 0;
+        for (const item of items)
+            transfer(item, bowl, () => {
+                if (item.hidden)
+                    return;
+                item.hidden = true;
+                bowl.dataset.added = String(++added);
+                sound();
+                if (added === items.length)
+                    mix(recipe);
+            });
     }
-}
-export function addCake() {
-    if (state.mode !== "baking" || phase !== "mix")
-        return;
-    unlock();
-    if (served === 6) {
-        feedback("Lautanen on täynnä. Voit poistaa kakun koskettamalla sitä.");
-        say("Lautanen on täynnä. Voit poistaa kakun koskettamalla sitä.");
-        return;
-    }
-    served++;
-    drawPlate();
-    ding("sprinkle");
-    say(counts[served]);
-    feedback(served === recipes[recipe]
-        ? "Juuri sopivasti! Laitetaanko kakut uuniin?"
-        : "Lautasella on " + served + ".");
-}
-export function resetPlate() {
-    if (phase !== "mix")
-        return;
-    served = 0;
-    drawPlate();
-    feedback("Lautanen on tyhjä. Kokeillaan yhdessä uudestaan.");
-    say("Lautanen on tyhjä. Leivotaan uudestaan.");
-}
-function bake() {
-    if (phase !== "oven" || el("baking-bake").disabled)
-        return;
-    el("baking-bake").disabled = true;
-    el("baking-oven").classList.add("heating");
-    feedback("Kakut kohoavat uunissa…");
-    ovenTimer = setTimeout(finishBaking, 1350);
-}
-function finishBaking() {
-    if (state.mode !== "baking" || phase !== "oven")
-        return;
-    setAction("", null);
-    showPhase("decorate");
-    el("instruction").textContent =
-        "Valitse kuorrute ja liu’uta sormea kakkujen yli.";
-    feedback("Kakut kypsyivät! Voit nyt koristella ne.");
-    say("Kakut kypsyivät! Voit nyt koristella ne.");
-    ding("discovery");
-}
-export function checkRecipe() {
-    unlock();
-    if (phase === "mix") {
-        const target = recipes[recipe];
-        if (served !== target) {
-            feedback(served < target
-                ? "Tarvitaan vielä lisää kakkuja."
-                : "Nyt on vähän liikaa. Poista kakku koskettamalla sitä.");
-            say(served < target
-                ? "Tarvitaan vielä lisää kakkuja."
-                : "Nyt on vähän liikaa. Kosketa kakkua, niin se poistuu.");
-            return;
+    function mix(recipe) {
+        show(3, "Sekoita taikina pyörittämällä sormea kulhossa.", `
+      <div class="bakery-bowl mixing" tabindex="0" aria-label="Sekoita taikina"><span class="bakery-spoon" aria-hidden="true"></span></div>
+      <progress class="bakery-progress" value="0" max="100" aria-label="Taikina sekoitettu"></progress>`);
+        const bowl = scene.querySelector(".bakery-bowl");
+        const spoon = scene.querySelector(".bakery-spoon");
+        const meter = scene.querySelector("progress");
+        let turns = 0;
+        function add(amount) {
+            turns += amount;
+            meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * 4)) * 100);
+            if (meter.value === 100)
+                tray(recipe);
         }
-        showPhase("oven");
-        el("instruction").textContent = "Paina uunin nappia, niin kakut kypsyvät.";
-        feedback("Kakut ovat uunissa.");
-        say("Kakut ovat uunissa.");
-        ding("piece");
-        return;
+        gesture(bowl, {
+            start() { },
+            move(from, to) {
+                const box = bowl.getBoundingClientRect();
+                const x = box.left + box.width / 2;
+                const y = box.top + box.height / 2;
+                const radius = box.width / 2;
+                spoon.style.left =
+                    Math.max(15, Math.min(85, ((to.x - box.left) / box.width) * 100)) +
+                        "%";
+                spoon.style.top =
+                    Math.max(15, Math.min(85, ((to.y - box.top) / box.height) * 100)) +
+                        "%";
+                const distances = [from, to].map((point) => Math.hypot(point.x - x, point.y - y));
+                if (distances.some((distance) => distance < radius * 0.2 || distance > radius * 0.97))
+                    return;
+                const delta = Math.atan2(to.y - y, to.x - x) - Math.atan2(from.y - y, from.x - x);
+                const angle = Math.atan2(Math.sin(delta), Math.cos(delta));
+                if (Math.abs(angle) < Math.PI / 2)
+                    add(angle);
+            },
+            end() { },
+        });
+        bowl.addEventListener("keydown", (event) => {
+            if (event.key !== " " && event.key !== "Enter")
+                return;
+            event.preventDefault();
+            add(Math.PI);
+        });
     }
-    if (phase !== "decorate")
-        return;
-    if (decorated.size < served) {
-        feedback("Koristele vielä loput kakut.");
-        el("baking-plate").classList.add("needs-topping");
-        return;
+    function tray(recipe) {
+        show(4, "Vedä leivinpaperi pellille.", `
+      <div class="bakery-tray" aria-label="Uunipelti"><div class="bakery-slots"></div></div>
+      <div class="bakery-paper" tabindex="0" role="button" aria-label="Aseta leivinpaperi pellille"></div>
+      <div class="bakery-dough" hidden></div>`);
+        const pan = scene.querySelector(".bakery-tray");
+        const paper = scene.querySelector(".bakery-paper");
+        const slots = scene.querySelector(".bakery-slots");
+        const dough = scene.querySelector(".bakery-dough");
+        transfer(paper, pan, () => {
+            if (paper.hidden)
+                return;
+            paper.hidden = true;
+            pan.classList.add("lined");
+            el("instruction").textContent =
+                "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
+            dough.hidden = false;
+            for (let i = 0; i < 6; i++) {
+                slots.insertAdjacentHTML("beforeend", '<span class="bakery-slot"></span>');
+                dough.insertAdjacentHTML("beforeend", '<div role="button" tabindex="0" aria-label="Siirrä ' +
+                    recipe.piece +
+                    ' pellille">' +
+                    piece(recipe) +
+                    "</div>");
+            }
+            const places = [...slots.children];
+            let filled = 0;
+            for (const item of [...dough.children])
+                transfer(item, pan, (point) => {
+                    if (item.hidden)
+                        return;
+                    const open = places.filter((slot) => !slot.hasChildNodes());
+                    const chosen = point
+                        ? open.reduce((best, slot) => {
+                            const distance = (el) => {
+                                const rect = el.getBoundingClientRect();
+                                return Math.hypot(rect.left + rect.width / 2 - point.x, rect.top + rect.height / 2 - point.y);
+                            };
+                            return distance(slot) < distance(best) ? slot : best;
+                        })
+                        : open[0];
+                    chosen.innerHTML = piece(recipe);
+                    item.hidden = true;
+                    sound();
+                    if (++filled === places.length)
+                        oven(recipe);
+                });
+        });
     }
-    setAction("", null);
-    showPhase("served");
-    el("instruction").textContent = "Hile sai kuppikakut!";
-    progress(recipe + 1, recipes.length);
-    feedback("Juuri sopivasti! Hile ilahtuu!");
-    ding("celebration");
-    say("Juuri sopivasti! Hile ilahtuu!");
-    setAction(recipe === recipes.length - 1 ? "Juhlitaan!" : "Seuraava resepti", () => {
-        recipe++;
-        if (recipe === recipes.length)
-            finish("Mikä ihana leipuri!", "Leivoit kaikki herkut. Hile kiittää avusta!", "cakey");
-        else
-            showRecipe();
-    });
-    advanceAfterSuccess();
+    function oven(recipe) {
+        show(5, "Vedä uunin luukkua alaspäin.", `
+      <div class="bakery-oven">
+        <div class="bakery-knob" role="slider" tabindex="0" aria-label="Uunin lämpötila" aria-valuemin="0" aria-valuemax="225" aria-valuenow="0" aria-disabled="true"></div>
+        <output class="bakery-temp">0 °C</output>
+        <div class="bakery-cavity">
+          <div class="bakery-door" role="button" tabindex="0" aria-label="Avaa uunin luukku"></div>
+        </div>
+      </div>
+      <div class="bakery-tray oven-tray lined" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${piece(recipe).repeat(6)}</div>`);
+        const cavity = scene.querySelector(".bakery-cavity");
+        const door = scene.querySelector(".bakery-door");
+        const knob = scene.querySelector(".bakery-knob");
+        const temperature = scene.querySelector(".bakery-temp");
+        const pan = scene.querySelector(".oven-tray");
+        let step = 0;
+        let start;
+        let heat = 0;
+        let dial = 0;
+        function toggleDoor() {
+            if (step === 0) {
+                step = 1;
+                cavity.classList.add("door-open");
+                pan.hidden = false;
+                door.setAttribute("aria-label", "Uunin luukku on auki");
+                el("instruction").textContent = "Vedä täysi pelti uuniin.";
+            }
+            else if (step === 2) {
+                step = 3;
+                cavity.classList.remove("door-open");
+                door.setAttribute("aria-label", "Uunin luukku on kiinni");
+                knob.setAttribute("aria-disabled", "false");
+                el("instruction").textContent =
+                    "Käännä nuppia, kunnes uuni on " + recipe.heat + " °C.";
+            }
+        }
+        gesture(door, {
+            start(point) {
+                start = point;
+            },
+            move(_from, point) {
+                if (step !== 0 && step !== 2)
+                    return;
+                const base = step === 2 ? 53 : 0;
+                const angle = Math.max(0, Math.min(65, base + (point.y - start.y)));
+                door.style.setProperty("--door-angle", -angle + "deg");
+            },
+            end(point) {
+                door.style.removeProperty("--door-angle");
+                if (point &&
+                    ((step === 0 && point.y - start.y > 25) ||
+                        (step === 2 && start.y - point.y > 25)))
+                    toggleDoor();
+            },
+        });
+        door.onkeydown = (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                toggleDoor();
+            }
+        };
+        transfer(pan, cavity, () => {
+            if (step !== 1)
+                return;
+            step = 2;
+            pan.hidden = true;
+            cavity.classList.add("tray-loaded");
+            const loaded = document.createElement("div");
+            loaded.className = "bakery-loaded";
+            loaded.setAttribute("aria-hidden", "true");
+            loaded.innerHTML = piece(recipe).repeat(6);
+            cavity.prepend(loaded);
+            door.setAttribute("aria-label", "Sulje uunin luukku");
+            el("instruction").textContent = "Vedä luukku ylös kiinni.";
+            sound();
+        });
+        function setHeat(value) {
+            if (step !== 3)
+                return;
+            heat = Math.max(0, Math.min(recipe.heat, value));
+            knob.style.setProperty("--dial", heat + "deg");
+            knob.setAttribute("aria-valuenow", String(Math.round(heat)));
+            temperature.value = Math.round(heat) + " °C";
+            if (heat < recipe.heat)
+                return;
+            step = 4;
+            knob.setAttribute("aria-disabled", "true");
+            cavity.classList.add("oven-cooking");
+            feedback("Leivonnaiset paistuvat.");
+            timer = setTimeout(() => {
+                progress(6, 6);
+                finish("Pelti on valmis!", "Hile kiittää avusta.", "cakey");
+            }, 1700);
+        }
+        gesture(knob, {
+            start(point) {
+                dial = point.x;
+            },
+            move(_from, to) {
+                setHeat(heat + Math.abs(to.x - dial) * 1.6);
+                dial = to.x;
+            },
+            end() { },
+        });
+        knob.onkeydown = (event) => {
+            if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+                event.preventDefault();
+                setHeat(heat + 25);
+            }
+        };
+    }
 }

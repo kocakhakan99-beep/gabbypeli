@@ -9,31 +9,37 @@ const roomObjects = {
         { id: "cupboard", name: "Kaappi" },
         { id: "box", name: "Lelulaatikko" },
         { id: "chair", name: "Tuoli" },
+        { id: "tent", name: "Leikkiteltta" },
     ],
     cakey: [
         { id: "oven", name: "Uuni" },
         { id: "cupboard", name: "Keittiökaappi" },
         { id: "box", name: "Kakkulaatikko" },
+        { id: "chair", name: "Keittiötuoli" },
     ],
     mercat: [
         { id: "tub", name: "Kylpyamme" },
         { id: "cupboard", name: "Kylpyhuoneen kaappi" },
         { id: "box", name: "Kori" },
+        { id: "chair", name: "Jakkara" },
     ],
     fairy: [
         { id: "tree", name: "Puu" },
         { id: "flowerpot", name: "Kukkaruukku" },
         { id: "box", name: "Puutarhalaatikko" },
+        { id: "chair", name: "Puutarhatuoli" },
     ],
     pandy: [
         { id: "box", name: "Lelulaatikko" },
         { id: "chair", name: "Nojatuoli" },
         { id: "tent", name: "Leikkiteltta" },
+        { id: "cupboard", name: "Lelukaappi" },
     ],
     dj: [
         { id: "piano", name: "Piano" },
         { id: "speaker", name: "Kaiutin" },
         { id: "cupboard", name: "Musiikkikaappi" },
+        { id: "chair", name: "Musiikkituoli" },
     ],
 };
 const roomSurprises = {

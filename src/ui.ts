@@ -23,6 +23,8 @@ const glyphs: Record<string, string> = {
     '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="17" cy="24" r="4"/><circle cx="31" cy="24" r="4"/>',
   cards4:
     '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="17" cy="17" r="3"/><circle cx="31" cy="17" r="3"/><circle cx="17" cy="31" r="3"/><circle cx="31" cy="31" r="3"/>',
+  cards5:
+    '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="15" cy="15" r="3"/><circle cx="33" cy="15" r="3"/><circle cx="24" cy="24" r="3"/><circle cx="15" cy="33" r="3"/><circle cx="33" cy="33" r="3"/>',
   cards6:
     '<rect x="5" y="5" width="38" height="38" rx="7"/><circle cx="16" cy="15" r="2.5"/><circle cx="24" cy="15" r="2.5"/><circle cx="32" cy="15" r="2.5"/><circle cx="16" cy="32" r="2.5"/><circle cx="24" cy="32" r="2.5"/><circle cx="32" cy="32" r="2.5"/>',
   puzzle:
@@ -64,7 +66,7 @@ function iconForLabel(label: string): string {
   if (/kaver/.test(text)) return "friends";
   if (/esine/.test(text)) return "objects";
   if (/paria|palaa/.test(text)) {
-    const count = text.match(/\b(2|4|6)\b/)?.[1];
+    const count = text.match(/\b(2|4|5|6)\b/)?.[1];
     return count ? `cards${count}` : "cards";
   }
   if (/kortit/.test(text)) return "cards";

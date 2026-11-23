@@ -17,7 +17,7 @@ test("a returning player earns an illustrated sticker on their second completion
   await page.goto("/");
   const book = page.locator("#gf-stickers");
   const bonus = book.locator(".sticker").filter({ hasText: "Sateenkaarikynä" });
-  await expect(page.locator("#gf-sticker-count")).toHaveText("1 / 18 tarraa");
+  await expect(page.locator("#gf-sticker-count")).toHaveText("1 / 24 tarraa");
   await expect(bonus).not.toHaveClass(/earned/);
   await page.locator("#gf-open-drawing").click();
   await page.locator("#gf-drawing-paper").click();
@@ -26,13 +26,13 @@ test("a returning player earns an illustrated sticker on their second completion
   await expect(reward).toContainText("Sateenkaarikynä");
   await expect(reward.locator(".bonus-art")).toHaveCSS(
     "background-image",
-    /dollhouse-stickers\.webp/,
+    /stickers\/bonus-7\.webp/,
   );
   await page.locator("#gf-other").click();
   await expect(bonus).toHaveClass(/earned/);
   await page.reload();
   await expect(bonus).toHaveClass(/earned/);
-  await expect(page.locator("#gf-sticker-count")).toHaveText("2 / 18 tarraa");
+  await expect(page.locator("#gf-sticker-count")).toHaveText("2 / 24 tarraa");
   const asset = await page.request.get("/assets/dollhouse-stickers.webp");
   expect(asset.ok()).toBe(true);
 });
