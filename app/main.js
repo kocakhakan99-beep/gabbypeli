@@ -35,7 +35,19 @@ for (const mode of [
 ]) {
     el(`open-${mode}`).addEventListener("click", () => open(mode));
 }
-const updateMap = () => renderCampaign((level) => open("memory", level));
+let mapGame = "memory";
+function updateMap() {
+    renderCampaign(mapGame, (level) => open(mapGame, level));
+    for (const game of ["memory", "puzzle"]) {
+        document.querySelector(`#gf-map-${game}`).setAttribute("aria-pressed", String(mapGame === game));
+    }
+}
+for (const game of ["memory", "puzzle"]) {
+    document.querySelector(`#gf-map-${game}`).addEventListener("click", () => {
+        mapGame = game;
+        updateMap();
+    });
+}
 function showMap(show) {
     document.querySelector("#gf-campaign-map").hidden = !show;
     document.querySelector("#gf-free-games").hidden = show;
@@ -47,7 +59,7 @@ document.querySelector("#gf-free-toggle").addEventListener("click", () => showMa
 document.querySelector("#gf-next-level").addEventListener("click", () => {
     const level = campaignLevel();
     if (level !== undefined)
-        open("memory", level + 1);
+        open(mapGame, level + 1);
 });
 function exitGame() {
     const adventure = campaignLevel() !== undefined;

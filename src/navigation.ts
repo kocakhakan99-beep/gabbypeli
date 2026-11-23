@@ -56,7 +56,7 @@ export function home(): void {
 }
 
 export function open(which: GameMode, level?: number): void {
-  setCampaignLevel(which === "memory" ? level : undefined);
+  setCampaignLevel(which === "memory" || which === "puzzle" ? level : undefined, which === "puzzle" ? "puzzle" : "memory");
   if (which === "drawing") {
     home();
     return;

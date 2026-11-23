@@ -1,38 +1,42 @@
-const key = "gabbypeli-campaign-memory-v1";
+export type CampaignGame = "memory" | "puzzle";
+const games: CampaignGame[] = ["memory", "puzzle"];
+const key = (game: CampaignGame) => `gabbypeli-campaign-${game}-v1`;
 export const levelCount = 10;
 export const coinReward = 25;
-let completed = 0;
+const completed = { memory: 0, puzzle: 0 };
+let activeGame: CampaignGame = "memory";
 let active: number | undefined;
 
-function readProgress(): number {
+function readProgress(game: CampaignGame): number {
   try {
-    const value = Number(localStorage.getItem(key));
+    const value = Number(localStorage.getItem(key(game)));
     if (Number.isInteger(value) && value >= 0 && value <= levelCount)
-      completed = Math.max(completed, value);
+      completed[game] = Math.max(completed[game], value);
   } catch { /* Keep progress in memory when storage is unavailable. */ }
-  return completed;
+  return completed[game];
 }
 
 export function campaignLevel() {
   return active;
 }
 
-export function setCampaignLevel(level?: number): void {
+export function setCampaignLevel(level?: number, game: CampaignGame = "memory"): void {
+  activeGame = game;
   active = level !== undefined && Number.isInteger(level) && level >= 1 &&
-    level <= Math.min(levelCount, readProgress() + 1) ? level : undefined;
+    level <= Math.min(levelCount, readProgress(activeGame) + 1) ? level : undefined;
 }
 
 export function awardCampaignLevel(): number {
-  if (active !== readProgress() + 1) return 0;
-  completed = active;
-  try { localStorage.setItem(key, String(completed)); }
+  if (active !== readProgress(activeGame) + 1) return 0;
+  completed[activeGame] = active;
+  try { localStorage.setItem(key(activeGame), String(active)); }
   catch { /* Keep progress for this session. */ }
   return coinReward;
 }
 
-export function renderCampaign(start: (level: number) => void): void {
-  const progress = readProgress();
-  document.querySelector("#gf-coins")!.textContent = String(progress * coinReward);
+export function renderCampaign(game: CampaignGame, start: (level: number) => void): void {
+  const progress = readProgress(game);
+  document.querySelector("#gf-coins")!.textContent = String(games.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
   const map = document.querySelector("#gf-levels")!;
   map.replaceChildren();
   for (let level = 1; level <= levelCount; level++) {

@@ -1,4 +1,4 @@
-import { campaignLevel, renderCampaign } from "./campaign.js";
+import { campaignLevel, renderCampaign, type CampaignGame } from "./campaign.js";
 import { cancelAdvance, iconButton } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
@@ -49,7 +49,19 @@ for (const mode of [
 ] as const) {
   el(`open-${mode}`).addEventListener("click", () => open(mode));
 }
-const updateMap = () => renderCampaign((level) => open("memory", level));
+let mapGame: CampaignGame = "memory";
+function updateMap(): void {
+  renderCampaign(mapGame, (level) => open(mapGame, level));
+  for (const game of ["memory", "puzzle"] as const) {
+    document.querySelector(`#gf-map-${game}`)!.setAttribute("aria-pressed", String(mapGame === game));
+  }
+}
+for (const game of ["memory", "puzzle"] as const) {
+  document.querySelector(`#gf-map-${game}`)!.addEventListener("click", () => {
+    mapGame = game;
+    updateMap();
+  });
+}
 function showMap(show: boolean): void {
   document.querySelector<HTMLElement>("#gf-campaign-map")!.hidden = !show;
   document.querySelector<HTMLElement>("#gf-free-games")!.hidden = show;
@@ -60,7 +72,7 @@ document.querySelector("#gf-campaign-toggle")!.addEventListener("click", () => s
 document.querySelector("#gf-free-toggle")!.addEventListener("click", () => showMap(false));
 document.querySelector("#gf-next-level")!.addEventListener("click", () => {
   const level = campaignLevel();
-  if (level !== undefined) open("memory", level + 1);
+  if (level !== undefined) open(mapGame, level + 1);
 });
 function exitGame(): void {
   const adventure = campaignLevel() !== undefined;

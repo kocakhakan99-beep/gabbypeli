@@ -3569,3 +3569,11 @@ body {
 #gabby-fi #gf-free-games[hidden], #gabby-fi #gf-campaign-map[hidden],
 #gabby-fi #gf-next-level[hidden], #gabby-fi #gf-coin-reward[hidden],
 #gabby-fi #gf-memory-packs[hidden], #gabby-fi #gf-memory-settings[hidden] { display: none; }
+
+#gabby-fi #gf-campaign-map button[aria-pressed="true"] {
+  background: #ffe085;
+  color: #50226c;
+}
+#gabby-fi #gf-puzzle-settings[hidden], #gabby-fi #gf-scenes[hidden] {
+  display: none;
+}

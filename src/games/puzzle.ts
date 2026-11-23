@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
@@ -74,7 +75,15 @@ export function crop(piece: number) {
   );
 }
 
+let freeSize = 2;
+let freeArt = 0;
+
 export function initPuzzle() {
+  const level = campaignLevel();
+  state.puzzleSize = level === undefined ? freeSize : level <= 3 ? 2 : level <= 6 ? 4 : 6;
+  state.puzzleArt = level === undefined ? freeArt : level - 1;
+  el("puzzle-settings").hidden = level !== undefined;
+  el("scenes").hidden = level !== undefined;
   stopPuzzleDrag();
   state.selected = null;
   state.placed = new Set();
@@ -90,7 +99,7 @@ export function initPuzzle() {
   el("puzzle-settings").replaceChildren();
   [2, 4, 6].forEach((n) => {
     const b = button(n + " palaa", () => {
-      state.puzzleSize = n;
+      freeSize = n;
       initPuzzle();
     });
     b.setAttribute("aria-pressed", String(n === state.puzzleSize));
@@ -101,7 +110,7 @@ export function initPuzzle() {
     const b = button(
       "",
       () => {
-        state.puzzleArt = i;
+        freeArt = i;
         initPuzzle();
       },
       "scene-choice",
