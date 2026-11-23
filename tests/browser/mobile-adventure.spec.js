@@ -2,15 +2,31 @@ import { test, expect } from "@playwright/test";
 
 test.use({ viewport: { width: 320, height: 740 }, hasTouch: true, isMobile: true });
 
-test("adventure map and celebration fit a small touch screen", async ({ page }) => {
+test("adventure map and celebration fit a small touch screen", async ({ page }, testInfo) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
+  const rooms = page.locator(".dollhouse-rooms");
+  await expect(rooms.locator(".game-link:visible")).toHaveCount(6);
+  await expect(rooms.locator("button:visible")).toHaveCount(5);
+  const images = page.locator("#gf-free-games img");
+  await expect(images).toHaveCount(7);
+  await expect.poll(() => images.evaluateAll((elements) =>
+    elements.every((image) => image.complete && image.naturalWidth > 0)
+  )).toBe(true);
+  await expect(rooms).toHaveCSS("grid-template-columns", /^\S+ \S+$/);
+  await page.screenshot({ path: testInfo.outputPath("nukketalo-320.png"), fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: testInfo.outputPath("nukketalo-390.png"), fullPage: true });
+  await page.setViewportSize({ width: 1200, height: 900 });
+  await expect(rooms).toHaveCSS("grid-template-columns", /^\S+ \S+ \S+$/);
+  await page.screenshot({ path: testInfo.outputPath("nukketalo-1200.png"), fullPage: true });
+  await page.setViewportSize({ width: 320, height: 740 });
   const navigation = page.getByRole("navigation", { name: "Nukketalo" });
   await navigation.getByRole("button", { name: "Tarrakirja" }).tap();
   await expect(page.locator("#gf-sticker-book")).toBeVisible();
   await expect(page.locator("#gf-free-games")).toBeHidden();
-  await navigation.getByRole("button", { name: "Vapaa leikki" }).tap();
+  await navigation.getByRole("button", { name: "Leikit" }).tap();
   await expect(page.locator("#gf-free-games")).toBeVisible();
   await expect(page.locator("#gf-sticker-book")).toBeHidden();
   await navigation.getByRole("button", { name: "Koti" }).tap();
@@ -32,6 +48,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }) 
     await page.locator("#gf-board .cue").tap();
   }
   await expect(page.locator("#gf-win")).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("voitto-320.png"), fullPage: true });
   await expect(page.locator("#gf-coin-reward")).toHaveText("+25 kisukolikkoa");
   await expect(page.locator("#gf-next-level")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

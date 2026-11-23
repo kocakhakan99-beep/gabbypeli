@@ -60,6 +60,13 @@ export function renderCampaign(game, start) {
             button.setAttribute("aria-current", "step");
         button.dataset.completed = String(level <= progress);
         button.setAttribute("aria-label", `Taso ${level}${level <= progress ? ", suoritettu" : button.disabled ? ", lukittu" : ""}`);
+        if (button.disabled || level <= progress) {
+            const mark = document.createElement("span");
+            mark.className = "level-mark";
+            mark.setAttribute("aria-hidden", "true");
+            mark.textContent = button.disabled ? "▣" : "✓";
+            button.append(mark);
+        }
         button.onclick = () => start(level);
         map.append(button);
     }

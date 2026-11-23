@@ -13,7 +13,7 @@ initStickerAlbum();
 iconButton(el("home-button"), "home", "Takaisin nukketaloon");
 iconButton(el("hint"), "hint", "Näytä vihje");
 iconButton(el("repeat"), "voice", "Kuuntele Gabbyn ohje uudelleen");
-iconButton(el("again"), "replay", "Leiki uudestaan");
+el("again").textContent = "Pelaa uudelleen";
 iconButton(el("other"), "home", "Takaisin nukketaloon");
 iconButton(el("sound"), "voice", "Äänet päällä");
 iconButton(el("drawing-brush"), "brush", "Paksu kynä");
@@ -55,6 +55,7 @@ const stickerPanel = document.querySelector("#gf-sticker-book");
 function showDestination(destination) {
     el("home").dataset.destination = destination;
     mapPanel.hidden = destination !== "campaign";
+    mapPanel.parentElement.hidden = mapPanel.hidden;
     roomPanel.hidden = destination !== "home" && destination !== "free";
     stickerPanel.hidden = destination !== "stickers";
     document.querySelector("#gf-campaign-toggle").setAttribute("aria-expanded", String(!mapPanel.hidden));
@@ -63,6 +64,8 @@ function showDestination(destination) {
     updateMap();
 }
 for (const button of navigation) {
+    if (button.disabled)
+        continue;
     button.addEventListener("click", () => showDestination(button.dataset.destination));
 }
 document.querySelector("#gf-campaign-toggle").addEventListener("click", () => {
