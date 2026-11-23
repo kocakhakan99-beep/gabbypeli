@@ -3452,3 +3452,15 @@ body {
 #gabby-fi .bakery-tray.phaser-tray-ready .bakery-slot .bakery-piece {
   visibility: hidden;
 }
+
+#gabby-fi .bakery-loaded {
+  height: 55px;
+}
+#gabby-fi .bakery-loaded canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gabby-fi .bakery-loaded.phaser-tray-ready > .bakery-piece {
+  visibility: hidden;
+}
