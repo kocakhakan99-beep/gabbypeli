@@ -38,7 +38,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
     await page.locator(`#gf-open-${game}`).tap();
     await expect(page.locator("#gf-campaign-map")).toBeVisible();
     await expect(page.locator("#gf-levels button")).toHaveCount(10);
-    if (game === "baking") {
+    if (game === "baking" || game === "garden") {
       const levels = page.locator("#gf-levels button");
       const positions = await levels.evaluateAll((buttons) => buttons.map((button) => {
         const box = button.getBoundingClientRect();

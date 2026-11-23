@@ -4134,3 +4134,52 @@ body {
 @media (max-width: 679px) {
   #gabby-fi #gf-levels[data-game="baking"] { min-height: 680px; }
 }
+
+/* Garden trail uses its own illustrated layout at each orientation. */
+#gabby-fi #gf-levels[data-game="garden"] {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  background: url("../assets/rooms/garden-map-tall.webp") center / 100% 100%;
+}
+#gabby-fi #gf-levels[data-game="garden"]::before { content: none; }
+#gabby-fi #gf-levels[data-game="garden"] button {
+  position: absolute;
+  left: var(--garden-map-x);
+  top: var(--garden-map-y);
+  transform: translate(-50%, -50%);
+  width: clamp(44px, 13vw, 60px);
+  min-height: 44px;
+  aspect-ratio: 1;
+}
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(1) { --garden-map-x: 42%; --garden-map-y: 94%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(2) { --garden-map-x: 29%; --garden-map-y: 85%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(3) { --garden-map-x: 36%; --garden-map-y: 76%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(4) { --garden-map-x: 61%; --garden-map-y: 72%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(5) { --garden-map-x: 75%; --garden-map-y: 63%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(6) { --garden-map-x: 56%; --garden-map-y: 54%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(7) { --garden-map-x: 26%; --garden-map-y: 48%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(8) { --garden-map-x: 43%; --garden-map-y: 40%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(9) { --garden-map-x: 68%; --garden-map-y: 33%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(10) { --garden-map-x: 44%; --garden-map-y: 24%; }
+@media (max-width: 679px) {
+  #gabby-fi #gf-levels[data-game="garden"] { min-height: 680px; }
+}
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game="garden"] {
+    aspect-ratio: 16 / 9;
+    background-image: url("../assets/rooms/garden-map-wide.webp");
+  }
+  #gabby-fi #gf-levels[data-game="garden"] button { width: clamp(44px, 6vw, 66px); }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(1) { --garden-map-x: 10%; --garden-map-y: 55%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(2) { --garden-map-x: 22%; --garden-map-y: 58%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(3) { --garden-map-x: 36%; --garden-map-y: 60%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(4) { --garden-map-x: 50%; --garden-map-y: 57%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(5) { --garden-map-x: 64%; --garden-map-y: 51%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(6) { --garden-map-x: 78%; --garden-map-y: 50%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(7) { --garden-map-x: 91%; --garden-map-y: 58%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(8) { --garden-map-x: 81%; --garden-map-y: 73%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(9) { --garden-map-x: 62%; --garden-map-y: 80%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(10) { --garden-map-x: 42%; --garden-map-y: 75%; }
+}
