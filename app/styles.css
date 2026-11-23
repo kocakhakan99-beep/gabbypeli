@@ -3495,3 +3495,16 @@ body {
 #gabby-fi .phaser-preparation-ready.soapy .wash-hands::after {
   visibility: hidden;
 }
+
+#gabby-fi .phaser-garden-ready > canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gabby-fi .phaser-garden-ready .garden-flower > span:not(.garden-meter) {
+  visibility: hidden;
+}
+#gabby-fi .phaser-garden-ready .garden-flower,
+#gabby-fi .phaser-garden-ready .garden-tool {
+  z-index: 2;
+}

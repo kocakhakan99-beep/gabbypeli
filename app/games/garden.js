@@ -7,10 +7,19 @@ const beds = [
     [17, 37, 60, 82],
 ];
 const colors = ["#ff88bc", "#ffd778", "#ba96ff", "#ffa6c9"];
+let gardenView;
+let gardenGeneration = 0;
+export function stopGarden() {
+    gardenGeneration++;
+    gardenView?.destroy();
+    gardenView = undefined;
+}
 export function startGarden() {
     plantBed(0);
 }
 function plantBed(level) {
+    stopGarden();
+    const generation = gardenGeneration;
     const field = el("garden-field");
     const row = beds[level];
     let amounts = row.map(() => 0);
@@ -38,6 +47,11 @@ function plantBed(level) {
         flowers.push(flower);
         field.append(flower);
     });
+    void import("../phaser-room.js").then(({ createGardenView }) => {
+        if (generation !== gardenGeneration || !field.isConnected)
+            return;
+        gardenView = createGardenView(field, flowers);
+    }).catch(() => { });
     progress(0, row.length);
     feedback("Muokataan ensin multa lapiolla.");
     setAction("", null);
@@ -71,8 +85,10 @@ function plantBed(level) {
             setAction(level + 1 < beds.length ? "Seuraava kukkapenkki" : "Juhlitaan!", () => {
                 if (level + 1 < beds.length)
                     plantBed(level + 1);
-                else
+                else {
+                    stopGarden();
                     finish("Puutarha kukkii!", "Sait puutarhurin tarran!", "fairy");
+                }
             });
             advanceAfterSuccess();
             return;

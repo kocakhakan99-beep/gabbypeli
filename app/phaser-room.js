@@ -43502,4 +43502,46 @@ function ie(e, t) {
 		}
 	};
 }
-export { Q as createBakingTrayView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView };
+function ae(e, t) {
+	let n = !0, r = window.matchMedia("(prefers-reduced-motion: reduce)").matches, i = [
+		16746684,
+		16766840,
+		12228351,
+		16754377
+	], a, o = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: e.clientWidth,
+		height: e.clientHeight,
+		scale: { mode: X.Scale.RESIZE },
+		scene: {
+			create() {
+				n && (a = this.add.graphics(), e.classList.add("phaser-garden-ready"));
+			},
+			update(o) {
+				if (!n || !a) return;
+				a.clear();
+				let s = e.clientWidth, c = e.clientHeight;
+				t.forEach((t, n) => {
+					let l = parseFloat(t.style.getPropertyValue("--flower-x")) * s / 100, u = parseFloat(t.style.getPropertyValue("--flower-y")) * c / 100, d = Number(t.style.getPropertyValue("--growth")) || 0, f = t.classList.contains("water-done") ? 1 : e.dataset.stage === "water" ? d : 0, p = r ? 0 : Math.sin(o / 700 + n) * f * 3;
+					if (a.fillStyle(t.classList.contains("soil-done") ? 7358511 : 9659206), a.fillEllipse(l, u + 25, 65, 22), f > 0) {
+						a.lineStyle(5, 3769165), a.lineBetween(l, u + 23, l + p, u - 30 * f), a.fillStyle(6662226), a.fillEllipse(l + 10, u + 5, 22 * f, 10 * f);
+						let e = u - 30 * f;
+						a.fillStyle(i[n % i.length]);
+						for (let t = 0; t < 6; t++) {
+							let n = t * Math.PI / 3;
+							a.fillCircle(l + p + Math.cos(n) * 13 * f, e + Math.sin(n) * 13 * f, 10 * f);
+						}
+						a.fillStyle(16772504), a.fillCircle(l + p, e, 8 * f);
+					}
+					e.dataset.stage === "tidy" && !t.classList.contains("tidy-done") && (a.fillStyle(10056010, 1 - d), a.fillEllipse(l - 20, u + 20, 13, 6), a.fillEllipse(l + 22, u + 28, 12, 5));
+				});
+			}
+		}
+	});
+	return { destroy() {
+		n = !1, e.classList.remove("phaser-garden-ready"), o.destroy(!0);
+	} };
+}
+export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView };

@@ -350,3 +350,61 @@ export function createPreparationView(parent: HTMLElement, mode: "wash" | "ingre
     },
   };
 }
+
+export function createGardenView(parent: HTMLElement, flowers: HTMLButtonElement[]): { destroy(): void } {
+  let alive = true;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const palette = [0xff88bc, 0xffd778, 0xba96ff, 0xffa6c9];
+  let graphics: Phaser.GameObjects.Graphics;
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent, transparent: true,
+    width: parent.clientWidth, height: parent.clientHeight,
+    scale: { mode: Phaser.Scale.RESIZE },
+    scene: {
+      create() {
+        if (!alive) return;
+        graphics = this.add.graphics();
+        parent.classList.add("phaser-garden-ready");
+      },
+      update(time: number) {
+        if (!alive || !graphics) return;
+        graphics.clear();
+        const width = parent.clientWidth;
+        const height = parent.clientHeight;
+        flowers.forEach((flower, index) => {
+          const x = parseFloat(flower.style.getPropertyValue("--flower-x")) * width / 100;
+          const y = parseFloat(flower.style.getPropertyValue("--flower-y")) * height / 100;
+          const amount = Number(flower.style.getPropertyValue("--growth")) || 0;
+          const grown = flower.classList.contains("water-done") ? 1 : parent.dataset.stage === "water" ? amount : 0;
+          const sway = reducedMotion ? 0 : Math.sin(time / 700 + index) * grown * 3;
+          graphics.fillStyle(flower.classList.contains("soil-done") ? 0x70482f : 0x936346);
+          graphics.fillEllipse(x, y + 25, 65, 22);
+          if (grown > 0) {
+            graphics.lineStyle(5, 0x39834d);
+            graphics.lineBetween(x, y + 23, x + sway, y - 30 * grown);
+            graphics.fillStyle(0x65a852);
+            graphics.fillEllipse(x + 10, y + 5, 22 * grown, 10 * grown);
+            const top = y - 30 * grown;
+            graphics.fillStyle(palette[index % palette.length]);
+            for (let petal = 0; petal < 6; petal++) {
+              const angle = petal * Math.PI / 3;
+              graphics.fillCircle(x + sway + Math.cos(angle) * 13 * grown, top + Math.sin(angle) * 13 * grown, 10 * grown);
+            }
+            graphics.fillStyle(0xffed98);
+            graphics.fillCircle(x + sway, top, 8 * grown);
+          }
+          if (parent.dataset.stage === "tidy" && !flower.classList.contains("tidy-done")) {
+            graphics.fillStyle(0x99714a, 1 - amount);
+            graphics.fillEllipse(x - 20, y + 20, 13, 6);
+            graphics.fillEllipse(x + 22, y + 28, 12, 5);
+          }
+        });
+      },
+    },
+  });
+  return { destroy() {
+    alive = false;
+    parent.classList.remove("phaser-garden-ready");
+    game.destroy(true);
+  } };
+}

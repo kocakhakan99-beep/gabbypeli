@@ -12,10 +12,11 @@ import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
 
 import { startDrawing } from "./games/drawing.js";
-import { startGarden } from "./games/garden.js";
+import { startGarden, stopGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 
 function stopGestures(): void {
+  stopGarden();
   stopFind();
   stopMemoryTimers();
   stopStroke(el("portrait"));

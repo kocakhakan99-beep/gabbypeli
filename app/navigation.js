@@ -10,9 +10,10 @@ import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
 import { startDrawing } from "./games/drawing.js";
-import { startGarden } from "./games/garden.js";
+import { startGarden, stopGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 function stopGestures() {
+    stopGarden();
     stopFind();
     stopMemoryTimers();
     stopStroke(el("portrait"));
