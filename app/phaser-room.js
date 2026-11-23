@@ -43651,21 +43651,22 @@ function se(e, t) {
 			}
 		},
 		scene: { create() {
-			let e = (e) => {
+			let r = (e) => {
 				if (e.event instanceof MouseEvent && e.event.button !== 0 || n && n.surface.isConnected && t.handlers(n.surface)) return;
 				let r = t.find(e.downElement), a = i(e);
 				r && a && (n = {
 					id: e.id,
+					touchId: e.event instanceof TouchEvent ? e.identifier : void 0,
 					surface: r,
 					previous: a
 				}, t.handlers(r)?.start(a));
-			}, r = (e) => {
-				if (n?.id !== e.id) return;
+			}, o = (e) => {
+				if (n?.id !== e.id || n.touchId !== void 0) return;
 				let r = i(e);
 				if (!r) return;
 				let a = n.previous;
 				n.previous = r, t.handlers(n.surface)?.move(a, r);
-			}, o = (e) => {
+			}, s = (e) => {
 				if (n?.id !== e.id) return;
 				if (e.wasCanceled) {
 					a();
@@ -43676,7 +43677,17 @@ function se(e, t) {
 				let o = i(e), s = t.handlers(r.surface);
 				o && s?.move(r.previous, o), r.surface.isConnected && s?.end(o);
 			};
-			this.input.on("pointerdown", e), this.input.on("pointerdownoutside", e), this.input.on("pointermove", r), this.input.on("pointerup", o), this.input.on("pointerupoutside", o), this.game.events.on("blur", a), t.ready();
+			e.addEventListener("touchmove", (e) => {
+				let r = n;
+				if (r?.touchId === void 0) return;
+				let i = Array.from(e.changedTouches).find((e) => e.identifier === r.touchId);
+				if (!i) return;
+				let a = {
+					x: i.clientX,
+					y: i.clientY
+				}, o = r.previous;
+				r.previous = a, t.handlers(r.surface)?.move(o, a);
+			}, { passive: !0 }), this.input.on("pointerdown", r), this.input.on("pointerdownoutside", r), this.input.on("pointermove", o), this.input.on("pointerup", s), this.input.on("pointerupoutside", s), this.game.events.on("blur", a), t.ready();
 		} }
 	}), a;
 }

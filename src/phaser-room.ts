@@ -522,7 +522,7 @@ export function startRoomInput(target: HTMLElement, bridge: {
   handlers(surface: HTMLElement): import("./games/stroke.js").StrokeHandlers | undefined;
 }): () => void {
   type Point = import("./games/stroke.js").Point;
-  let active: { id: number; surface: HTMLElement; previous: Point } | undefined;
+  let active: { id: number; touchId?: number; surface: HTMLElement; previous: Point } | undefined;
   const host = document.createElement("div");
   host.hidden = true;
   host.setAttribute("aria-hidden", "true");
@@ -562,11 +562,16 @@ export function startRoomInput(target: HTMLElement, bridge: {
           const surface = bridge.find(pointer.downElement);
           const point = position(pointer);
           if (!surface || !point) return;
-          active = { id: pointer.id, surface, previous: point };
+          active = {
+            id: pointer.id,
+            touchId: pointer.event instanceof TouchEvent ? pointer.identifier : undefined,
+            surface,
+            previous: point,
+          };
           bridge.handlers(surface)?.start(point);
         };
         const move = (pointer: Phaser.Input.Pointer): void => {
-          if (active?.id !== pointer.id) return;
+          if (active?.id !== pointer.id || active.touchId !== undefined) return;
           const point = position(pointer);
           if (!point) return;
           const previous = active.previous;
@@ -586,6 +591,17 @@ export function startRoomInput(target: HTMLElement, bridge: {
           if (point) handlers?.move(stroke.previous, point);
           if (stroke.surface.isConnected) handlers?.end(point);
         };
+        // Phaser limits touchmove to the canvas. Accessible controls sit above it.
+        target.addEventListener("touchmove", (event) => {
+          const stroke = active;
+          if (stroke?.touchId === undefined) return;
+          const touch = Array.from(event.changedTouches).find((touch) => touch.identifier === stroke.touchId);
+          if (!touch) return;
+          const point = { x: touch.clientX, y: touch.clientY };
+          const previous = stroke.previous;
+          stroke.previous = point;
+          bridge.handlers(stroke.surface)?.move(previous, point);
+        }, { passive: true });
         this.input.on("pointerdown", down);
         this.input.on("pointerdownoutside", down);
         this.input.on("pointermove", move);
