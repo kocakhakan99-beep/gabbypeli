@@ -48,14 +48,31 @@ for (const game of campaignGames) {
         updateMap();
     });
 }
-function showMap(show) {
-    document.querySelector("#gf-campaign-map").hidden = !show;
-    document.querySelector("#gf-free-games").hidden = show;
-    document.querySelector("#gf-campaign-toggle").setAttribute("aria-expanded", String(show));
+const navigation = document.querySelectorAll(".dollhouse-nav button");
+const mapPanel = document.querySelector("#gf-campaign-map");
+const roomPanel = document.querySelector("#gf-free-games");
+const stickerPanel = document.querySelector("#gf-sticker-book");
+function showDestination(destination) {
+    el("home").dataset.destination = destination;
+    mapPanel.hidden = destination !== "campaign";
+    roomPanel.hidden = destination !== "home" && destination !== "free";
+    stickerPanel.hidden = destination !== "stickers";
+    document.querySelector("#gf-campaign-toggle").setAttribute("aria-expanded", String(!mapPanel.hidden));
+    for (const button of navigation)
+        button.setAttribute("aria-pressed", String(button.dataset.destination === destination));
     updateMap();
 }
-document.querySelector("#gf-campaign-toggle").addEventListener("click", () => showMap(true));
-document.querySelector("#gf-free-toggle").addEventListener("click", () => showMap(false));
+for (const button of navigation) {
+    button.addEventListener("click", () => showDestination(button.dataset.destination));
+}
+document.querySelector("#gf-campaign-toggle").addEventListener("click", () => {
+    showDestination("campaign");
+    document.querySelector("#gf-campaign-resume:not([hidden]), #gf-levels button:not(:disabled)")?.focus();
+});
+document.querySelector("#gf-free-toggle").addEventListener("click", () => {
+    showDestination("free");
+    roomPanel.querySelector("button:not([hidden])")?.focus();
+});
 document.querySelector("#gf-next-level").addEventListener("click", () => {
     const level = campaignLevel();
     if (level !== undefined)
@@ -64,13 +81,15 @@ document.querySelector("#gf-next-level").addEventListener("click", () => {
 function exitGame() {
     const adventure = campaignLevel() !== undefined;
     home();
-    showMap(adventure);
-    if (adventure)
-        document.querySelector("#gf-campaign-toggle").focus();
+    showDestination(adventure ? "campaign" : "free");
+    if (adventure) {
+        const next = document.querySelector('#gf-levels [aria-current="step"]');
+        (next ?? document.querySelector(`#gf-map-${mapGame}`))?.focus();
+    }
 }
 el("home-button").addEventListener("click", exitGame);
 el("other").addEventListener("click", exitGame);
-updateMap();
+showDestination("home");
 el("action").addEventListener("click", () => {
     cancelAdvance();
     const action = state.action;

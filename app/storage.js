@@ -341,5 +341,8 @@ export function renderStickers() {
                 " / " +
                 (stickerSets.length * 2 + Object.keys(extraStickers).length) +
                 " tarraa";
+    const homeCount = document.getElementById("gf-home-sticker-count");
+    if (homeCount && summary)
+        homeCount.textContent = summary.textContent;
     renderAlbum();
 }

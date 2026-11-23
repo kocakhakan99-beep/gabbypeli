@@ -47,6 +47,10 @@ export function renderCampaign(game, start) {
     const map = document.querySelector("#gf-levels");
     map.dataset.game = game;
     map.replaceChildren();
+    const resume = document.querySelector("#gf-campaign-resume");
+    resume.hidden = progress >= levelCount;
+    resume.textContent = progress ? `Jatka tasolta ${progress + 1}` : "Aloita seikkailu";
+    resume.onclick = () => start(progress + 1);
     for (let level = 1; level <= levelCount; level++) {
         const button = document.createElement("button");
         button.type = "button";

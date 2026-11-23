@@ -3853,3 +3853,64 @@ body {
   border-radius: 16px;
   background: #fff6f4dc;
 }
+
+#gabby-fi .dollhouse-nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 6px;
+  border: 3px solid #fff;
+  border-radius: 24px;
+  background: #f2ddfb;
+  box-shadow: 0 4px #c79bd9;
+}
+#gabby-fi .dollhouse-nav button {
+  min-height: 48px;
+  padding: 6px 3px;
+  border: 2px solid #fff9;
+  border-radius: 16px;
+  background: #fff4ff;
+  color: #582174;
+  font: inherit;
+  font-size: clamp(.73rem, 2.9vw, 1rem);
+  font-weight: 800;
+  cursor: pointer;
+}
+#gabby-fi .dollhouse-nav button[aria-pressed="true"] {
+  background: #ffe193;
+  border-color: #fff;
+  color: #50226c;
+}
+#gabby-fi .dollhouse-nav button:focus-visible { outline: 3px solid #512171; }
+#gabby-fi .home-sticker-count {
+  align-self: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: #fff4ff;
+  color: #582174;
+  font-weight: 800;
+}
+#gabby-fi #gf-home[data-destination="free"] .home-house,
+#gabby-fi #gf-home[data-destination="stickers"] .home-house,
+#gabby-fi #gf-sticker-book[hidden],
+#gabby-fi .campaign-resume[hidden] { display: none; }
+#gabby-fi .campaign-resume {
+  display: block;
+  min-height: 50px;
+  margin: 16px auto 0;
+}
+@media (max-width: 370px) {
+  #gabby-fi .dollhouse-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 760px) {
+  #gabby-fi #gf-home[data-destination="home"] .home-house {
+    margin-bottom: 0;
+  }
+  #gabby-fi #gf-home[data-destination="home"] .mode-hub > .mode-choices {
+    position: relative;
+    width: min(88%, 740px);
+    margin: -56px auto 0;
+  }
+}

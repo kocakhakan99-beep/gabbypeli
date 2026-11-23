@@ -6,6 +6,15 @@ test("adventure map and celebration fit a small touch screen", async ({ page }) 
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
+  const navigation = page.getByRole("navigation", { name: "Nukketalo" });
+  await navigation.getByRole("button", { name: "Tarrakirja" }).tap();
+  await expect(page.locator("#gf-sticker-book")).toBeVisible();
+  await expect(page.locator("#gf-free-games")).toBeHidden();
+  await navigation.getByRole("button", { name: "Vapaa leikki" }).tap();
+  await expect(page.locator("#gf-free-games")).toBeVisible();
+  await expect(page.locator("#gf-sticker-book")).toBeHidden();
+  await navigation.getByRole("button", { name: "Koti" }).tap();
+  await expect(page.locator(".home-house img")).toBeVisible();
   await page.locator("#gf-campaign-toggle").tap();
   for (const game of ["memory", "puzzle", "find", "garden", "baking"]) {
     await page.locator(`#gf-map-${game}`).tap();
@@ -30,7 +39,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }) 
   await expect(page.locator("#gf-map-puzzle")).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#gf-map-progress")).toHaveJSProperty("value", 1);
   await expect(page.locator("#gf-coins")).toHaveText("25");
-  await page.getByRole("button", { name: "Taso 2", exact: true }).tap();
+  await page.getByRole("button", { name: "Jatka tasolta 2" }).tap();
   await expect(page.locator("#gf-win")).toBeHidden();
   await expect(page.locator("#gf-board .slot")).toHaveCount(2);
   expect(errors).toEqual([]);
