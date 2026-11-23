@@ -2424,3 +2424,82 @@ body {
     transition: none;
   }
 }
+
+#gabby-fi .hide-room {
+  width: 100%;
+  min-height: clamp(220px, 55vw, 340px);
+  display: flex;
+  align-items: end;
+  justify-content: space-evenly;
+  gap: 8px;
+  padding: 25px 10px 22px;
+  overflow: hidden;
+  border: 5px solid #fff;
+  border-radius: 24px;
+  background:
+    linear-gradient(#fff7, #fff4),
+    url("../assets/room-kitchen.webp") center / cover;
+}
+#gabby-fi .hide-spot {
+  position: relative;
+  width: 30%;
+  height: clamp(120px, 32vw, 220px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+#gabby-fi .hide-spot .hiding-friend {
+  position: absolute;
+  inset: 4% 5% 5%;
+  display: grid;
+  place-items: center;
+}
+#gabby-fi .hide-spot .hiding-friend .picture {
+  width: 95%;
+}
+#gabby-fi .hide-spot .furniture {
+  position: absolute;
+  inset: 9% 0 0;
+  border: 5px solid #ab78a7;
+  border-radius: 14px 14px 8px 8px;
+  background: linear-gradient(90deg, #f1c8e6 48%, #bc8ab8 49% 51%, #f1c8e6 52%);
+  box-shadow:
+    inset 0 0 0 4px #fff8,
+    0 6px #91618d;
+  transform-origin: left bottom;
+  transition:
+    transform 550ms ease,
+    opacity 400ms ease;
+}
+#gabby-fi .hide-spot.box .furniture {
+  inset: 43% 0 0;
+  background: #f7c279;
+  border-color: #ca945a;
+}
+#gabby-fi .hide-spot.chair .furniture {
+  inset: 28% 8% 0;
+  border-radius: 45% 45% 15px 15px;
+  background: #a8d5e5;
+  border-color: #72abc2;
+}
+#gabby-fi .furniture span {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  top: 48%;
+  height: 7px;
+  border-radius: 8px;
+  background: #fff9;
+}
+#gabby-fi .hide-spot.opened .furniture {
+  transform: translateX(-85%) rotate(-12deg);
+  opacity: 0.3;
+}
+#gabby-fi .hide-spot.opened .hiding-friend .picture {
+  animation: playful-success 700ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .hide-spot .furniture {
+    transition: none;
+  }
+}

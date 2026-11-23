@@ -1,104 +1,72 @@
-import { advanceAfterSuccess } from "../ui.js";
-import { button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
-import { ding, say, unlock } from "../audio.js";
+import { advanceAfterSuccess, button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
+import { ding, unlock } from "../audio.js";
 import { el } from "../dom.js";
 import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
-import { bindStroke, stopStroke } from "./stroke.js";
+const furniture = [
+    { id: "cupboard", name: "Kaappi" },
+    { id: "box", name: "Lelulaatikko" },
+    { id: "chair", name: "Tuoli" },
+];
 export function renderFind() {
-    const f = friends[state.learnIndex];
-    const portrait = el("portrait");
-    stopStroke(portrait);
+    const friend = friends[state.learnIndex];
     state.learnDone = false;
-    heading(f.id, "Kuka piilottelee?", "Katso pientä kuvan osaa. Kenen kuva se on?", f.room);
-    portrait.classList.add("find-clue");
-    portrait.setAttribute("aria-label", "Tutki piilossa olevaa kaveria liikuttamalla sormea kuvan päällä");
-    let clueScale = 3;
-    const tile = f.tile ?? state.learnIndex;
-    portrait.style.setProperty("--clue-x", ((3 * (tile % 3) + 1) / 8) * 100 + "%");
-    function revealMore() {
-        if (state.learnDone || clueScale <= 1.5)
-            return;
-        clueScale = Math.max(1.5, clueScale - 0.5);
-        const x = tile % 3;
-        const y = Math.floor(tile / 3);
-        portrait.style.backgroundSize = `${3 * clueScale * 100}% ${2 * clueScale * 100}%`;
-        portrait.style.backgroundPosition = `${((clueScale * x + (clueScale - 1) / 2) / (3 * clueScale - 1)) * 100}% ${((clueScale * y + (clueScale - 1) / 2) / (2 * clueScale - 1)) * 100}%`;
-    }
-    let travelled = 0;
-    bindStroke(portrait, {
-        start() {
-            travelled = 0;
-        },
-        move(from, to) {
-            travelled += Math.hypot(to.x - from.x, to.y - from.y);
-            if (travelled >= 40) {
-                travelled = 0;
-                revealMore();
-            }
-        },
-        end() { },
-    });
-    portrait.style.setProperty("--clue-y", ((3 * Math.floor(tile / 3) + 1) / 5) * 100 + "%");
+    heading(friend.id, "Kuka piilottelee?", "Kosketa huonekaluja. Kuka niiden takaa löytyy?", friend.room);
+    const portrait = el("portrait");
+    portrait.dataset.cast = "gabby";
+    portrait.setAttribute("aria-label", "Gabby etsii piilottelevaa kaveria");
     el("pattern").hidden = true;
-    el("choices").replaceChildren();
+    const field = el("choices");
+    field.replaceChildren();
+    const room = document.createElement("div");
+    room.className = "hide-room";
+    room.setAttribute("role", "group");
+    room.setAttribute("aria-label", "Tutki huoneen huonekaluja");
+    field.append(room);
     feedback("");
     setAction("", null);
     progress(state.learnIndex, friends.length);
-    const choices = shuffle([
-        f,
-        ...shuffle(friends.filter((friend) => friend.id !== f.id)).slice(0, 2),
-    ]);
-    choices.forEach((friend) => {
-        const b = button("", () => {
-            if (state.learnDone || b.disabled)
+    const hidingPlace = Math.floor(Math.random() * furniture.length);
+    shuffle(furniture).forEach((item, index) => {
+        const isHiding = index === hidingPlace;
+        const spot = button("", () => {
+            if (state.learnDone || spot.classList.contains("opened"))
                 return;
             unlock();
-            if (friend.id === f.id) {
-                state.learnDone = true;
-                stopStroke(portrait);
-                b.classList.add("correct");
-                portrait.classList.remove("find-clue");
-                portrait.classList.add("find-reveal");
-                portrait.style.removeProperty("--clue-x");
-                portrait.style.removeProperty("--clue-y");
-                portrait.style.backgroundSize = "300% 200%";
-                el("choices")
-                    .querySelectorAll("button")
-                    .forEach((x) => (x.disabled = true));
-                feedback("Löysit oikean kaverin! " + f.name + "!");
-                ding("discovery");
-                say("Löysit oikean kaverin! " + f.name);
-                el("portrait").style.backgroundSize = "";
-                el("portrait").style.backgroundPosition = "";
-                progress(state.learnIndex + 1, friends.length);
-                setAction(state.learnIndex === friends.length - 1
-                    ? "Juhlitaan!"
-                    : "Seuraava kaveri", () => {
-                    state.learnIndex++;
-                    if (state.learnIndex === friends.length)
-                        finish("Tarkat silmät!", "Löysit kaikki kuusi kaveria. Gabby on iloinen avustasi!", "gabby");
-                    else
-                        renderFind();
-                });
-                advanceAfterSuccess();
+            spot.classList.add("opened");
+            if (!isHiding) {
+                spot.setAttribute("aria-label", item.name + " on tyhjä");
+                feedback("Täällä ei vielä ollut ketään. Tutkitaan lisää!");
+                return;
             }
-            else {
-                b.disabled = true;
-                revealMore();
-                feedback("Tutkitaan vielä. Katso värejä ja korvia.");
-                say("Tutkitaan vielä. Katso kuvan värejä ja korvia.");
-            }
-        }, "choice");
-        b.innerHTML =
-            '<span class="mini">' +
-                picture(friend.id) +
-                "</span><span>" +
-                friend.name +
-                "</span>";
-        b.setAttribute("aria-label", friend.name);
-        el("choices").append(b);
+            state.learnDone = true;
+            spot.setAttribute("aria-label", "Löytyi " + friend.name);
+            room.querySelectorAll("button").forEach((b) => {
+                if (b !== spot)
+                    b.disabled = true;
+            });
+            portrait.dataset.cast = friend.id;
+            portrait.setAttribute("aria-label", friend.name);
+            feedback("Löysit kaverin! " + friend.name + "!");
+            ding("discovery");
+            progress(state.learnIndex + 1, friends.length);
+            setAction(state.learnIndex === friends.length - 1
+                ? "Juhlitaan!"
+                : "Seuraava kaveri", () => {
+                state.learnIndex++;
+                if (state.learnIndex === friends.length)
+                    finish("Tarkat silmät!", "Löysit kaikki kuusi kaveria!", "gabby");
+                else
+                    renderFind();
+            });
+            advanceAfterSuccess();
+        }, "hide-spot " + item.id);
+        spot.setAttribute("aria-label", "Tutki " + item.name.toLowerCase());
+        spot.innerHTML =
+            '<span class="hiding-friend">' +
+                (isHiding ? picture(friend.id) : "") +
+                '</span><span class="furniture" aria-hidden="true"><span></span></span>';
+        room.append(spot);
     });
-    say("Kuka piilottelee? Katso kuvan osaa ja kosketa oikeaa kaveria.");
 }
