@@ -7,17 +7,28 @@ export interface RoomItem {
 
 export interface RoomView {
   reveal(index: number): void;
+  drag(index: number, progress: number): void;
   destroy(): void;
 }
 
-/** Renders the first hide-and-seek room. The HTML buttons provide accessible input. */
+/** Renders a hide-and-seek room. The HTML buttons provide accessible input. */
 export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: string, surprise: string): RoomView {
   const furniture: Phaser.GameObjects.Image[] = [];
   const surprises: Phaser.GameObjects.Image[] = [];
+  const originalX: number[] = [];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let scene: Phaser.Scene | undefined;
   let ready = false;
   const pending = new Set<number>();
+
+  function drag(index: number, progress: number): void {
+    const object = furniture[index];
+    if (!object) return;
+    const amount = Phaser.Math.Clamp(progress, 0, 1);
+    object.setX(originalX[index] - 105 * amount);
+    object.setAngle(-10 * amount);
+    object.setAlpha(1 - 0.75 * amount);
+  }
 
   function reveal(index: number): void {
     if (!ready || !scene) {
@@ -29,10 +40,10 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: s
     if (!object || !surprise) return;
     surprise.setVisible(true);
     if (reducedMotion) {
-      object.setAlpha(0.2).setX(object.x - 105);
+      drag(index, 1);
       return;
     }
-    scene.tweens.add({ targets: object, x: object.x - 105, angle: -10, alpha: 0.25, duration: 500, ease: "Sine.easeInOut" });
+    scene.tweens.add({ targets: object, x: originalX[index] - 105, angle: -10, alpha: 0.25, duration: 500, ease: "Sine.easeInOut" });
     const scaleX = surprise.scaleX;
     const scaleY = surprise.scaleY;
     surprise.setScale(scaleX * 0.2, scaleY * 0.2);
@@ -57,6 +68,7 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: s
         const positions = [[200, 140], [600, 140], [200, 420], [600, 420]];
         items.forEach((item, index) => {
           const [x, y] = positions[index];
+          originalX.push(x);
           const surprise = this.add.image(x, y, item.hidden ? "hidden-friend" : "hidden-surprise");
           surprise.setDisplaySize(135, 135).setVisible(false);
           surprises.push(surprise);
@@ -72,5 +84,5 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: s
       },
     },
   });
-  return { reveal, destroy: () => { parent.parentElement?.classList.remove("phaser-ready"); game.destroy(true); } };
+  return { reveal, drag, destroy: () => { parent.parentElement?.classList.remove("phaser-ready"); game.destroy(true); } };
 }

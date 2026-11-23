@@ -3418,6 +3418,7 @@ body {
   z-index: 1;
   height: 100%;
   max-height: none;
+  touch-action: none;
 }
 #gabby-fi .hide-room.phaser-ready .hide-spot .furniture-image,
 #gabby-fi .hide-room.phaser-ready .hide-spot .hiding-friend {

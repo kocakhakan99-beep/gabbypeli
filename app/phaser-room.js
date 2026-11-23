@@ -43245,36 +43245,42 @@ r.Q8, r.En, r.Qw, r.gd, r.j$, r.l2, r.Tm, r.Xs, r.iJ, r.XT, r.dv, r.PX, r.B_, r.
 var Z = r.Ay;
 // src/phaser-room.ts
 function te(e, t, n, r) {
-	let i = [], a = [], o = window.matchMedia("(prefers-reduced-motion: reduce)").matches, s, c = !1, l = /* @__PURE__ */ new Set();
-	function u(e) {
-		if (!c || !s) {
-			l.add(e);
+	let i = [], a = [], o = [], s = window.matchMedia("(prefers-reduced-motion: reduce)").matches, c, l = !1, u = /* @__PURE__ */ new Set();
+	function d(e, t) {
+		let n = i[e];
+		if (!n) return;
+		let r = Z.Math.Clamp(t, 0, 1);
+		n.setX(o[e] - 105 * r), n.setAngle(-10 * r), n.setAlpha(1 - .75 * r);
+	}
+	function f(e) {
+		if (!l || !c) {
+			u.add(e);
 			return;
 		}
 		let t = i[e], n = a[e];
 		if (!t || !n) return;
-		if (n.setVisible(!0), o) {
-			t.setAlpha(.2).setX(t.x - 105);
+		if (n.setVisible(!0), s) {
+			d(e, 1);
 			return;
 		}
-		s.tweens.add({
+		c.tweens.add({
 			targets: t,
-			x: t.x - 105,
+			x: o[e] - 105,
 			angle: -10,
 			alpha: .25,
 			duration: 500,
 			ease: "Sine.easeInOut"
 		});
-		let r = n.scaleX, u = n.scaleY;
-		n.setScale(r * .2, u * .2), s.tweens.add({
+		let r = n.scaleX, f = n.scaleY;
+		n.setScale(r * .2, f * .2), c.tweens.add({
 			targets: n,
 			scaleX: r,
-			scaleY: u,
+			scaleY: f,
 			duration: 450,
 			ease: "Back.easeOut"
 		});
 	}
-	let d = new Z.Game({
+	let p = new Z.Game({
 		type: Z.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43290,7 +43296,7 @@ function te(e, t, n, r) {
 				this.load.image("hidden-friend", `./assets/friends/${n}.webp`), this.load.image("hidden-surprise", `./assets/objects/${r}.webp`);
 			},
 			create() {
-				s = this;
+				c = this;
 				let n = [
 					[200, 140],
 					[600, 140],
@@ -43298,18 +43304,21 @@ function te(e, t, n, r) {
 					[600, 420]
 				];
 				t.forEach((e, t) => {
-					let [r, o] = n[t], s = this.add.image(r, o, e.hidden ? "hidden-friend" : "hidden-surprise");
-					s.setDisplaySize(135, 135).setVisible(!1), a.push(s);
-					let c = this.add.image(r, o, e.id), l = Math.min(280 / c.width, 235 / c.height);
-					c.setScale(l), i.push(c);
-				}), c = !0, e.parentElement?.classList.add("phaser-ready"), l.forEach(u), l.clear();
+					let [r, s] = n[t];
+					o.push(r);
+					let c = this.add.image(r, s, e.hidden ? "hidden-friend" : "hidden-surprise");
+					c.setDisplaySize(135, 135).setVisible(!1), a.push(c);
+					let l = this.add.image(r, s, e.id), u = Math.min(280 / l.width, 235 / l.height);
+					l.setScale(u), i.push(l);
+				}), l = !0, e.parentElement?.classList.add("phaser-ready"), u.forEach(f), u.clear();
 			}
 		}
 	});
 	return {
-		reveal: u,
+		reveal: f,
+		drag: d,
 		destroy: () => {
-			e.parentElement?.classList.remove("phaser-ready"), d.destroy(!0);
+			e.parentElement?.classList.remove("phaser-ready"), p.destroy(!0);
 		}
 	};
 }
