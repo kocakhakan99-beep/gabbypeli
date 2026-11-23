@@ -31,6 +31,7 @@ test("one swipe opens multiple flowers and the next bed also works by keyboard",
   await page.goto("/");
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-garden").click();
+  await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   const field = page.locator("#gf-garden-field");
   for (const count of [3, 4]) {
     for (const stage of ["soil", "water", "tidy"]) {
@@ -51,6 +52,7 @@ test("a puzzle piece follows a finger and lands in its matching slot", async ({
   await page.goto("/");
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-puzzle").click();
+  await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   const piece = page.locator('#gf-tray [data-piece="0"]');
   await piece.scrollIntoViewIfNeeded();
   const a = await piece.boundingBox();
@@ -72,6 +74,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
 }) => {
   await page.goto("/");
   await page.locator("#gf-open-baking").click();
+  await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   await page.getByRole("button", { name: "Piparit" }).click();
   await expect(page.locator(".baking-wash")).toHaveClass(/phaser-preparation-ready/);
   await page.getByRole("button", { name: "Ota saippuaa" }).click();

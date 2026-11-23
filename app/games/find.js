@@ -1,3 +1,4 @@
+import { bindStroke } from "./stroke.js";
 import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess, button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
 import { ding, unlock } from "../audio.js";
@@ -93,7 +94,7 @@ export function renderFind() {
     roomItems.forEach((roomItem, index) => {
         const item = furniture.find((object) => object.id === roomItem.id);
         const isHiding = index === hidingPlace;
-        let pointer = null;
+        let origin;
         let suppressClick = false;
         const spot = button("", () => {
             if (suppressClick) {
@@ -137,35 +138,31 @@ export function renderFind() {
         }, "hide-spot " + item.id);
         spot.style.setProperty("--spot-delay", `${index * 0.35}s`);
         spot.setAttribute("aria-label", "Tutki " + item.name.toLowerCase());
-        spot.addEventListener("pointerdown", (event) => {
-            if (spot.disabled || spot.classList.contains("opened") || !event.isPrimary)
-                return;
-            pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0 };
-            spot.setPointerCapture(event.pointerId);
-        });
-        spot.addEventListener("pointermove", (event) => {
-            if (!pointer || pointer.id !== event.pointerId)
-                return;
-            pointer.distance = Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y);
-            roomView?.drag(index, pointer.distance / Math.max(48, spot.clientWidth * 0.35));
-        });
-        spot.addEventListener("pointerup", (event) => {
-            if (!pointer || pointer.id !== event.pointerId)
-                return;
-            const moved = pointer.distance >= Math.max(28, spot.clientWidth * 0.2);
-            pointer = null;
-            if (moved) {
-                spot.click();
-                suppressClick = true;
-                window.setTimeout(() => { suppressClick = false; }, 0);
-            }
-            else {
-                roomView?.drag(index, 0);
-            }
-        });
-        spot.addEventListener("pointercancel", () => {
-            pointer = null;
-            roomView?.drag(index, 0);
+        bindStroke(spot, {
+            start(point) {
+                if (!spot.disabled && !spot.classList.contains("opened"))
+                    origin = point;
+            },
+            move(_previous, point) {
+                if (!origin)
+                    return;
+                const distance = Math.hypot(point.x - origin.x, point.y - origin.y);
+                roomView?.drag(index, distance / Math.max(48, spot.clientWidth * 0.35));
+            },
+            end(point) {
+                const start = origin;
+                origin = undefined;
+                if (!start)
+                    return;
+                if (point && Math.hypot(point.x - start.x, point.y - start.y) >= Math.max(28, spot.clientWidth * 0.2)) {
+                    spot.click();
+                    suppressClick = true;
+                    window.setTimeout(() => { suppressClick = false; }, 0);
+                }
+                else {
+                    roomView?.drag(index, 0);
+                }
+            },
         });
         spot.innerHTML =
             '<span class="hiding-friend">' +

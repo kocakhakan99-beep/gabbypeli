@@ -11,8 +11,11 @@ import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
 import { startGarden, stopGarden } from "./games/garden.js";
-import { stopStroke } from "./games/stroke.js";
+import { enableSceneStrokes, sceneStrokeHandlers, sceneStrokeTarget, stopStroke } from "./games/stroke.js";
+let inputStarted = false;
+let cancelRoomInput;
 function stopGestures() {
+    cancelRoomInput?.();
     stopGarden();
     stopFind();
     stopMemoryTimers();
@@ -87,6 +90,20 @@ export function open(which, level) {
     el("learn").hidden = !["find", "learn", "sizes"].includes(which);
     feedback("");
     setAction("", null);
+    if (!inputStarted && ["memory", "puzzle", "find", "garden", "baking"].includes(which)) {
+        inputStarted = true;
+        const target = el("play");
+        void import("./phaser-room.js").then(({ startRoomInput }) => {
+            cancelRoomInput = startRoomInput(target, {
+                ready: () => {
+                    enableSceneStrokes(target);
+                    target.dataset.input = "phaser";
+                },
+                find: sceneStrokeTarget,
+                handlers: sceneStrokeHandlers,
+            });
+        }).catch(() => { inputStarted = false; });
+    }
     starters[which]();
     el("title").focus();
     el("play").scrollIntoView({ block: "start" });

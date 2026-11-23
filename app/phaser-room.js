@@ -43612,4 +43612,72 @@ function oe(e, t, n, r = 1, i) {
 		}
 	};
 }
-export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView, oe as createTileView };
+function se(e, t) {
+	let n, r = document.createElement("div");
+	r.hidden = !0, r.setAttribute("aria-hidden", "true"), e.append(r);
+	function i(e) {
+		let t = e.event;
+		if (t instanceof MouseEvent) return {
+			x: t.clientX,
+			y: t.clientY
+		};
+		if (t instanceof TouchEvent) {
+			let n = Array.from(t.changedTouches).find((t) => t.identifier === e.identifier);
+			if (n) return {
+				x: n.clientX,
+				y: n.clientY
+			};
+		}
+	}
+	function a() {
+		let e = n;
+		n = void 0, e && t.handlers(e.surface)?.end();
+	}
+	return new X.Game({
+		type: X.CANVAS,
+		parent: r,
+		width: 1,
+		height: 1,
+		audio: { noAudio: !0 },
+		input: {
+			keyboard: !1,
+			mouse: {
+				target: e,
+				preventDefaultMove: !1
+			},
+			touch: {
+				target: e,
+				capture: !1
+			}
+		},
+		scene: { create() {
+			let e = (e) => {
+				if (e.event instanceof MouseEvent && e.event.button !== 0 || n && n.surface.isConnected && t.handlers(n.surface)) return;
+				let r = t.find(e.downElement), a = i(e);
+				r && a && (n = {
+					id: e.id,
+					surface: r,
+					previous: a
+				}, t.handlers(r)?.start(a));
+			}, r = (e) => {
+				if (n?.id !== e.id) return;
+				let r = i(e);
+				if (!r) return;
+				let a = n.previous;
+				n.previous = r, t.handlers(n.surface)?.move(a, r);
+			}, o = (e) => {
+				if (n?.id !== e.id) return;
+				if (e.wasCanceled) {
+					a();
+					return;
+				}
+				let r = n;
+				n = void 0;
+				let o = i(e), s = t.handlers(r.surface);
+				o && s?.move(r.previous, o), r.surface.isConnected && s?.end(o);
+			};
+			this.input.on("pointerdown", e), this.input.on("pointerdownoutside", e), this.input.on("pointermove", r), this.input.on("pointerup", o), this.input.on("pointerupoutside", o), this.game.events.on("blur", a), t.ready();
+		} }
+	}), a;
+}
+export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView, oe as createTileView, se as startRoomInput };

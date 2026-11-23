@@ -1,6 +1,23 @@
+const registered = new WeakMap();
+let engineTarget;
+export function enableSceneStrokes(target) {
+    engineTarget = target;
+}
+export function sceneStrokeTarget(target) {
+    if (!(target instanceof Element))
+        return;
+    for (let element = target; element && engineTarget?.contains(element); element = element.parentElement) {
+        if (element instanceof HTMLElement && registered.has(element))
+            return element;
+    }
+}
+export function sceneStrokeHandlers(surface) {
+    return registered.get(surface);
+}
 const cleanups = new WeakMap();
 export function bindStroke(surface, handlers) {
     cleanups.get(surface)?.();
+    registered.set(surface, handlers);
     const listeners = new AbortController();
     const { signal } = listeners;
     let pointer;
@@ -19,7 +36,7 @@ export function bindStroke(surface, handlers) {
         handlers.end(releasedAt);
     }
     surface.addEventListener("pointerdown", (event) => {
-        if (pointer !== undefined || event.button !== 0)
+        if (pointer !== undefined || event.button !== 0 || engineTarget?.contains(surface))
             return;
         pointer = event.pointerId;
         previous = point(event);
@@ -53,6 +70,7 @@ export function bindStroke(surface, handlers) {
 export function stopStroke(surface) {
     cleanups.get(surface)?.();
     cleanups.delete(surface);
+    registered.delete(surface);
 }
 export function distanceToStroke(point, start, end) {
     const dx = end.x - start.x;

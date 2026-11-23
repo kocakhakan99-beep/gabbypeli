@@ -1,9 +1,27 @@
 // Use screen coordinates so hit testing works equally for mouse, pen and touch.
 export type Point = { x: number; y: number };
-interface StrokeHandlers {
+export interface StrokeHandlers {
   start(point: Point): void;
   move(from: Point, to: Point): void;
   end(releasedAt?: Point): void;
+}
+
+const registered = new WeakMap<HTMLElement, StrokeHandlers>();
+let engineTarget: HTMLElement | undefined;
+
+export function enableSceneStrokes(target: HTMLElement): void {
+  engineTarget = target;
+}
+
+export function sceneStrokeTarget(target: EventTarget | null): HTMLElement | undefined {
+  if (!(target instanceof Element)) return;
+  for (let element = target; element && engineTarget?.contains(element); element = element.parentElement!) {
+    if (element instanceof HTMLElement && registered.has(element)) return element;
+  }
+}
+
+export function sceneStrokeHandlers(surface: HTMLElement): StrokeHandlers | undefined {
+  return registered.get(surface);
 }
 
 const cleanups = new WeakMap<HTMLElement, () => void>();
@@ -13,6 +31,7 @@ export function bindStroke(
   handlers: StrokeHandlers,
 ): void {
   cleanups.get(surface)?.();
+  registered.set(surface, handlers);
   const listeners = new AbortController();
   const { signal } = listeners;
   let pointer: number | undefined;
@@ -34,7 +53,7 @@ export function bindStroke(
   surface.addEventListener(
     "pointerdown",
     (event) => {
-      if (pointer !== undefined || event.button !== 0) return;
+      if (pointer !== undefined || event.button !== 0 || engineTarget?.contains(surface)) return;
       pointer = event.pointerId;
       previous = point(event);
       surface.setPointerCapture(pointer);
@@ -79,6 +98,7 @@ export function bindStroke(
 export function stopStroke(surface: HTMLElement): void {
   cleanups.get(surface)?.();
   cleanups.delete(surface);
+  registered.delete(surface);
 }
 
 export function distanceToStroke(

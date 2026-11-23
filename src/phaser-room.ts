@@ -514,3 +514,87 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
     overlay.remove();
   } };
 }
+
+/** One input scene for the playable rooms. HTML retains focus and keyboard activation. */
+export function startRoomInput(target: HTMLElement, bridge: {
+  ready(): void;
+  find(target: EventTarget | null): HTMLElement | undefined;
+  handlers(surface: HTMLElement): import("./games/stroke.js").StrokeHandlers | undefined;
+}): () => void {
+  type Point = import("./games/stroke.js").Point;
+  let active: { id: number; surface: HTMLElement; previous: Point } | undefined;
+  const host = document.createElement("div");
+  host.hidden = true;
+  host.setAttribute("aria-hidden", "true");
+  target.append(host);
+
+  function position(pointer: Phaser.Input.Pointer): Point | undefined {
+    const event = pointer.event;
+    if (event instanceof MouseEvent) return { x: event.clientX, y: event.clientY };
+    if (event instanceof TouchEvent) {
+      const touch = Array.from(event.changedTouches).find((touch) => touch.identifier === pointer.identifier);
+      if (touch) return { x: touch.clientX, y: touch.clientY };
+    }
+  }
+
+  function cancel(): void {
+    const stroke = active;
+    active = undefined;
+    if (stroke) bridge.handlers(stroke.surface)?.end();
+  }
+
+  new Phaser.Game({
+    type: Phaser.CANVAS,
+    parent: host,
+    width: 1,
+    height: 1,
+    audio: { noAudio: true },
+    input: {
+      keyboard: false,
+      mouse: { target, preventDefaultMove: false },
+      touch: { target, capture: false },
+    },
+    scene: {
+      create() {
+        const down = (pointer: Phaser.Input.Pointer): void => {
+          if (pointer.event instanceof MouseEvent && pointer.event.button !== 0) return;
+          if (active && active.surface.isConnected && bridge.handlers(active.surface)) return;
+          const surface = bridge.find(pointer.downElement);
+          const point = position(pointer);
+          if (!surface || !point) return;
+          active = { id: pointer.id, surface, previous: point };
+          bridge.handlers(surface)?.start(point);
+        };
+        const move = (pointer: Phaser.Input.Pointer): void => {
+          if (active?.id !== pointer.id) return;
+          const point = position(pointer);
+          if (!point) return;
+          const previous = active.previous;
+          active.previous = point;
+          bridge.handlers(active.surface)?.move(previous, point);
+        };
+        const up = (pointer: Phaser.Input.Pointer): void => {
+          if (active?.id !== pointer.id) return;
+          if (pointer.wasCanceled) {
+            cancel();
+            return;
+          }
+          const stroke = active;
+          active = undefined;
+          const point = position(pointer);
+          const handlers = bridge.handlers(stroke.surface);
+          if (point) handlers?.move(stroke.previous, point);
+          if (stroke.surface.isConnected) handlers?.end(point);
+        };
+        this.input.on("pointerdown", down);
+        this.input.on("pointerdownoutside", down);
+        this.input.on("pointermove", move);
+        this.input.on("pointerup", up);
+        this.input.on("pointerupoutside", up);
+        this.game.events.on("blur", cancel);
+        bridge.ready();
+      },
+    },
+  });
+  return cancel;
+}
