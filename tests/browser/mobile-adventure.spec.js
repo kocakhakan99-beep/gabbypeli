@@ -38,6 +38,22 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
     await page.locator(`#gf-open-${game}`).tap();
     await expect(page.locator("#gf-campaign-map")).toBeVisible();
     await expect(page.locator("#gf-levels button")).toHaveCount(10);
+    if (game === "baking") {
+      const levels = page.locator("#gf-levels button");
+      const positions = await levels.evaluateAll((buttons) => buttons.map((button) => {
+        const box = button.getBoundingClientRect();
+        return { x: box.x, y: box.y, width: box.width, height: box.height };
+      }));
+      for (let index = 0; index < positions.length; index++) {
+        expect(positions[index].width).toBeGreaterThanOrEqual(44);
+        for (const other of positions.slice(index + 1)) {
+          const first = positions[index];
+          const overlap = first.x < other.x + other.width && first.x + first.width > other.x &&
+            first.y < other.y + other.height && first.y + first.height > other.y;
+          expect(overlap).toBe(false);
+        }
+      }
+    }
     await expect(page.getByRole("button", { name: "Taso 1", exact: true })).toBeEnabled();
     await expect(page.getByRole("button", { name: "Taso 2, lukittu" })).toBeDisabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

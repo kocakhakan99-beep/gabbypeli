@@ -4131,3 +4131,6 @@ body {
   #gabby-fi #gf-levels[data-game="baking"] button:nth-child(9) { --bakery-x: 59%; --bakery-y: 87%; }
   #gabby-fi #gf-levels[data-game="baking"] button:nth-child(10) { --bakery-x: 37%; --bakery-y: 84%; }
 }
+@media (max-width: 679px) {
+  #gabby-fi #gf-levels[data-game="baking"] { min-height: 680px; }
+}
