@@ -1,0 +1,32 @@
+import { test, expect } from "@playwright/test";
+
+test.use({ viewport: { width: 320, height: 740 }, hasTouch: true, isMobile: true });
+
+test("adventure map and celebration fit a small touch screen", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  await page.locator("#gf-campaign-toggle").tap();
+  for (const game of ["memory", "puzzle", "find", "garden", "baking"]) {
+    await page.locator(`#gf-map-${game}`).tap();
+    await expect(page.locator(`#gf-map-${game}`)).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#gf-levels button")).toHaveCount(10);
+    await expect(page.getByRole("button", { name: "Taso 1", exact: true })).toBeEnabled();
+    await expect(page.getByRole("button", { name: "Taso 2, lukittu" })).toBeDisabled();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.locator("#gf-map-puzzle").tap();
+  await page.getByRole("button", { name: "Taso 1", exact: true }).tap();
+  for (let index = 0; index < 2; index++) {
+    await page.locator("#gf-hint").tap();
+    await page.locator("#gf-board .cue").tap();
+  }
+  await expect(page.locator("#gf-win")).toBeVisible();
+  await expect(page.locator("#gf-coin-reward")).toHaveText("+25 kisukolikkoa");
+  await expect(page.locator("#gf-next-level")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.locator("#gf-next-level").tap();
+  await expect(page.locator("#gf-win")).toBeHidden();
+  await expect(page.locator("#gf-board .slot")).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
