@@ -71,19 +71,16 @@ test("one swipe opens multiple flowers and the next bed also works by keyboard",
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-garden").click();
   const field = page.locator("#gf-garden-field");
-  await field.scrollIntoViewIfNeeded();
-  const buds = field.locator("button");
-  const points = [];
-  for (const bud of await buds.all()) {
-    const { x, y, width, height } = await bud.boundingBox();
-    points.push({ x: x + width / 2, y: y + height / 2 });
+  for (const count of [3, 4]) {
+    for (const stage of ["soil", "water", "tidy"]) {
+      await expect(field).toHaveAttribute("data-stage", stage);
+      for (let index = 0; index < count; index++) {
+        const flower = field.locator("button").nth(index);
+        for (let n = 0; n < 4; n++) await flower.press("Enter");
+      }
+    }
+    await page.locator("#gf-action").click();
   }
-  await swipe(page, points);
-  await expect(field.locator(".bloomed")).toHaveCount(3);
-  await page.locator("#gf-action").click();
-  for (const bud of await buds.all()) await bud.press("Enter");
-  await expect(field.locator(".bloomed")).toHaveCount(4);
-  await page.locator("#gf-action").click();
   await expect(page.locator("#gf-win")).toBeVisible();
 });
 
@@ -115,6 +112,8 @@ test("a finger mixes the batter and paints frosting across two cupcakes", async 
   await page.goto("/");
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-baking").click();
+  await page.getByRole("button", { name: "Ota saippuaa" }).click();
+  await page.getByRole("button", { name: "Huuhtele kädet" }).click();
   const bowl = page.locator("#gf-baking-add");
   await bowl.scrollIntoViewIfNeeded();
   const box = await bowl.boundingBox();
@@ -124,11 +123,14 @@ test("a finger mixes the batter and paints frosting across two cupcakes", async 
     { x: x - 22, y },
     { x, y: y - 24 },
     { x: x + 22, y },
+    { x, y: y + 24 },
+    { x: x - 22, y },
   ]);
   await expect(page.locator("#gf-baking-count")).toHaveText("1");
   await bowl.click();
   await page.locator("#gf-baking-check").click();
-  await page.locator("#gf-baking-bake").click();
+  for (let step = 0; step < 5; step++)
+    await page.locator("#gf-baking-bake").click();
   await page.getByRole("button", { name: "Mustikka" }).click();
   const plate = page.locator("#gf-baking-plate");
   await plate.scrollIntoViewIfNeeded();

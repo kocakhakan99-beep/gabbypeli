@@ -7,19 +7,8 @@ for (const width of [360, 768]) {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/");
     await page.locator("#gf-sound").click();
-    await expect(page.locator("#gf-open-sizes")).toBeVisible();
-    await page.locator("#gf-open-sizes").click();
-    for (const count of [2, 2, 4, 4]) {
-      await expect(page.locator(".size-toy")).toHaveCount(count);
-      for (const toy of await page.locator(".size-toy").all()) {
-        const size = await toy.getAttribute("data-size");
-        await toy.click();
-        await page.locator(".size-basket." + size).click();
-      }
-      await page.locator("#gf-action").click();
-    }
-    await expect(page.locator("#gf-win")).toBeVisible();
-    await page.locator("#gf-other").click();
+    for (const id of ["sizes", "bubbles", "learn"])
+      await expect(page.locator("#gf-open-" + id)).toBeHidden();
     await page.locator("#gf-open-memory").click();
     await page.locator("#gf-action").click();
     await page.locator("#gf-cards button").first().click();
@@ -46,9 +35,9 @@ test("sound effects run and mute suspends audio", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await page.locator("#gf-open-sizes").click();
-  await page.locator(".size-toy.large").click();
-  await page.locator(".size-basket.large").click();
+  await page.locator("#gf-open-puzzle").click();
+  await page.locator("#gf-hint").click();
+  await page.locator("#gf-board .cue").click();
   const audio = await page.evaluate(async () => {
     const { state } = await import("/app/state.js");
     return { available: Boolean(state.ctx), status: state.ctx?.state };
