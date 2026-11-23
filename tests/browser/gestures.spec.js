@@ -134,6 +134,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
     name: "Aseta leivinpaperi pellille",
   });
   await expect(page.locator(".bakery-bowl.mixing canvas")).toHaveCount(0);
+  await expect(page.locator(".bakery-tray")).toHaveClass(/phaser-tray-ready/);
   await paper.scrollIntoViewIfNeeded();
   async function center(locator) {
     const box = await locator.boundingBox();

@@ -8,11 +8,14 @@ const recipes = [
 ];
 let timer;
 let mixingView;
+let trayView;
 let mixingGeneration = 0;
 function stopMixingView() {
     mixingGeneration++;
     mixingView?.destroy();
     mixingView = undefined;
+    trayView?.destroy();
+    trayView = undefined;
 }
 export function stopBakingGestures() {
     stopMixingView();
@@ -205,11 +208,26 @@ export function startBaking() {
         const paper = scene.querySelector(".bakery-paper");
         const slots = scene.querySelector(".bakery-slots");
         const dough = scene.querySelector(".bakery-dough");
+        const generation = mixingGeneration;
+        void import("../phaser-room.js").then(({ createBakingTrayView }) => {
+            if (generation !== mixingGeneration || !pan.isConnected)
+                return;
+            trayView = createBakingTrayView(pan, recipe.art);
+            if (pan.classList.contains("lined"))
+                trayView.line();
+            [...slots.children].forEach((slot, index) => {
+                if (slot.hasChildNodes())
+                    trayView?.place(index);
+            });
+        }).catch(() => {
+            // The existing tray remains available if the graphics cannot load.
+        });
         transfer(paper, pan, () => {
             if (paper.hidden)
                 return;
             paper.hidden = true;
             pan.classList.add("lined");
+            trayView?.line();
             el("instruction").textContent =
                 "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
             dough.hidden = false;
@@ -238,6 +256,7 @@ export function startBaking() {
                         })
                         : open[0];
                     chosen.innerHTML = piece(recipe);
+                    trayView?.place(places.indexOf(chosen));
                     item.hidden = true;
                     sound();
                     if (++filled === places.length)

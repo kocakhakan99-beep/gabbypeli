@@ -3436,3 +3436,19 @@ body {
 #gabby-fi .bakery-bowl.phaser-mixing-ready .bakery-spoon {
   visibility: hidden;
 }
+
+#gabby-fi .bakery-tray:not(.oven-tray) {
+  position: relative;
+}
+#gabby-fi .bakery-tray:not(.oven-tray) canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gabby-fi .bakery-tray.phaser-tray-ready .bakery-slots {
+  position: relative;
+  z-index: 1;
+}
+#gabby-fi .bakery-tray.phaser-tray-ready .bakery-slot .bakery-piece {
+  visibility: hidden;
+}

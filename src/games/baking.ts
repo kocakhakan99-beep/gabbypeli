@@ -9,7 +9,7 @@ import {
   setAction,
 } from "../ui.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
-import type { MixingView } from "../phaser-room.js";
+import type { BakingTrayView, MixingView } from "../phaser-room.js";
 
 type Recipe = { name: string; piece: string; art: string; heat: number };
 const recipes: Recipe[] = [
@@ -18,12 +18,15 @@ const recipes: Recipe[] = [
 ];
 let timer: ReturnType<typeof setTimeout> | undefined;
 let mixingView: MixingView | undefined;
+let trayView: BakingTrayView | undefined;
 let mixingGeneration = 0;
 
 function stopMixingView(): void {
   mixingGeneration++;
   mixingView?.destroy();
   mixingView = undefined;
+  trayView?.destroy();
+  trayView = undefined;
 }
 
 export function stopBakingGestures(): void {
@@ -261,10 +264,22 @@ export function startBaking(): void {
     const paper = scene.querySelector<HTMLElement>(".bakery-paper")!;
     const slots = scene.querySelector<HTMLElement>(".bakery-slots")!;
     const dough = scene.querySelector<HTMLElement>(".bakery-dough")!;
+    const generation = mixingGeneration;
+    void import("../phaser-room.js").then(({ createBakingTrayView }) => {
+      if (generation !== mixingGeneration || !pan.isConnected) return;
+      trayView = createBakingTrayView(pan, recipe.art);
+      if (pan.classList.contains("lined")) trayView.line();
+      [...slots.children].forEach((slot, index) => {
+        if (slot.hasChildNodes()) trayView?.place(index);
+      });
+    }).catch(() => {
+      // The existing tray remains available if the graphics cannot load.
+    });
     transfer(paper, pan, () => {
       if (paper.hidden) return;
       paper.hidden = true;
       pan.classList.add("lined");
+      trayView?.line();
       el("instruction").textContent =
         "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
       dough.hidden = false;
@@ -301,6 +316,7 @@ export function startBaking(): void {
               })
             : open[0];
           chosen.innerHTML = piece(recipe);
+          trayView?.place(places.indexOf(chosen));
           item.hidden = true;
           sound();
           if (++filled === places.length) oven(recipe);
