@@ -3398,3 +3398,28 @@ body {
     animation: none;
   }
 }
+
+/* The first hide-and-seek room uses Phaser for its animated objects. */
+#gabby-fi .hide-room:has(.phaser-room-canvas) {
+  position: relative;
+  aspect-ratio: 10 / 7;
+  padding: 0;
+  gap: 0;
+}
+#gabby-fi .phaser-room-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gabby-fi .phaser-room-canvas canvas {
+  display: block;
+}
+#gabby-fi .hide-room.phaser-ready .hide-spot {
+  z-index: 1;
+  height: 100%;
+  max-height: none;
+}
+#gabby-fi .hide-room.phaser-ready .hide-spot .furniture-image,
+#gabby-fi .hide-room.phaser-ready .hide-spot .hiding-friend {
+  visibility: hidden;
+}

@@ -4,6 +4,13 @@ import { el } from "../dom.js";
 import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
+let roomView;
+let roomGeneration = 0;
+export function stopFind() {
+    roomGeneration++;
+    roomView?.destroy();
+    roomView = undefined;
+}
 const roomObjects = {
     gabby: [
         { id: "cupboard", name: "Kaappi" },
@@ -51,6 +58,8 @@ const roomSurprises = {
     dj: { id: "train", name: "lelujuna" },
 };
 export function renderFind() {
+    stopFind();
+    const generation = roomGeneration;
     const friend = friends[state.learnIndex];
     state.learnDone = false;
     heading(friend.id, "Kuka piilottelee?", "Kosketa huonekaluja. Kuka niiden takaa löytyy?", friend.room);
@@ -73,13 +82,19 @@ export function renderFind() {
     const furniture = roomObjects[friend.id];
     const surprise = roomSurprises[friend.id];
     const hidingPlace = Math.floor(Math.random() * furniture.length);
-    shuffle(furniture).forEach((item, index) => {
+    const roomItems = shuffle(furniture).map((item, index) => ({
+        id: item.id,
+        hidden: index === hidingPlace,
+    }));
+    roomItems.forEach((roomItem, index) => {
+        const item = furniture.find((object) => object.id === roomItem.id);
         const isHiding = index === hidingPlace;
         const spot = button("", () => {
             if (state.learnDone || spot.classList.contains("opened"))
                 return;
             unlock();
             spot.classList.add("opened");
+            roomView?.reveal(index);
             if (!isHiding) {
                 spot.setAttribute("aria-label", item.name + ": löytyi " + surprise.name);
                 feedback("Löytyi " + surprise.name + "! Missähän kaveri on?");
@@ -118,4 +133,21 @@ export function renderFind() {
                 '.webp" alt="" draggable="false">';
         room.append(spot);
     });
+    if (friend.id === "gabby") {
+        const canvas = document.createElement("div");
+        canvas.className = "phaser-room-canvas";
+        canvas.setAttribute("aria-hidden", "true");
+        room.append(canvas);
+        void import("../phaser-room.js").then(({ createRoomView }) => {
+            if (generation !== roomGeneration || !room.isConnected)
+                return;
+            roomView = createRoomView(canvas, roomItems);
+            room.querySelectorAll(".hide-spot").forEach((spot, index) => {
+                if (spot.classList.contains("opened"))
+                    roomView?.reveal(index);
+            });
+        }).catch(() => {
+            canvas.remove();
+        });
+    }
 }
