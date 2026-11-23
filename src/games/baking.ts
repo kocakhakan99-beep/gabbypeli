@@ -399,6 +399,15 @@ export function startBaking(): void {
       loaded.setAttribute("aria-hidden", "true");
       loaded.innerHTML = piece(recipe).repeat(6);
       cavity.prepend(loaded);
+      const generation = mixingGeneration;
+      void import("../phaser-room.js").then(({ createBakingTrayView }) => {
+        if (generation !== mixingGeneration || !loaded.isConnected) return;
+        trayView = createBakingTrayView(loaded, recipe.art);
+        trayView.line();
+        for (let index = 0; index < 6; index++) trayView.place(index);
+      }).catch(() => {
+        // Keep the existing oven portions available if graphics cannot load.
+      });
       door.setAttribute("aria-label", "Sulje uunin luukku");
       el("instruction").textContent = "Vedä luukku ylös kiinni.";
       sound();
@@ -415,6 +424,7 @@ export function startBaking(): void {
       cavity.classList.add("oven-cooking");
       feedback("Leivonnaiset paistuvat.");
       timer = setTimeout(() => {
+        stopMixingView();
         progress(6, 6);
         finish("Pelti on valmis!", "Hile kiittää avusta.", "cakey");
       }, 1700);
