@@ -33,7 +33,8 @@ let phase: Phase = "mix";
 let recipe = 0;
 let served = 0;
 let topping = "berry";
-const stirLength = 105;
+const stirTurn = Math.PI * 1.5;
+let ovenStep = 0;
 let ovenTimer: ReturnType<typeof setTimeout> | undefined;
 const decorated = new Map<number, string>();
 
@@ -52,27 +53,53 @@ export function stopBakingGestures(): void {
 export function startBaking(): void {
   recipe = 0;
   const bowl = el("baking-add");
-  let distance = 0;
+  let rotation = 0;
   let total = 0;
   let skipClick = false;
+  let previousAngle: number | undefined;
   bindStroke(bowl, {
-    start() {
-      distance = 0;
+    start(point) {
+      rotation = 0;
       total = 0;
+      const rect = bowl.getBoundingClientRect();
+      previousAngle = Math.atan2(
+        point.y - rect.top - rect.height / 2,
+        point.x - rect.left - rect.width / 2,
+      );
     },
     move(from, to) {
       if (phase !== "mix") return;
       const movement = Math.hypot(to.x - from.x, to.y - from.y);
-      distance += movement;
       total += movement;
-      bowl.style.setProperty("--stir-angle", Math.sin(total / 18) * 25 + "deg");
-      while (distance >= stirLength && served < recipes[recipe]) {
-        distance -= stirLength;
+      const rect = bowl.getBoundingClientRect();
+      const angle = Math.atan2(
+        to.y - rect.top - rect.height / 2,
+        to.x - rect.left - rect.width / 2,
+      );
+      if (previousAngle !== undefined) {
+        let delta = angle - previousAngle;
+        if (delta > Math.PI) delta -= Math.PI * 2;
+        if (delta < -Math.PI) delta += Math.PI * 2;
+        if (
+          Math.hypot(
+            to.x - rect.left - rect.width / 2,
+            to.y - rect.top - rect.height / 2,
+          ) > 12
+        )
+          rotation += delta;
+      }
+      previousAngle = angle;
+      bowl.style.setProperty(
+        "--stir-angle",
+        (rotation * 180) / Math.PI + "deg",
+      );
+      while (Math.abs(rotation) >= stirTurn && served < recipes[recipe]) {
+        rotation = 0;
         addCake();
       }
       bowl.style.setProperty(
         "--stir-fill",
-        Math.min(100, (distance / stirLength) * 100) + "%",
+        Math.min(100, (Math.abs(rotation) / stirTurn) * 100) + "%",
       );
     },
     end(point) {
@@ -80,7 +107,7 @@ export function startBaking(): void {
       bowl.style.removeProperty("--stir-fill");
       if (total < 25) return;
       skipClick = true;
-      if (point && total < stirLength && served < recipes[recipe]) addCake();
+      previousAngle = undefined;
       setTimeout(() => {
         skipClick = false;
       }, 0);
@@ -207,12 +234,15 @@ function showRecipe(): void {
   served = 0;
   topping = "berry";
   decorated.clear();
+  el("baking").dataset.recipe = recipe % 2 ? "cookie" : "cupcake";
   showToppingSelection();
   el("baking-dialogue").hidden = recipe !== 0;
   heading(
     "cakey",
-    "Leivotaan " + recipes[recipe] + " kuppikakkua!",
-    "Liikuta sormea kulhossa tai napauta. Jokaisesta vedosta tulee yksi kakku.",
+    "Leivotaan " +
+      recipes[recipe] +
+      (recipe % 2 ? " piparia!" : " kuppikakkua!"),
+    "Pyöritä sormea kulhossa tai napauta kulhoa.",
     "Hileen leipomo",
   );
   showPhase("mix");
@@ -300,6 +330,22 @@ export function resetPlate(): void {
 
 function bake(): void {
   if (phase !== "oven" || el("baking-bake").disabled) return;
+  const next = [
+    "Pue patalaput",
+    "Avaa uunin luukku",
+    "Laita leivonnaiset uuniin",
+    "Sulje uunin luukku",
+    "Säädä lämpötila ja paista",
+  ];
+  if (ovenStep < next.length) {
+    el("baking-oven").dataset.step = String(++ovenStep);
+    if (ovenStep < next.length) {
+      iconButton(el("baking-bake"), "oven", next[ovenStep]);
+      el("instruction").textContent = next[ovenStep];
+      feedback(next[ovenStep]);
+      return;
+    }
+  }
   el("baking-bake").disabled = true;
   el("baking-oven").classList.add("heating");
   feedback("Kakut kohoavat uunissa…");
@@ -335,9 +381,11 @@ export function checkRecipe(): void {
       return;
     }
     showPhase("oven");
-    el("instruction").textContent = "Paina uunin nappia, niin kakut kypsyvät.";
-    feedback("Kakut ovat uunissa.");
-    say("Kakut ovat uunissa.");
+    ovenStep = 0;
+    el("baking-oven").dataset.step = "0";
+    iconButton(el("baking-bake"), "oven", "Pue patalaput");
+    el("instruction").textContent = "Pue patalaput.";
+    feedback("Pue patalaput.");
     ding("piece");
     return;
   }
