@@ -4075,3 +4075,13 @@ body {
   #gabby-fi .house-welcome img { display: block; width: 100%; filter: drop-shadow(0 5px 5px #4e245d55); }
   #gabby-fi .house-welcome img + img { width: 55%; margin: -44% 0 0 37%; }
 }
+
+#gabby-fi #gf-home[data-mode="campaign"] #gf-campaign-toggle,
+#gabby-fi #gf-home[data-mode="free"] #gf-free-toggle {
+  border-color: #ffe18b;
+  outline: 3px solid #fff5;
+}
+#gabby-fi #gf-map-back {
+  min-height: 48px;
+  margin: 8px 0;
+}

@@ -33,20 +33,22 @@ for (const mode of [
     "drawing",
     "garden",
 ]) {
-    el(`open-${mode}`).addEventListener("click", () => open(mode));
+    el(`open-${mode}`).addEventListener("click", () => {
+        if (selectedMode === "campaign" && campaignGames.some((game) => game === mode)) {
+            mapGame = mode;
+            showDestination("campaign");
+            document.querySelector("#gf-campaign-resume:not([hidden]), #gf-levels button:not(:disabled)")?.focus();
+        }
+        else
+            open(mode);
+    });
 }
 let mapGame = "memory";
+let selectedMode = "free";
 function updateMap() {
     renderCampaign(mapGame, (level) => open(mapGame, level));
-    for (const game of campaignGames) {
-        document.querySelector(`#gf-map-${game}`).setAttribute("aria-pressed", String(mapGame === game));
-    }
-}
-for (const game of campaignGames) {
-    document.querySelector(`#gf-map-${game}`).addEventListener("click", () => {
-        mapGame = game;
-        updateMap();
-    });
+    const names = { memory: "Muistipeli", puzzle: "Palapeli", find: "Piilopeli", garden: "Kisukeijun puutarha", baking: "Hileen leipomo" };
+    document.querySelector("#gf-map-title").textContent = names[mapGame] + " – Seikkailu";
 }
 const navigation = document.querySelectorAll(".dollhouse-nav button");
 const mapPanel = document.querySelector("#gf-campaign-map");
@@ -54,12 +56,13 @@ const roomPanel = document.querySelector("#gf-free-games");
 const stickerPanel = document.querySelector("#gf-sticker-book");
 function showDestination(destination) {
     el("home").dataset.destination = destination;
+    el("home").dataset.mode = selectedMode;
     mapPanel.hidden = destination !== "campaign";
     mapPanel.parentElement.hidden = mapPanel.hidden;
     roomPanel.hidden = destination !== "home" && destination !== "free";
     stickerPanel.hidden = destination !== "stickers";
-    document.querySelector("#gf-campaign-toggle").setAttribute("aria-expanded", String(!mapPanel.hidden));
-    document.querySelector("#gf-free-toggle").setAttribute("aria-pressed", String(destination === "free"));
+    document.querySelector("#gf-campaign-toggle").setAttribute("aria-expanded", String(selectedMode === "campaign"));
+    document.querySelector("#gf-free-toggle").setAttribute("aria-pressed", String(selectedMode === "free"));
     for (const button of navigation)
         button.setAttribute("aria-pressed", String(button.dataset.destination === destination));
     updateMap();
@@ -70,12 +73,19 @@ for (const button of navigation) {
     button.addEventListener("click", () => showDestination(button.dataset.destination));
 }
 document.querySelector("#gf-campaign-toggle").addEventListener("click", () => {
-    showDestination("campaign");
-    document.querySelector("#gf-campaign-resume:not([hidden]), #gf-levels button:not(:disabled)")?.focus();
+    selectedMode = "campaign";
+    showDestination("home");
+    roomPanel.querySelector("button:not([hidden])")?.focus();
 });
 document.querySelector("#gf-free-toggle").addEventListener("click", () => {
+    selectedMode = "free";
     showDestination("free");
     roomPanel.querySelector("button:not([hidden])")?.focus();
+});
+document.querySelector("#gf-map-back").addEventListener("click", () => {
+    selectedMode = "campaign";
+    showDestination("home");
+    document.querySelector(`#gf-open-${mapGame}`)?.focus();
 });
 document.querySelector("#gf-next-level").addEventListener("click", () => {
     const level = campaignLevel();
@@ -84,11 +94,12 @@ document.querySelector("#gf-next-level").addEventListener("click", () => {
 });
 function exitGame() {
     const adventure = campaignLevel() !== undefined;
+    selectedMode = adventure ? "campaign" : "free";
     home();
     showDestination(adventure ? "campaign" : "free");
     if (adventure) {
         const next = document.querySelector('#gf-levels [aria-current="step"]');
-        (next ?? document.querySelector(`#gf-map-${mapGame}`))?.focus();
+        (next ?? document.querySelector("#gf-map-back"))?.focus();
     }
 }
 el("home-button").addEventListener("click", exitGame);

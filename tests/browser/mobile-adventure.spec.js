@@ -35,14 +35,16 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   await expect(page.locator("#gf-campaign-toggle")).toContainText("Seikkailu");
   await page.locator("#gf-campaign-toggle").tap();
   for (const game of ["memory", "puzzle", "find", "garden", "baking"]) {
-    await page.locator(`#gf-map-${game}`).tap();
-    await expect(page.locator(`#gf-map-${game}`)).toHaveAttribute("aria-pressed", "true");
+    await page.locator(`#gf-open-${game}`).tap();
+    await expect(page.locator("#gf-campaign-map")).toBeVisible();
     await expect(page.locator("#gf-levels button")).toHaveCount(10);
     await expect(page.getByRole("button", { name: "Taso 1", exact: true })).toBeEnabled();
     await expect(page.getByRole("button", { name: "Taso 2, lukittu" })).toBeDisabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.locator("#gf-map-back").tap();
+    await expect(page.locator(`#gf-open-${game}`)).toBeFocused();
   }
-  await page.locator("#gf-map-puzzle").tap();
+  await page.locator("#gf-open-puzzle").tap();
   await expect(page.locator("#gf-map-progress")).toHaveJSProperty("value", 0);
   await page.getByRole("button", { name: "Taso 1", exact: true }).tap();
   for (let index = 0; index < 2; index++) {
@@ -55,7 +57,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   await expect(page.locator("#gf-next-level")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.locator("#gf-other").tap();
-  await expect(page.locator("#gf-map-puzzle")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#gf-map-title")).toContainText("Palapeli");
   await expect(page.locator("#gf-map-progress")).toHaveJSProperty("value", 1);
   await expect(page.locator("#gf-coins")).toHaveText("25");
   await page.getByRole("button", { name: "Jatka tasolta 2" }).tap();

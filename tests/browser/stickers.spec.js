@@ -34,7 +34,7 @@ test("a returning player earns an illustrated sticker on their second completion
   await page.locator("#gf-other").click();
 
   await page.locator("#gf-campaign-toggle").click();
-  await page.locator("#gf-map-puzzle").click();
+  await page.locator("#gf-open-puzzle").click();
   await expect(page.getByRole("button", { name: "Taso 2, lukittu" })).toBeDisabled();
   await page.getByRole("button", { name: "Taso 1", exact: true }).click();
   await finishPuzzle();

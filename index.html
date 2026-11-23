@@ -65,15 +65,9 @@
 
           <div class="mode-hub" hidden>
             <section id="gf-campaign-map" hidden>
-              <h2>Seikkailukartta</h2>
+              <h2 id="gf-map-title" tabindex="-1">Seikkailukartta</h2>
               <p class="map-intro">Valitse leikki ja löydä seuraava taso!</p>
-              <div class="mode-choices" role="group" aria-label="Seikkailun leikki">
-                <button type="button" id="gf-map-memory">Muistipeli</button>
-                <button type="button" id="gf-map-puzzle">Palapeli</button>
-                <button type="button" id="gf-map-find">Piilopeli</button>
-                <button type="button" id="gf-map-garden">Puutarha</button>
-                <button type="button" id="gf-map-baking">Leipomo</button>
-              </div>
+              <button type="button" id="gf-map-back" class="tool">Takaisin nukketaloon</button>
               <div class="campaign-progress">
                 <span id="gf-map-progress-label">Eteneminen 0 / 10</span>
                 <progress id="gf-map-progress" max="10" value="0" aria-label="Valitun leikin eteneminen"></progress>
