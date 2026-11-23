@@ -4085,3 +4085,49 @@ body {
   min-height: 48px;
   margin: 8px 0;
 }
+
+/* Bakery path coordinates match the illustrated room. */
+#gabby-fi #gf-levels[data-game="baking"] {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  background: url("../assets/rooms/bakery-map-tall.webp") center / 100% 100%;
+}
+#gabby-fi #gf-levels[data-game="baking"]::before { content: none; }
+#gabby-fi #gf-levels[data-game="baking"] button {
+  position: absolute;
+  left: var(--bakery-x);
+  top: var(--bakery-y);
+  transform: translate(-50%, -50%);
+  width: clamp(44px, 13vw, 60px);
+  min-height: 44px;
+  aspect-ratio: 1;
+}
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(1) { --bakery-x: 50%; --bakery-y: 90%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(2) { --bakery-x: 43%; --bakery-y: 82%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(3) { --bakery-x: 26%; --bakery-y: 75%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(4) { --bakery-x: 23%; --bakery-y: 67%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(5) { --bakery-x: 38%; --bakery-y: 60%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(6) { --bakery-x: 59%; --bakery-y: 57%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(7) { --bakery-x: 75%; --bakery-y: 50%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(8) { --bakery-x: 61%; --bakery-y: 43%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(9) { --bakery-x: 36%; --bakery-y: 38%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(10) { --bakery-x: 42%; --bakery-y: 29%; }
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game="baking"] {
+    aspect-ratio: 16 / 9;
+    background-image: url("../assets/rooms/bakery-map-wide.webp");
+  }
+  #gabby-fi #gf-levels[data-game="baking"] button { width: clamp(44px, 6vw, 66px); }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(1) { --bakery-x: 10%; --bakery-y: 68%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(2) { --bakery-x: 19%; --bakery-y: 63%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(3) { --bakery-x: 31%; --bakery-y: 68%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(4) { --bakery-x: 43%; --bakery-y: 70%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(5) { --bakery-x: 56%; --bakery-y: 68%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(6) { --bakery-x: 70%; --bakery-y: 63%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(7) { --bakery-x: 84%; --bakery-y: 66%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(8) { --bakery-x: 78%; --bakery-y: 79%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(9) { --bakery-x: 59%; --bakery-y: 87%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(10) { --bakery-x: 37%; --bakery-y: 84%; }
+}
