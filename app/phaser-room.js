@@ -6342,7 +6342,7 @@ var e = {
 				}
 				i = B.join("\n"), r.wrappedText = i, a = i.length;
 			}
-			var K = 0;
+			var ee = 0;
 			for (N = 0; N < a; N++) if (v = i.charCodeAt(N), v === 10) R !== null && (I.push({
 				word: R.word,
 				i: R.i,
@@ -6353,13 +6353,13 @@ var e = {
 			}), R = null), E = null, O[j] = M, M > A && (A = M), M < k && (k = M), j++, M = 0, g = 0, _ = (p + h) * j;
 			else if (y = f[v], y) {
 				if (x = g, S = _, E !== null) {
-					var q = y.kerning[D];
-					x += q === void 0 ? 0 : q;
+					var K = y.kerning[D];
+					x += K === void 0 ? 0 : K;
 				}
 				c > x && (c = x), l > S && (l = S);
-				var J = x + y.xAdvance, Y = S + p;
-				u < J && (u = J), d < Y && (d = Y);
-				var X = y.xOffset + y.xAdvance + (q === void 0 ? 0 : q);
+				var q = x + y.xAdvance, J = S + p;
+				u < q && (u = q), d < J && (d = J);
+				var Y = y.xOffset + y.xAdvance + (K === void 0 ? 0 : K);
 				v === s ? R !== null && (I.push({
 					word: R.word,
 					i: R.i,
@@ -6369,13 +6369,13 @@ var e = {
 					h: R.h * T
 				}), R = null) : (R === null && (R = {
 					word: "",
-					i: K,
+					i: ee,
 					x: g,
 					y: _,
 					w: 0,
 					h: p
-				}), R.word = R.word.concat(i[N]), R.w += X), L.push({
-					i: K,
+				}), R.word = R.word.concat(i[N]), R.w += Y), L.push({
+					i: ee,
 					idx: N,
 					char: i[N],
 					code: v,
@@ -6384,11 +6384,11 @@ var e = {
 					w: y.width * C,
 					h: y.height * C,
 					t: _ * C,
-					r: J * C,
+					r: q * C,
 					b: p * C,
 					line: j,
 					glyph: y
-				}), g += y.xAdvance + m + (q === void 0 ? 0 : q), E = y, D = v, M = J * C, K++;
+				}), g += y.xAdvance + m + (K === void 0 ? 0 : K), E = y, D = v, M = q * C, ee++;
 			}
 			if (R !== null && I.push({
 				word: R.word,
@@ -6397,18 +6397,18 @@ var e = {
 				y: R.y * T,
 				w: R.w * w,
 				h: R.h * T
-			}), O[j] = M, M > A && (A = M), M < k && (k = M), b > 0) for (var ee = 0; ee < L.length; ee++) {
-				var Z = L[ee];
+			}), O[j] = M, M > A && (A = M), M < k && (k = M), b > 0) for (var te = 0; te < L.length; te++) {
+				var X = L[te];
 				if (b === 1) {
-					var te = (A - O[Z.line]) / 2;
-					Z.x += te, Z.r += te;
+					var ne = (A - O[X.line]) / 2;
+					X.x += ne, X.r += ne;
 				} else if (b === 2) {
-					var Q = A - O[Z.line];
-					Z.x += Q, Z.r += Q;
+					var Z = A - O[X.line];
+					X.x += Z, X.r += Z;
 				}
 			}
-			var ne = r.local, $ = r.global;
-			return F = r.lines, ne.x = c * C, ne.y = l * C, ne.width = u * C, ne.height = d * C, $.x = e.x - e._displayOriginX + c * w, $.y = e.y - e._displayOriginY + l * T, $.width = u * w, $.height = d * T, F.shortest = k, F.longest = A, F.lengths = O, t && (ne.x = Math.ceil(ne.x), ne.y = Math.ceil(ne.y), ne.width = Math.ceil(ne.width), ne.height = Math.ceil(ne.height), $.x = Math.ceil($.x), $.y = Math.ceil($.y), $.width = Math.ceil($.width), $.height = Math.ceil($.height), F.shortest = Math.ceil(k), F.longest = Math.ceil(A)), n && (e._displayOriginX = e.originX * ne.width, e._displayOriginY = e.originY * ne.height, $.x = e.x - e._displayOriginX * e.scaleX, $.y = e.y - e._displayOriginY * e.scaleY, t && ($.x = Math.ceil($.x), $.y = Math.ceil($.y))), r.words = I, r.characters = L, r.lines.height = p, r.scale = C, r.scaleX = e.scaleX, r.scaleY = e.scaleY, r;
+			var Q = r.local, $ = r.global;
+			return F = r.lines, Q.x = c * C, Q.y = l * C, Q.width = u * C, Q.height = d * C, $.x = e.x - e._displayOriginX + c * w, $.y = e.y - e._displayOriginY + l * T, $.width = u * w, $.height = d * T, F.shortest = k, F.longest = A, F.lengths = O, t && (Q.x = Math.ceil(Q.x), Q.y = Math.ceil(Q.y), Q.width = Math.ceil(Q.width), Q.height = Math.ceil(Q.height), $.x = Math.ceil($.x), $.y = Math.ceil($.y), $.width = Math.ceil($.width), $.height = Math.ceil($.height), F.shortest = Math.ceil(k), F.longest = Math.ceil(A)), n && (e._displayOriginX = e.originX * Q.width, e._displayOriginY = e.originY * Q.height, $.x = e.x - e._displayOriginX * e.scaleX, $.y = e.y - e._displayOriginY * e.scaleY, t && ($.x = Math.ceil($.x), $.y = Math.ceil($.y))), r.words = I, r.characters = L, r.lines.height = p, r.scale = C, r.scaleX = e.scaleX, r.scaleY = e.scaleY, r;
 		};
 	},
 	61327(e, t, n) {
@@ -6637,24 +6637,24 @@ var e = {
 				t.maxWidth > 0 && (u = W.wrappedText, d = u.length);
 				var G = t._bounds.lines;
 				V === 1 ? U = (G.longest - G.lengths[0]) / 2 : V === 2 && (U = G.longest - G.lengths[0]);
-				for (var K = t.displayCallback, q = t.callbackData, J = 0; J < d; J++) if (D = u.charCodeAt(J), D === 10) H++, V === 1 ? U = (G.longest - G.lengths[H]) / 2 : V === 2 && (U = G.longest - G.lengths[H]), T = 0, E += R, N = null;
+				for (var ee = t.displayCallback, K = t.callbackData, q = 0; q < d; q++) if (D = u.charCodeAt(q), D === 10) H++, V === 1 ? U = (G.longest - G.lengths[H]) / 2 : V === 2 && (U = G.longest - G.lengths[H]), T = 0, E += R, N = null;
 				else if (A = L[D], A) {
 					c.uvSource = A, j = A.width, M = A.height;
-					var Y = A.xOffset + T - P, X = A.yOffset + E - F;
+					var J = A.xOffset + T - P, Y = A.yOffset + E - F;
 					if (N !== null) {
-						var ee = A.kerning[O] || 0;
-						Y += ee, T += ee;
+						var te = A.kerning[O] || 0;
+						J += te, T += te;
 					}
 					if (T += A.xAdvance + k, N = A, O = D, j !== 0 && M !== 0 && D !== 32) {
-						if (z = t.fontSize / t.fontData.size, B = 0, K) {
-							q.color = 0, q.tintMode = b, q.tint.topLeft = x, q.tint.topRight = S, q.tint.bottomLeft = C, q.tint.bottomRight = w, q.index = J, q.charCode = D, q.x = Y, q.y = X, q.scale = z, q.rotation = B, q.data = A.data;
-							var Z = K(q);
-							Y = Z.x, X = Z.y, z = Z.scale, B = Z.rotation, Z.color ? (x = Z.color, S = Z.color, C = Z.color, w = Z.color) : (x = Z.tint.topLeft, S = Z.tint.topRight, C = Z.tint.bottomLeft, w = Z.tint.bottomRight), b = Z.tintMode, x = o.getTintAppendFloatAlpha(x, t._alphaTL), S = o.getTintAppendFloatAlpha(S, t._alphaTR), C = o.getTintAppendFloatAlpha(C, t._alphaBL), w = o.getTintAppendFloatAlpha(w, t._alphaBR);
+						if (z = t.fontSize / t.fontData.size, B = 0, ee) {
+							K.color = 0, K.tintMode = b, K.tint.topLeft = x, K.tint.topRight = S, K.tint.bottomLeft = C, K.tint.bottomRight = w, K.index = q, K.charCode = D, K.x = J, K.y = Y, K.scale = z, K.rotation = B, K.data = A.data;
+							var X = ee(K);
+							J = X.x, Y = X.y, z = X.scale, B = X.rotation, X.color ? (x = X.color, S = X.color, C = X.color, w = X.color) : (x = X.tint.topLeft, S = X.tint.topRight, C = X.tint.bottomLeft, w = X.tint.bottomRight), b = X.tintMode, x = o.getTintAppendFloatAlpha(x, t._alphaTL), S = o.getTintAppendFloatAlpha(S, t._alphaTR), C = o.getTintAppendFloatAlpha(C, t._alphaBL), w = o.getTintAppendFloatAlpha(w, t._alphaBR);
 						}
-						l.tintEffect = b, l.tintTopLeft = x, l.tintTopRight = S, l.tintBottomLeft = C, l.tintBottomRight = w, Y *= z, X *= z, Y -= t.displayOriginX, X -= t.displayOriginY, Y += U, v.applyITRS(Y, X, B, z, z), _.multiply(v, g);
-						var te = j, Q = M, ne = g.e, $ = g.f, re = Q * g.c + g.e, ie = Q * g.d + g.f, ae = te * g.a + Q * g.c + g.e, oe = te * g.b + Q * g.d + g.f, se = te * g.a + g.e, ce = te * g.b + g.f;
+						l.tintEffect = b, l.tintTopLeft = x, l.tintTopRight = S, l.tintBottomLeft = C, l.tintBottomRight = w, J *= z, Y *= z, J -= t.displayOriginX, Y -= t.displayOriginY, J += U, v.applyITRS(J, Y, B, z, z), _.multiply(v, g);
+						var ne = j, Z = M, Q = g.e, $ = g.f, re = Z * g.c + g.e, ie = Z * g.d + g.f, ae = ne * g.a + Z * g.c + g.e, oe = ne * g.b + Z * g.d + g.f, se = ne * g.a + g.e, ce = ne * g.b + g.f;
 						m.run(p, t, void 0, 0, c, { quad: [
-							ne,
+							Q,
 							$,
 							re,
 							ie,
@@ -9480,13 +9480,13 @@ var e = {
 						break;
 					case r.GRADIENT_LINE_STYLE:
 						T = S[++L];
-						var K = S[++L] * C;
-						p.TL = I(S[++L], K), p.TR = I(S[++L], K), p.BL = I(S[++L], K), p.BR = I(S[++L], K);
+						var ee = S[++L] * C;
+						p.TL = I(S[++L], ee), p.TR = I(S[++L], ee), p.BL = I(S[++L], ee), p.BR = I(S[++L], ee);
 						break;
 					case r.ARC:
-						var q = 0, J = S[++L], Y = S[++L], X = S[++L], ee = S[++L], Z = S[++L], te = S[++L], Q = S[++L];
-						for (Z -= ee, te ? Z < -A ? Z = -A : Z > 0 && (Z = -A + Z % A) : Z > A ? Z = A : Z < 0 && (Z = A + Z % A), F === null && (F = new c(J + Math.cos(ee) * X, Y + Math.sin(ee) * X, T), M.push(F), q += k); q < 1 + Q;) O = Z * q + ee, E = J + Math.cos(O) * X, D = Y + Math.sin(O) * X, F.addPoint(E, D, T), q += k;
-						O = Z + ee, E = J + Math.cos(O) * X, D = Y + Math.sin(O) * X, F.addPoint(E, D, T);
+						var K = 0, q = S[++L], J = S[++L], Y = S[++L], te = S[++L], X = S[++L], ne = S[++L], Z = S[++L];
+						for (X -= te, ne ? X < -A ? X = -A : X > 0 && (X = -A + X % A) : X > A ? X = A : X < 0 && (X = A + X % A), F === null && (F = new c(q + Math.cos(te) * Y, J + Math.sin(te) * Y, T), M.push(F), K += k); K < 1 + Z;) O = X * K + te, E = q + Math.cos(O) * Y, D = J + Math.sin(O) * Y, F.addPoint(E, D, T), K += k;
+						O = X + te, E = q + Math.cos(O) * Y, D = J + Math.sin(O) * Y, F.addPoint(E, D, T);
 						break;
 					case r.FILL_RECT:
 						b.multiply(x, d), (s.FillRect || h.FillRect).run(v, d, g, S[++L], S[++L], S[++L], S[++L], f.TL, f.TR, f.BL, f.BR, _);
@@ -9498,7 +9498,7 @@ var e = {
 						b.multiply(x, d), m[0].x = S[++L], m[0].y = S[++L], m[0].width = T, m[1].x = S[++L], m[1].y = S[++L], m[1].width = T, m[2].x = S[++L], m[2].y = S[++L], m[2].width = T, m[3].x = m[0].x, m[3].y = m[0].y, m[3].width = T, (s.StrokePath || h.StrokePath).run(v, g, m, T, !1, d, p.TL, p.TR, p.BL, p.BR, _);
 						break;
 					case r.LINE_TO:
-						J = S[++L], Y = S[++L], F === null ? (F = new c(J, Y, T), M.push(F)) : F.addPoint(J, Y, T);
+						q = S[++L], J = S[++L], F === null ? (F = new c(q, J, T), M.push(F)) : F.addPoint(q, J, T);
 						break;
 					case r.MOVE_TO:
 						F = new c(S[++L], S[++L], T), M.push(F);
@@ -9510,10 +9510,10 @@ var e = {
 						x.copyFromArray(l.pop());
 						break;
 					case r.TRANSLATE:
-						J = S[++L], Y = S[++L], x.translate(J, Y);
+						q = S[++L], J = S[++L], x.translate(q, J);
 						break;
 					case r.SCALE:
-						J = S[++L], Y = S[++L], x.scale(J, Y);
+						q = S[++L], J = S[++L], x.scale(q, J);
 						break;
 					case r.ROTATE: x.rotate(S[++L]);
 				}
@@ -22056,35 +22056,35 @@ var e = {
 				r < 0 && (r += 289), t[n] = (r * 34 + 10) * r % 289;
 			}
 		}, m = function(e, t, n) {
-			var r = f.uvw, i = f.i0, a = f.f0, o = f.g_, c = f.l_, l = f.g, u = f.l, d = f.o1, m = f.o2, h = f.i1, g = f.i2, _ = f.i3, v = f.v0, y = f.v1, b = f.v2, x = f.v3, S = f.x0, C = f.x1, w = f.x2, T = f.x3, E = f.vx, D = f.vy, O = f.vz, k = f.hash, A = f.theta, j = f.sz, M = f.psi, N = f.Ct, P = f.St, F = f.szp, I = f.gx, L = f.gy, R = f.gz, z = f.px, B = f.py, V = f.pz, H = f.Sp, U = f.Cp, W = f.Ctp, G = f.qx, K = f.qy, q = f.qz, J = f.Sa, Y = f.Ca, X = f.w, ee = f.w2, Z = f.w3, te = f.gdotx;
+			var r = f.uvw, i = f.i0, a = f.f0, o = f.g_, c = f.l_, l = f.g, u = f.l, d = f.o1, m = f.o2, h = f.i1, g = f.i2, _ = f.i3, v = f.v0, y = f.v1, b = f.v2, x = f.v3, S = f.x0, C = f.x1, w = f.x2, T = f.x3, E = f.vx, D = f.vy, O = f.vz, k = f.hash, A = f.theta, j = f.sz, M = f.psi, N = f.Ct, P = f.St, F = f.szp, I = f.gx, L = f.gy, R = f.gz, z = f.px, B = f.py, V = f.pz, H = f.Sp, U = f.Cp, W = f.Ctp, G = f.qx, ee = f.qy, K = f.qz, q = f.Sa, J = f.Ca, Y = f.w, te = f.w2, X = f.w3, ne = f.gdotx;
 			r[0] = 0 * e[0] + 1 * e[1] + 1 * e[2], r[1] = 1 * e[0] + 0 * e[1] + 1 * e[2], r[2] = 1 * e[0] + 1 * e[1] + 0 * e[2];
-			for (var Q = 0; Q < 3; Q++) i[Q] = Math.floor(r[Q]), a[Q] = r[Q] - i[Q];
-			for (o[0] = a[0] > a[1] ? 0 : 1, o[1] = a[1] > a[2] ? 0 : 1, o[2] = a[0] > a[2] ? 0 : 1, c[0] = 1 - o[0], c[1] = 1 - o[1], c[2] = 1 - o[2], l[0] = c[2], l[1] = o[0], l[2] = o[1], u[0] = c[0], u[1] = c[1], u[2] = o[2], Q = 0; Q < 3; Q++) d[Q] = Math.min(l[Q], u[Q]), m[Q] = Math.max(l[Q], u[Q]);
-			for (Q = 0; Q < 3; Q++) h[Q] = i[Q] + d[Q], g[Q] = i[Q] + m[Q], _[Q] = i[Q] + 1;
-			var ne = i[0], $ = i[1], re = i[2], ie = h[0], ae = h[1], oe = h[2], se = g[0], ce = g[1], le = g[2], ue = _[0], de = _[1], fe = _[2];
-			for (v[0] = -.5 * ne + .5 * $ + .5 * re, v[1] = .5 * ne - .5 * $ + .5 * re, v[2] = .5 * ne + .5 * $ - .5 * re, y[0] = -.5 * ie + .5 * ae + .5 * oe, y[1] = .5 * ie - .5 * ae + .5 * oe, y[2] = .5 * ie + .5 * ae - .5 * oe, b[0] = -.5 * se + .5 * ce + .5 * le, b[1] = .5 * se - .5 * ce + .5 * le, b[2] = .5 * se + .5 * ce - .5 * le, x[0] = -.5 * ue + .5 * de + .5 * fe, x[1] = .5 * ue - .5 * de + .5 * fe, x[2] = .5 * ue + .5 * de - .5 * fe, Q = 0; Q < 3; Q++) S[Q] = e[Q] - v[Q], C[Q] = e[Q] - y[Q], w[Q] = e[Q] - b[Q], T[Q] = e[Q] - x[Q];
+			for (var Z = 0; Z < 3; Z++) i[Z] = Math.floor(r[Z]), a[Z] = r[Z] - i[Z];
+			for (o[0] = a[0] > a[1] ? 0 : 1, o[1] = a[1] > a[2] ? 0 : 1, o[2] = a[0] > a[2] ? 0 : 1, c[0] = 1 - o[0], c[1] = 1 - o[1], c[2] = 1 - o[2], l[0] = c[2], l[1] = o[0], l[2] = o[1], u[0] = c[0], u[1] = c[1], u[2] = o[2], Z = 0; Z < 3; Z++) d[Z] = Math.min(l[Z], u[Z]), m[Z] = Math.max(l[Z], u[Z]);
+			for (Z = 0; Z < 3; Z++) h[Z] = i[Z] + d[Z], g[Z] = i[Z] + m[Z], _[Z] = i[Z] + 1;
+			var Q = i[0], $ = i[1], re = i[2], ie = h[0], ae = h[1], oe = h[2], se = g[0], ce = g[1], le = g[2], ue = _[0], de = _[1], fe = _[2];
+			for (v[0] = -.5 * Q + .5 * $ + .5 * re, v[1] = .5 * Q - .5 * $ + .5 * re, v[2] = .5 * Q + .5 * $ - .5 * re, y[0] = -.5 * ie + .5 * ae + .5 * oe, y[1] = .5 * ie - .5 * ae + .5 * oe, y[2] = .5 * ie + .5 * ae - .5 * oe, b[0] = -.5 * se + .5 * ce + .5 * le, b[1] = .5 * se - .5 * ce + .5 * le, b[2] = .5 * se + .5 * ce - .5 * le, x[0] = -.5 * ue + .5 * de + .5 * fe, x[1] = .5 * ue - .5 * de + .5 * fe, x[2] = .5 * ue + .5 * de - .5 * fe, Z = 0; Z < 3; Z++) S[Z] = e[Z] - v[Z], C[Z] = e[Z] - y[Z], w[Z] = e[Z] - b[Z], T[Z] = e[Z] - x[Z];
 			if (t[0] > 0 || t[1] > 0 || t[2] > 0) {
-				if (E[0] = v[0], E[1] = y[0], E[2] = b[0], E[3] = x[0], D[0] = v[1], D[1] = y[1], D[2] = b[1], D[3] = x[1], O[0] = v[2], O[1] = y[2], O[2] = b[2], O[3] = x[2], t[0] > 0) for (Q = 0; Q < 4; Q++) E[Q] = (E[Q] % t[0] + t[0]) % t[0];
-				if (t[1] > 0) for (Q = 0; Q < 4; Q++) D[Q] = (D[Q] % t[1] + t[1]) % t[1];
-				if (t[2] > 0) for (Q = 0; Q < 4; Q++) O[Q] = (O[Q] % t[2] + t[2]) % t[2];
+				if (E[0] = v[0], E[1] = y[0], E[2] = b[0], E[3] = x[0], D[0] = v[1], D[1] = y[1], D[2] = b[1], D[3] = x[1], O[0] = v[2], O[1] = y[2], O[2] = b[2], O[3] = x[2], t[0] > 0) for (Z = 0; Z < 4; Z++) E[Z] = (E[Z] % t[0] + t[0]) % t[0];
+				if (t[1] > 0) for (Z = 0; Z < 4; Z++) D[Z] = (D[Z] % t[1] + t[1]) % t[1];
+				if (t[2] > 0) for (Z = 0; Z < 4; Z++) O[Z] = (O[Z] % t[2] + t[2]) % t[2];
 				var pe = E[0], me = D[0], he = O[0], ge = E[1], _e = D[1], ve = O[1], ye = E[2], be = D[2], xe = O[2], Se = E[3], Ce = D[3], we = O[3];
 				i[0] = Math.floor(0 * pe + 1 * me + 1 * he + .5), i[1] = Math.floor(1 * pe + 0 * me + 1 * he + .5), i[2] = Math.floor(1 * pe + 1 * me + 0 * he + .5), h[0] = Math.floor(0 * ge + 1 * _e + 1 * ve + .5), h[1] = Math.floor(1 * ge + 0 * _e + 1 * ve + .5), h[2] = Math.floor(1 * ge + 1 * _e + 0 * ve + .5), g[0] = Math.floor(0 * ye + 1 * be + 1 * xe + .5), g[1] = Math.floor(1 * ye + 0 * be + 1 * xe + .5), g[2] = Math.floor(1 * ye + 1 * be + 0 * xe + .5), _[0] = Math.floor(0 * Se + 1 * Ce + 1 * we + .5), _[1] = Math.floor(1 * Se + 0 * Ce + 1 * we + .5), _[2] = Math.floor(1 * Se + 1 * Ce + 0 * we + .5);
 			}
 			i[0] += s[0], i[1] += s[1], i[2] += s[2], h[0] += s[0], h[1] += s[1], h[2] += s[2], g[0] += s[0], g[1] += s[1], g[2] += s[2], _[0] += s[0], _[1] += s[1], _[2] += s[2];
 			var Te = f.vx, Ee = f.vy;
-			for (Te[0] = i[2], Te[1] = h[2], Te[2] = g[2], Te[3] = _[2], p(Te, Ee), Ee[0] += i[1], Ee[1] += h[1], Ee[2] += g[1], Ee[3] += _[1], p(Ee, Te), Te[0] += i[0], Te[1] += h[0], Te[2] += g[0], Te[3] += _[0], p(Te, k), Q = 0; Q < 4; Q++) A[Q] = k[Q] * 3.883222077, j[Q] = .996539792 - .006920415 * k[Q], M[Q] = k[Q] * .108705628, N[Q] = Math.cos(A[Q]), P[Q] = Math.sin(A[Q]), F[Q] = Math.sqrt(Math.max(0, 1 - j[Q] * j[Q]));
-			if (n !== 0) for (Q = 0; Q < 4; Q++) z[Q] = N[Q] * F[Q], B[Q] = P[Q] * F[Q], V[Q] = j[Q], H[Q] = Math.sin(M[Q]), U[Q] = Math.cos(M[Q]), W[Q] = P[Q] * H[Q] - N[Q] * U[Q], G[Q] = (1 - j[Q]) * (W[Q] * P[Q]) + j[Q] * H[Q], K[Q] = (1 - j[Q]) * (-W[Q] * N[Q]) + j[Q] * U[Q], q[Q] = -(B[Q] * U[Q] + z[Q] * H[Q]), J[Q] = Math.sin(n), Y[Q] = Math.cos(n), I[Q] = Y[Q] * z[Q] + J[Q] * G[Q], L[Q] = Y[Q] * B[Q] + J[Q] * K[Q], R[Q] = Y[Q] * V[Q] + J[Q] * q[Q];
-			else for (Q = 0; Q < 4; Q++) I[Q] = N[Q] * F[Q], L[Q] = P[Q] * F[Q], R[Q] = j[Q];
-			for (Q = 0; Q < 4; Q++) {
-				var De = Q === 0 ? S[0] : Q === 1 ? C[0] : Q === 2 ? w[0] : T[0], Oe = Q === 0 ? S[1] : Q === 1 ? C[1] : Q === 2 ? w[1] : T[1], ke = Q === 0 ? S[2] : Q === 1 ? C[2] : Q === 2 ? w[2] : T[2], Ae = De * De + Oe * Oe + ke * ke;
-				X[Q] = .5 - Ae, X[Q] < 0 && (X[Q] = 0), ee[Q] = X[Q] * X[Q], Z[Q] = ee[Q] * X[Q];
+			for (Te[0] = i[2], Te[1] = h[2], Te[2] = g[2], Te[3] = _[2], p(Te, Ee), Ee[0] += i[1], Ee[1] += h[1], Ee[2] += g[1], Ee[3] += _[1], p(Ee, Te), Te[0] += i[0], Te[1] += h[0], Te[2] += g[0], Te[3] += _[0], p(Te, k), Z = 0; Z < 4; Z++) A[Z] = k[Z] * 3.883222077, j[Z] = .996539792 - .006920415 * k[Z], M[Z] = k[Z] * .108705628, N[Z] = Math.cos(A[Z]), P[Z] = Math.sin(A[Z]), F[Z] = Math.sqrt(Math.max(0, 1 - j[Z] * j[Z]));
+			if (n !== 0) for (Z = 0; Z < 4; Z++) z[Z] = N[Z] * F[Z], B[Z] = P[Z] * F[Z], V[Z] = j[Z], H[Z] = Math.sin(M[Z]), U[Z] = Math.cos(M[Z]), W[Z] = P[Z] * H[Z] - N[Z] * U[Z], G[Z] = (1 - j[Z]) * (W[Z] * P[Z]) + j[Z] * H[Z], ee[Z] = (1 - j[Z]) * (-W[Z] * N[Z]) + j[Z] * U[Z], K[Z] = -(B[Z] * U[Z] + z[Z] * H[Z]), q[Z] = Math.sin(n), J[Z] = Math.cos(n), I[Z] = J[Z] * z[Z] + q[Z] * G[Z], L[Z] = J[Z] * B[Z] + q[Z] * ee[Z], R[Z] = J[Z] * V[Z] + q[Z] * K[Z];
+			else for (Z = 0; Z < 4; Z++) I[Z] = N[Z] * F[Z], L[Z] = P[Z] * F[Z], R[Z] = j[Z];
+			for (Z = 0; Z < 4; Z++) {
+				var De = Z === 0 ? S[0] : Z === 1 ? C[0] : Z === 2 ? w[0] : T[0], Oe = Z === 0 ? S[1] : Z === 1 ? C[1] : Z === 2 ? w[1] : T[1], ke = Z === 0 ? S[2] : Z === 1 ? C[2] : Z === 2 ? w[2] : T[2], Ae = De * De + Oe * Oe + ke * ke;
+				Y[Z] = .5 - Ae, Y[Z] < 0 && (Y[Z] = 0), te[Z] = Y[Z] * Y[Z], X[Z] = te[Z] * Y[Z];
 			}
-			for (Q = 0; Q < 4; Q++) {
-				var je = I[Q], Me = L[Q], Ne = R[Q], Pe = Q === 0 ? S[0] : Q === 1 ? C[0] : Q === 2 ? w[0] : T[0], Fe = Q === 0 ? S[1] : Q === 1 ? C[1] : Q === 2 ? w[1] : T[1], Ie = Q === 0 ? S[2] : Q === 1 ? C[2] : Q === 2 ? w[2] : T[2];
-				te[Q] = je * Pe + Me * Fe + Ne * Ie;
+			for (Z = 0; Z < 4; Z++) {
+				var je = I[Z], Me = L[Z], Ne = R[Z], Pe = Z === 0 ? S[0] : Z === 1 ? C[0] : Z === 2 ? w[0] : T[0], Fe = Z === 0 ? S[1] : Z === 1 ? C[1] : Z === 2 ? w[1] : T[1], Ie = Z === 0 ? S[2] : Z === 1 ? C[2] : Z === 2 ? w[2] : T[2];
+				ne[Z] = je * Pe + Me * Fe + Ne * Ie;
 			}
 			var Le = 0;
-			for (Q = 0; Q < 4; Q++) Le += Z[Q] * te[Q];
+			for (Z = 0; Z < 4; Z++) Le += X[Z] * ne[Z];
 			return 39.5 * Le;
 		};
 		e.exports = t;
@@ -27754,22 +27754,22 @@ var e = {
 					if (h.isActive && !h.isSensor) {
 						var g = h.collision, _ = g.parentA, v = g.parentB, y = g.normal.x, b = g.normal.y, x = g.tangent.x, S = g.tangent.y, C = h.inverseMass, w = h.friction * h.frictionStatic * c, T = h.contacts, E = h.contactCount, D = 1 / E, O = _.position.x - _.positionPrev.x, k = _.position.y - _.positionPrev.y, A = _.angle - _.anglePrev, j = v.position.x - v.positionPrev.x, M = v.position.y - v.positionPrev.y, N = v.angle - v.anglePrev;
 						for (m = 0; m < E; m++) {
-							var P = T[m], F = P.vertex, I = F.x - _.position.x, L = F.y - _.position.y, R = F.x - v.position.x, z = F.y - v.position.y, B = O - L * A, V = k + I * A, H = j - z * N, U = M + R * N, W = B - H, G = V - U, K = y * W + b * G, q = x * W + S * G, J = h.separation + K, Y = Math.min(J, 1);
-							Y = J < 0 ? 0 : Y;
-							var X = Y * w;
-							q < -X || q > X ? (f = q > 0 ? q : -q, d = h.friction * (q > 0 ? 1 : -1) * i, d < -f ? d = -f : d > f && (d = f)) : (d = q, f = l);
-							var ee = I * b - L * y, Z = R * b - z * y, te = D / (C + _.inverseInertia * ee * ee + v.inverseInertia * Z * Z), Q = (1 + h.restitution) * K * te;
-							if (d *= te, K < o) P.normalImpulse = 0;
+							var P = T[m], F = P.vertex, I = F.x - _.position.x, L = F.y - _.position.y, R = F.x - v.position.x, z = F.y - v.position.y, B = O - L * A, V = k + I * A, H = j - z * N, U = M + R * N, W = B - H, G = V - U, ee = y * W + b * G, K = x * W + S * G, q = h.separation + ee, J = Math.min(q, 1);
+							J = q < 0 ? 0 : J;
+							var Y = J * w;
+							K < -Y || K > Y ? (f = K > 0 ? K : -K, d = h.friction * (K > 0 ? 1 : -1) * i, d < -f ? d = -f : d > f && (d = f)) : (d = K, f = l);
+							var te = I * b - L * y, X = R * b - z * y, ne = D / (C + _.inverseInertia * te * te + v.inverseInertia * X * X), Z = (1 + h.restitution) * ee * ne;
+							if (d *= ne, ee < o) P.normalImpulse = 0;
 							else {
-								var ne = P.normalImpulse;
-								P.normalImpulse += Q, P.normalImpulse > 0 && (P.normalImpulse = 0), Q = P.normalImpulse - ne;
+								var Q = P.normalImpulse;
+								P.normalImpulse += Z, P.normalImpulse > 0 && (P.normalImpulse = 0), Z = P.normalImpulse - Q;
 							}
-							if (q < -s || q > s) P.tangentImpulse = 0;
+							if (K < -s || K > s) P.tangentImpulse = 0;
 							else {
 								var $ = P.tangentImpulse;
 								P.tangentImpulse += d, P.tangentImpulse < -f && (P.tangentImpulse = -f), P.tangentImpulse > f && (P.tangentImpulse = f), d = P.tangentImpulse - $;
 							}
-							var re = y * Q + x * d, ie = b * Q + S * d;
+							var re = y * Z + x * d, ie = b * Z + S * d;
 							_.isStatic || _.isSleeping || (_.positionPrev.x += re * _.inverseMass, _.positionPrev.y += ie * _.inverseMass, _.anglePrev += (I * ie - L * re) * _.inverseInertia), v.isStatic || v.isSleeping || (v.positionPrev.x -= re * v.inverseMass, v.positionPrev.y -= ie * v.inverseMass, v.anglePrev -= (R * ie - z * re) * v.inverseInertia);
 						}
 					}
@@ -31354,8 +31354,8 @@ var e = {
 						for (L = null, M = new o(), A = 0; A < g.length; A++) j = g[A], j.allowBaseDraw && u.width === w.width && u.height === w.height && A === g.length - 1 && m === 1 && (W = !0, L = w), N = p.getNode(j.renderNode), u = N.run(j, u, L, M), M = j.currentPadding, M.x = -M.x, M.y = -M.y, M.width = -M.width, M.height = -M.height;
 						if (!W) {
 							P = d(m);
-							var G = -M.x, K = -M.y, q = u.width + M.right, J = u.height + M.bottom;
-							this.batchHandlerQuadSingleNode.batch(w, u.texture, G, J, G, K, q, J, q, K, 0, 0, 1, 1, !1, P, P, P, P, F), u.release();
+							var G = -M.x, ee = -M.y, K = u.width + M.right, q = u.height + M.bottom;
+							this.batchHandlerQuadSingleNode.batch(w, u.texture, G, q, G, ee, K, q, K, ee, 0, 0, 1, 1, !1, P, P, P, P, F), u.release();
 						}
 					}
 				}
@@ -31429,13 +31429,13 @@ var e = {
 						A = E[++N];
 						break;
 					case i.CALLBACK:
-						var K = E[++N];
-						K();
+						var ee = E[++N];
+						ee();
 						break;
 					case i.CAPTURE:
 						U = E[++N];
-						var q = E[++N], J = e.startCapture(U, q), Y = j;
-						q.camera && (Y = Y.getClone(), Y.setCamera(q.camera), Y.use()), this._draw(a, U, Y, t, k, J.transform), e.finishCapture(U, J), q.camera && Y.release();
+						var K = E[++N], q = e.startCapture(U, K), J = j;
+						K.camera && (J = J.getClone(), J.setCamera(K.camera), J.use()), this._draw(a, U, J, t, k, q.transform), e.finishCapture(U, q), K.camera && J.release();
 				}
 				A || (E.length = 0), j.release(), c.needsMipmapRegeneration = !0, n.emit(r.POST_RENDER, n), this.onRunEnd(t);
 			},
@@ -31614,7 +31614,7 @@ var e = {
 		});
 	},
 	30130(e, t, n) {
-		var r = n(50792), i = n(83419), a = n(92503), o = n(47406), s = n(53663), c = n(16971), l = n(15214), u = n(72266), d = n(62791), f = n(21832), p = n(59444), m = n(62087), h = n(61842), g = n(76409), _ = n(95449), v = n(61199), y = n(14255), b = n(12682), x = n(13119), S = n(22731), C = n(57032), w = n(52903), T = n(13922), E = n(33466), D = n(75798), O = n(90830), k = n(52302), A = n(34989), j = n(91614), M = n(15600), N = n(99786), P = n(26825), F = n(54900), I = n(34652), L = n(26703), R = n(56165), z = n(40305), B = n(55905), V = n(58167), H = n(40752), U = n(13279), W = n(27459), G = n(88856), K = n(10845), q = n(99184), J = n(27996), Y = n(56432), X = n(17486), ee = n(68517), Z = n(31029), te = n(94494), Q = n(87469), ne = n(89723), $ = n(12913), re = n(22995), ie = n(86081), ae = n(88383), oe = n(34454), se = n(46211), ce = n(64552), le = n(95433);
+		var r = n(50792), i = n(83419), a = n(92503), o = n(47406), s = n(53663), c = n(16971), l = n(15214), u = n(72266), d = n(62791), f = n(21832), p = n(59444), m = n(62087), h = n(61842), g = n(76409), _ = n(95449), v = n(61199), y = n(14255), b = n(12682), x = n(13119), S = n(22731), C = n(57032), w = n(52903), T = n(13922), E = n(33466), D = n(75798), O = n(90830), k = n(52302), A = n(34989), j = n(91614), M = n(15600), N = n(99786), P = n(26825), F = n(54900), I = n(34652), L = n(26703), R = n(56165), z = n(40305), B = n(55905), V = n(58167), H = n(40752), U = n(13279), W = n(27459), G = n(88856), ee = n(10845), K = n(99184), q = n(27996), J = n(56432), Y = n(17486), te = n(68517), X = n(31029), ne = n(94494), Z = n(87469), Q = n(89723), $ = n(12913), re = n(22995), ie = n(86081), ae = n(88383), oe = n(34454), se = n(46211), ce = n(64552), le = n(95433);
 		e.exports = new i({
 			Extends: r,
 			initialize: function(e) {
@@ -31661,16 +31661,16 @@ var e = {
 					FilterSampler: U,
 					FilterShadow: W,
 					FilterThreshold: G,
-					FilterVignette: K,
-					FilterWipe: q,
-					ListCompositor: J,
-					RebindContext: Y,
-					StrokePath: X,
-					SubmitterMeshToQuad: ee,
-					SubmitterQuad: Z,
-					SubmitterTile: te,
-					SubmitterTilemapGPULayer: Q,
-					SubmitterTileSprite: ne,
+					FilterVignette: ee,
+					FilterWipe: K,
+					ListCompositor: q,
+					RebindContext: J,
+					StrokePath: Y,
+					SubmitterMeshToQuad: te,
+					SubmitterQuad: X,
+					SubmitterTile: ne,
+					SubmitterTilemapGPULayer: Z,
+					SubmitterTileSprite: Q,
 					TexturerImage: $,
 					TexturerTileSprite: re,
 					TransformerImage: ie,
@@ -43150,7 +43150,7 @@ n.d(r, {
 	AQ: () => w,
 	Ae: () => B,
 	Aq: () => R,
-	Ay: () => ee,
+	Ay: () => te,
 	B_: () => p,
 	CB: () => U,
 	Cu: () => _,
@@ -43159,15 +43159,15 @@ n.d(r, {
 	En: () => a,
 	FE: () => D,
 	Fu: () => L,
-	M3: () => q,
-	NS: () => J,
+	M3: () => K,
+	NS: () => q,
 	O1: () => P,
-	PX: () => X,
+	PX: () => Y,
 	Q8: () => V,
 	Qw: () => o,
 	SY: () => G,
 	Tm: () => l,
-	UP: () => Y,
+	UP: () => J,
 	XT: () => f,
 	Xs: () => d,
 	Z5: () => k,
@@ -43187,13 +43187,13 @@ n.d(r, {
 	ry: () => T,
 	sV: () => g,
 	sx: () => I,
-	x3: () => K,
+	x3: () => ee,
 	xS: () => y,
 	xv: () => z,
 	zA: () => O,
 	zU: () => C
 }), n(63595);
-var i = n(8054), a = n(61061), o = n(60421), s = n(10312), c = n(83388), l = n(26638), u = n(42857), d = n(83419), f = n(25410), p = n(44965), m = n(27460), h = n(84902), g = n(93055), _ = n(11889), v = n(50127), y = n(77856), b = n(55738), x = n(14350), S = n(57777), C = n(75508), w = n(44563), T = n(18922), E = n(36909), D = n(93364), O = n(29795), k = n(97482), A = n(62194), j = n(41392), M = n(23717), N = n(27458), P = n(62501), F = n(90291), I = n(84322), L = n(43066), R = n(91799), z = i.VERSION, B = i.LOG_VERSION, V = i.AUTO, H = i.CANVAS, U = i.WEBGL, W = i.HEADLESS, G = i.FOREVER, K = i.NONE, q = i.LEFT, J = i.RIGHT, Y = i.UP, X = i.DOWN, ee = {
+var i = n(8054), a = n(61061), o = n(60421), s = n(10312), c = n(83388), l = n(26638), u = n(42857), d = n(83419), f = n(25410), p = n(44965), m = n(27460), h = n(84902), g = n(93055), _ = n(11889), v = n(50127), y = n(77856), b = n(55738), x = n(14350), S = n(57777), C = n(75508), w = n(44563), T = n(18922), E = n(36909), D = n(93364), O = n(29795), k = n(97482), A = n(62194), j = n(41392), M = n(23717), N = n(27458), P = n(62501), F = n(90291), I = n(84322), L = n(43066), R = n(91799), z = i.VERSION, B = i.LOG_VERSION, V = i.AUTO, H = i.CANVAS, U = i.WEBGL, W = i.HEADLESS, G = i.FOREVER, ee = i.NONE, K = i.LEFT, q = i.RIGHT, J = i.UP, Y = i.DOWN, te = {
 	Actions: a,
 	Animations: o,
 	BlendModes: s,
@@ -43235,21 +43235,21 @@ var i = n(8054), a = n(61061), o = n(60421), s = n(10312), c = n(83388), l = n(2
 	WEBGL: U,
 	HEADLESS: W,
 	FOREVER: G,
-	NONE: K,
-	LEFT: q,
-	RIGHT: J,
-	UP: Y,
-	DOWN: X
+	NONE: ee,
+	LEFT: K,
+	RIGHT: q,
+	UP: J,
+	DOWN: Y
 };
 r.Q8, r.En, r.Qw, r.gd, r.j$, r.l2, r.Tm, r.Xs, r.iJ, r.XT, r.dv, r.PX, r.B_, r.nl, r.sV, r.SY, r.Cu, r.Zt, r.xS, r.Dh, r.qt, r.pd, r.M3, r.Ae, r.aH, r.zU, r.x3, r.AQ, r.ry, r.NS, r.A4, r.FE, r.zA, r.Z5, r._k, r.AB, r.ho, r.D7, r.O1, r.gX, r.sx, r.Fu, r.UP, r.Aq, r.xv, r.CB;
-var Z = r.Ay;
+var X = r.Ay;
 // src/phaser-room.ts
-function te(e, t, n, r) {
+function ne(e, t, n, r) {
 	let i = [], a = [], o = [], s = window.matchMedia("(prefers-reduced-motion: reduce)").matches, c, l = !1, u = /* @__PURE__ */ new Set();
 	function d(e, t) {
 		let n = i[e];
 		if (!n) return;
-		let r = Z.Math.Clamp(t, 0, 1);
+		let r = X.Math.Clamp(t, 0, 1);
 		n.setX(o[e] - 105 * r), n.setAngle(-10 * r), n.setAlpha(1 - .75 * r);
 	}
 	function f(e) {
@@ -43280,15 +43280,15 @@ function te(e, t, n, r) {
 			ease: "Back.easeOut"
 		});
 	}
-	let p = new Z.Game({
-		type: Z.CANVAS,
+	let p = new X.Game({
+		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
 		width: 800,
 		height: 560,
 		scale: {
-			mode: Z.Scale.FIT,
-			autoCenter: Z.Scale.CENTER_BOTH
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
 		},
 		scene: {
 			preload() {
@@ -43322,7 +43322,7 @@ function te(e, t, n, r) {
 		}
 	};
 }
-function Q(e) {
+function Z(e) {
 	let t, n, r, i = {
 		x: .5,
 		y: .5,
@@ -43330,20 +43330,20 @@ function Q(e) {
 	}, a = !0;
 	function o(e, a, o) {
 		i = {
-			x: Z.Math.Clamp(e, .15, .85),
-			y: Z.Math.Clamp(a, .15, .85),
-			progress: Z.Math.Clamp(o, 0, 1)
+			x: X.Math.Clamp(e, .15, .85),
+			y: X.Math.Clamp(a, .15, .85),
+			progress: X.Math.Clamp(o, 0, 1)
 		}, t && n && r && (n.setPosition(i.x * 300, i.y * 300), n.setRotation(Math.atan2(i.y - .5, i.x - .5) + .8), r.clear(), r.lineStyle(7, 16774089, .7), r.beginPath(), r.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + i.progress * Math.PI * 2), r.strokePath());
 	}
-	let s = new Z.Game({
-		type: Z.CANVAS,
+	let s = new X.Game({
+		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
 		width: 300,
 		height: 300,
 		scale: {
-			mode: Z.Scale.FIT,
-			autoCenter: Z.Scale.CENTER_BOTH
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
 		},
 		scene: { create() {
 			if (!a) return;
@@ -43364,4 +43364,63 @@ function Q(e) {
 		}
 	};
 }
-export { Q as createMixingView, te as createRoomView };
+function Q(e, t) {
+	let n, r, i = !0, a = !1, o = /* @__PURE__ */ new Set(), s = /* @__PURE__ */ new Set(), c = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	function l() {
+		a = !0, n && r && (r.setVisible(!0), c || (r.setScale(.92), n.tweens.add({
+			targets: r,
+			scale: 1,
+			duration: 250,
+			ease: "Sine.easeOut"
+		})));
+	}
+	function u(e) {
+		if (o.add(e), !n || s.has(e)) return;
+		s.add(e);
+		let r = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, a = $(n, r, i, t);
+		c || (a.setScale(.5), n.tweens.add({
+			targets: a,
+			scale: 1,
+			duration: 300,
+			ease: "Back.easeOut"
+		}));
+	}
+	let d = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: 300,
+		height: 108,
+		scale: {
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
+		},
+		scene: { create() {
+			i && (n = this, r = this.add.rectangle(150, 54, 296, 104, 16773327).setVisible(!1), e.classList.add("phaser-tray-ready"), a && l(), o.forEach(u));
+		} }
+	});
+	return {
+		line: l,
+		place: u,
+		destroy() {
+			i = !1, e.classList.remove("phaser-tray-ready"), d.destroy(!0);
+		}
+	};
+}
+function $(e, t, n, r) {
+	if (r === "cupcake") {
+		let r = e.add.rectangle(0, 7, 28, 22, 12159963), i = e.add.ellipse(0, -6, 34, 23, 16758235), a = e.add.ellipse(-7, -9, 9, 5, 16772599, .8);
+		return e.add.container(t, n, [
+			r,
+			i,
+			a
+		]);
+	}
+	let i = e.add.ellipse(0, 0, 36, 33, 13867873), a = [
+		e.add.circle(-8, -5, 3, 8406063),
+		e.add.circle(6, 6, 3, 8406063),
+		e.add.circle(8, -8, 2, 8406063)
+	];
+	return e.add.container(t, n, [i, ...a]);
+}
+export { Q as createBakingTrayView, Z as createMixingView, ne as createRoomView };

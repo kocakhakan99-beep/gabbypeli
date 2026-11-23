@@ -147,3 +147,87 @@ export function createMixingView(parent: HTMLElement): MixingView {
     },
   };
 }
+
+export interface BakingTrayView {
+  line(): void;
+  place(index: number): void;
+  destroy(): void;
+}
+
+/** Draws the parchment and individual portions on the baking tray. */
+export function createBakingTrayView(parent: HTMLElement, recipe: string): BakingTrayView {
+  let scene: Phaser.Scene | undefined;
+  let paper: Phaser.GameObjects.Rectangle | undefined;
+  let alive = true;
+  let lined = false;
+  const placed = new Set<number>();
+  const drawn = new Set<number>();
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function line(): void {
+    lined = true;
+    if (!scene || !paper) return;
+    paper.setVisible(true);
+    if (!reducedMotion) {
+      paper.setScale(0.92);
+      scene.tweens.add({ targets: paper, scale: 1, duration: 250, ease: "Sine.easeOut" });
+    }
+  }
+
+  function place(index: number): void {
+    placed.add(index);
+    if (!scene || drawn.has(index)) return;
+    drawn.add(index);
+    const x = 50 + (index % 3) * 100;
+    const y = 27 + Math.floor(index / 3) * 54;
+    const portion = thisScenePortion(scene, x, y, recipe);
+    if (!reducedMotion) {
+      portion.setScale(0.5);
+      scene.tweens.add({ targets: portion, scale: 1, duration: 300, ease: "Back.easeOut" });
+    }
+  }
+
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS,
+    parent,
+    transparent: true,
+    width: 300,
+    height: 108,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: {
+      create() {
+        if (!alive) return;
+        scene = this;
+        paper = this.add.rectangle(150, 54, 296, 104, 0xfff0cf).setVisible(false);
+        parent.classList.add("phaser-tray-ready");
+        if (lined) line();
+        placed.forEach(place);
+      },
+    },
+  });
+  return {
+    line,
+    place,
+    destroy() {
+      alive = false;
+      parent.classList.remove("phaser-tray-ready");
+      game.destroy(true);
+    },
+  };
+}
+
+function thisScenePortion(scene: Phaser.Scene, x: number, y: number, recipe: string): Phaser.GameObjects.Container {
+  if (recipe === "cupcake") {
+    const wrapper = scene.add.rectangle(0, 7, 28, 22, 0xb98bdb);
+    const icing = scene.add.ellipse(0, -6, 34, 23, 0xffb5db);
+    const highlight = scene.add.ellipse(-7, -9, 9, 5, 0xffedf7, 0.8);
+    return scene.add.container(x, y, [wrapper, icing, highlight]);
+  }
+  const cookie = scene.add.ellipse(0, 0, 36, 33, 0xd39b61);
+  const chips = [
+    scene.add.circle(-8, -5, 3, 0x80442f),
+    scene.add.circle(6, 6, 3, 0x80442f),
+    scene.add.circle(8, -8, 2, 0x80442f),
+  ];
+  return scene.add.container(x, y, [cookie, ...chips]);
+}
