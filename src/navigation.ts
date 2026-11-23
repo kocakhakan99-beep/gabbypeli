@@ -1,3 +1,4 @@
+import { setCampaignLevel } from "./campaign.js";
 import type { GameMode } from "./types.js";
 import { el } from "./dom.js";
 import { cancelAdvance, feedback, setAction } from "./ui.js";
@@ -40,6 +41,7 @@ const starters: Record<GameMode, () => void> = {
 };
 
 export function home(): void {
+  setCampaignLevel();
   const previousRoom = state.mode;
   cancelAdvance();
   stopGestures();
@@ -53,7 +55,8 @@ export function home(): void {
   if (previousRoom) el(`open-${previousRoom}`).focus();
 }
 
-export function open(which: GameMode): void {
+export function open(which: GameMode, level?: number): void {
+  setCampaignLevel(which === "memory" ? level : undefined);
   if (which === "drawing") {
     home();
     return;

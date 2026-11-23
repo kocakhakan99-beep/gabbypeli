@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import { button, cat, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
@@ -8,6 +9,8 @@ import { state } from "../state.js";
 let memoryView;
 let memoryGeneration = 0;
 let memoryViewLoading = false;
+let freePairs = 2;
+let freePack = "friends";
 let pack = "friends";
 let previewTimer;
 let mismatchTimer;
@@ -44,6 +47,9 @@ function hidePreview(announce = true) {
 }
 export function initMemory() {
     stopMemoryTimers();
+    const level = campaignLevel();
+    pack = level === undefined ? freePack : level <= 5 ? "friends" : "mixed";
+    state.memoryPairs = level === undefined ? freePairs : [2, 3, 3, 4, 5, 5, 6, 7, 8, 9][level - 1];
     heading("cakey", pack === "friends"
         ? "Etsi kaveriparit"
         : pack === "mixed"
@@ -65,6 +71,8 @@ export function initMemory() {
         { friend: f, found: false },
     ]));
     const packSettings = el("memory-packs");
+    packSettings.hidden = level !== undefined;
+    el("memory-settings").hidden = level !== undefined;
     packSettings.replaceChildren();
     for (const [key, label] of [
         ["friends", "Kaverit"],
@@ -72,9 +80,9 @@ export function initMemory() {
         ["mixed", "Kaverit ja esineet"],
     ]) {
         const choice = button(label, () => {
-            pack = key;
+            freePack = key;
             if (key === "friends")
-                state.memoryPairs = Math.min(state.memoryPairs, 6);
+                freePairs = Math.min(freePairs, 6);
             initMemory();
         });
         choice.setAttribute("aria-pressed", String(pack === key));
@@ -84,7 +92,7 @@ export function initMemory() {
     const levels = pack === "friends" ? [2, 3, 4, 5, 6] : [2, 3, 4, 5, 6, 7, 8, 9];
     levels.forEach((n) => {
         const b = button(n + " paria", () => {
-            state.memoryPairs = n;
+            freePairs = n;
             initMemory();
         });
         if (n > 6)

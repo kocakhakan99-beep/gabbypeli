@@ -1,3 +1,4 @@
+import { awardCampaignLevel, campaignLevel, levelCount } from "./campaign.js";
 import { playObjects } from "./play-objects.js";
 import { completeGame } from "./storage.js";
 import { ding, say } from "./audio.js";
@@ -184,7 +185,15 @@ export function setAction(label: string, fn: (() => void) | null) {
 }
 
 export function finish(title: string, text: string, art: string) {
-  if (state.mode) completeGame(state.mode);
+  const level = campaignLevel();
+  const coins = awardCampaignLevel();
+  if (state.mode && (coins > 0 || (level === undefined && state.mode !== "memory")))
+    completeGame(state.mode);
+  else document.querySelector<HTMLElement>("#gf-sticker-reward")!.hidden = true;
+  const reward = document.querySelector<HTMLElement>("#gf-coin-reward")!;
+  reward.hidden = level === undefined;
+  reward.textContent = coins ? `+${coins} kisukolikkoa` : "Taso suoritettu uudelleen!";
+  document.querySelector<HTMLElement>("#gf-next-level")!.hidden = level === undefined || level >= levelCount;
   setAction("", null);
   el("content").hidden = true;
   el("win").hidden = false;

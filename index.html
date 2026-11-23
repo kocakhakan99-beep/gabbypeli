@@ -15,7 +15,18 @@
           <p class="sub">Leikitään yhdessä!</p>
         </header>
         <section id="gf-home">
-          <div class="dollhouse">
+          <div class="mode-hub">
+            <div class="mode-header"><strong>Kisukolikot <output id="gf-coins">0</output></strong><span>Kauppa · Tulossa pian</span></div>
+            <div class="mode-choices">
+              <button type="button" id="gf-campaign-toggle" aria-expanded="false" aria-controls="gf-campaign-map">Seikkailu</button>
+              <button type="button" id="gf-free-toggle" aria-controls="gf-free-games">Vapaa leikki</button>
+            </div>
+            <section id="gf-campaign-map" hidden>
+              <h2>Muistipelin seikkailu</h2>
+              <div id="gf-levels" role="group" aria-label="Muistipelin tasot"></div>
+            </section>
+          </div>
+          <div class="dollhouse" id="gf-free-games">
             <div class="dollhouse-roof" aria-hidden="true">
               <span class="picture" data-cast="gabby"></span>
             </div>
@@ -490,6 +501,8 @@
               <p class="eyebrow">Kissa-tastisen hienoa!</p>
               <h3 id="gf-win-title">Sinä osasit!</h3>
               <p id="gf-win-text"></p>
+              <p id="gf-coin-reward" hidden></p>
+              <button type="button" id="gf-next-level" class="primary" hidden>Seuraava taso</button>
               <div id="gf-sticker-reward" class="sticker-reward" hidden></div>
               <div class="actions">
                 <button

@@ -1,3 +1,4 @@
+import { setCampaignLevel } from "./campaign.js";
 import { el } from "./dom.js";
 import { cancelAdvance, feedback, setAction } from "./ui.js";
 import { initMemory, stopMemoryTimers } from "./games/memory.js";
@@ -35,6 +36,7 @@ const starters = {
     garden: startGarden,
 };
 export function home() {
+    setCampaignLevel();
     const previousRoom = state.mode;
     cancelAdvance();
     stopGestures();
@@ -48,7 +50,8 @@ export function home() {
     if (previousRoom)
         el(`open-${previousRoom}`).focus();
 }
-export function open(which) {
+export function open(which, level) {
+    setCampaignLevel(which === "memory" ? level : undefined);
     if (which === "drawing") {
         home();
         return;
