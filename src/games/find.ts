@@ -14,11 +14,38 @@ import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
-const furniture = [
-  { id: "cupboard", name: "Kaappi" },
-  { id: "box", name: "Lelulaatikko" },
-  { id: "chair", name: "Tuoli" },
-];
+const roomObjects: Record<string, { id: string; name: string }[]> = {
+  gabby: [
+    { id: "cupboard", name: "Kaappi" },
+    { id: "box", name: "Lelulaatikko" },
+    { id: "chair", name: "Tuoli" },
+  ],
+  cakey: [
+    { id: "oven", name: "Uuni" },
+    { id: "cupboard", name: "Keittiökaappi" },
+    { id: "box", name: "Kakkulaatikko" },
+  ],
+  mercat: [
+    { id: "tub", name: "Kylpyamme" },
+    { id: "cupboard", name: "Kylpyhuoneen kaappi" },
+    { id: "box", name: "Kori" },
+  ],
+  fairy: [
+    { id: "tree", name: "Puu" },
+    { id: "flowerpot", name: "Kukkaruukku" },
+    { id: "box", name: "Puutarhalaatikko" },
+  ],
+  pandy: [
+    { id: "box", name: "Lelulaatikko" },
+    { id: "chair", name: "Nojatuoli" },
+    { id: "tent", name: "Leikkiteltta" },
+  ],
+  dj: [
+    { id: "piano", name: "Piano" },
+    { id: "speaker", name: "Kaiutin" },
+    { id: "cupboard", name: "Musiikkikaappi" },
+  ],
+};
 
 export function renderFind(): void {
   const friend = friends[state.learnIndex];
@@ -38,12 +65,14 @@ export function renderFind(): void {
   const room = document.createElement("div");
   room.className = "hide-room";
   room.dataset.room = friend.id;
+  room.dataset.layout = String(state.learnIndex);
   room.setAttribute("role", "group");
   room.setAttribute("aria-label", "Tutki huoneen huonekaluja");
   field.append(room);
   feedback("");
   setAction("", null);
   progress(state.learnIndex, friends.length);
+  const furniture = roomObjects[friend.id];
   const hidingPlace = Math.floor(Math.random() * furniture.length);
   shuffle(furniture).forEach((item, index) => {
     const isHiding = index === hidingPlace;

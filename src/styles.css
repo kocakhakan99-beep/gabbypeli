@@ -2556,3 +2556,112 @@ body {
     transition: none;
   }
 }
+
+/* Keep accidental selections and touch callouts out of the play area. */
+#gabby-fi {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#gabby-fi .adult-settings,
+#gabby-fi .adult-settings input,
+#gabby-fi .adult-settings label {
+  -webkit-user-select: text;
+  user-select: text;
+}
+#gabby-fi .hide-room {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 1fr 1fr;
+  align-items: end;
+  min-height: clamp(250px, 62vw, 380px);
+}
+#gabby-fi .hide-spot {
+  width: 100%;
+  height: clamp(112px, 28vw, 190px);
+  grid-row: 2;
+}
+#gabby-fi .hide-room[data-layout="0"] .hide-spot:nth-child(1),
+#gabby-fi .hide-room[data-layout="3"] .hide-spot:nth-child(3) {
+  grid-row: 1 / 3;
+  align-self: center;
+}
+#gabby-fi .hide-room[data-layout="1"] .hide-spot:nth-child(2),
+#gabby-fi .hide-room[data-layout="4"] .hide-spot:nth-child(1) {
+  grid-row: 1 / 3;
+  align-self: start;
+}
+#gabby-fi .hide-room[data-layout="2"] .hide-spot:nth-child(3),
+#gabby-fi .hide-room[data-layout="5"] .hide-spot:nth-child(2) {
+  grid-row: 1 / 3;
+  align-self: center;
+}
+#gabby-fi .hide-room[data-layout="3"] .hide-spot:nth-child(2),
+#gabby-fi .hide-room[data-layout="4"] .hide-spot:nth-child(3),
+#gabby-fi .hide-room[data-layout="5"] .hide-spot:nth-child(1) {
+  transform: scale(0.78);
+  transform-origin: bottom;
+}
+#gabby-fi .hide-room[data-room="dj"] {
+  background:
+    radial-gradient(circle at 23% 25%, #fff9 0 8%, transparent 8.5%),
+    radial-gradient(circle at 76% 25%, #ffeaa1 0 7%, transparent 7.5%),
+    linear-gradient(#d4bbf1 0 68%, #bc89ca 68% 100%);
+}
+#gabby-fi .hide-room[data-room="pandy"] {
+  background:
+    radial-gradient(circle at 25% 26%, #fff 0 8%, transparent 8.5%),
+    linear-gradient(#e8d4fa 0 68%, #e7b3ce 68% 100%);
+}
+#gabby-fi .hide-spot.oven .furniture {
+  inset: 28% 4% 0;
+  background: linear-gradient(#ffd5b0 0 25%, #805d87 26% 80%, #ffd5b0 81%);
+  border-color: #d48d8e;
+}
+#gabby-fi .hide-spot.tub .furniture {
+  inset: 48% 0 4%;
+  border-radius: 12px 12px 45% 45%;
+  background: #b9edfa;
+  border-color: #72c7df;
+}
+#gabby-fi .hide-spot.tree .furniture {
+  inset: 0 3% 0;
+  border-radius: 50% 50% 38% 38%;
+  background: radial-gradient(circle, #ffbddc, #d989c4 70%);
+  border-color: #b06e9c;
+}
+#gabby-fi .hide-spot.flowerpot .furniture {
+  inset: 38% 6% 0;
+  border-radius: 45% 45% 20% 20%;
+  background: linear-gradient(#a8dc9c 0 42%, #efb68e 43%);
+  border-color: #ce8c75;
+}
+#gabby-fi .hide-spot.tent .furniture {
+  inset: 10% 0 0;
+  border: 0;
+  background: linear-gradient(115deg, #eaa3d5 50%, #b77bca 51%);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+#gabby-fi .hide-spot.piano .furniture {
+  inset: 42% 0 0;
+  background: repeating-linear-gradient(90deg, #fff 0 12%, #40395b 12% 16%);
+  border-color: #70bba4;
+}
+#gabby-fi .hide-spot.speaker .furniture {
+  inset: 16% 13% 0;
+  background:
+    radial-gradient(
+      circle at 50% 72%,
+      #815aa0 0 19%,
+      #e3b5e2 20% 25%,
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 50% 28%,
+      #815aa0 0 14%,
+      #e3b5e2 15% 20%,
+      #b78ccc 21%
+    );
+}
