@@ -414,8 +414,13 @@ export interface TileArt {
   folder: "friends" | "objects";
 }
 
-/** Keeps accessible HTML hit areas while Phaser draws the cards and puzzle crops. */
-export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", art: TileArt[], rows = 1): { destroy(): void } {
+export interface TileView {
+  activate(action: "flip" | "select" | "place", index: number): boolean;
+  destroy(): void;
+}
+
+/** Keeps accessible HTML hit areas while Phaser handles tile events and animation. */
+export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", art: TileArt[], rows = 1, onAction?: (action: "flip" | "select" | "place", index: number) => void): TileView {
   const overlay = document.createElement("div");
   overlay.className = "phaser-tile-layer";
   overlay.setAttribute("aria-hidden", "true");
@@ -423,7 +428,8 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
   let alive = true;
   let failed = false;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const tiles = new Map<HTMLButtonElement, { image: Phaser.GameObjects.Image; up: boolean }>();
+  let activeScene: Phaser.Scene | undefined;
+  const tiles = new Map<HTMLButtonElement, { image: Phaser.GameObjects.Image; up: boolean; openness: number }>();
   const game = new Phaser.Game({
     type: Phaser.CANVAS, parent: overlay, transparent: true,
     width: parent.clientWidth, height: parent.clientHeight,
@@ -444,6 +450,8 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
             texture.add(String(index), 0, (index % 2) * source.width / 2, Math.floor(index / 2) * source.height / rows, source.width / 2, source.height / rows);
           }
         }
+        activeScene = this;
+        if (onAction) this.events.on("tile-action", onAction);
         parent.classList.add(`phaser-${mode}-ready`);
       },
       update(this: Phaser.Scene) {
@@ -459,26 +467,31 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
           const item = mode === "memory" ? art[index] : art[0];
           if (!item || !this.textures.exists(item.id)) return;
           const rect = button.getBoundingClientRect();
-          const up = mode === "memory" ? button.getAttribute("aria-pressed") === "true" : !button.disabled || button.classList.contains("filled");
+          const up = mode === "memory" ? button.getAttribute("aria-pressed") === "true" && !button.classList.contains("closing") : !button.disabled || button.classList.contains("filled");
           let tile = tiles.get(button);
           if (!tile) {
             const image = this.add.image(0, 0, item.id, mode === "puzzle" ? String(index) : undefined);
-            tile = { image, up };
+            tile = { image, up, openness: up ? 1 : 0 };
             tiles.set(button, tile);
           }
           const image = tile.image;
-          const visible = mode === "memory" ? up : !button.classList.contains("piece") || !button.disabled;
+          const visible = mode === "memory" ? tile.openness > 0.5 : !button.classList.contains("piece") || !button.disabled;
           image.setVisible(visible);
           image.setPosition(rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2);
           if (mode === "memory") {
-            image.setScale(Math.min(Math.max(1, rect.width - 10) / image.frame.realWidth, Math.max(1, rect.height - 10) / image.frame.realHeight));
+            const scale = Math.min(Math.max(1, rect.width - 10) / image.frame.realWidth, Math.max(1, rect.height - 10) / image.frame.realHeight);
+            image.setScale(scale * Math.abs(Math.cos(tile.openness * Math.PI)), scale);
           } else {
             image.setDisplaySize(Math.max(1, rect.width - 10), Math.max(1, rect.height - 10));
           }
           if (mode === "puzzle") image.setAlpha(button.classList.contains("slot") && !button.classList.contains("filled") ? 0.23 : 1);
           if (tile.up !== up) {
             tile.up = up;
-            if (up && !reducedMotion) {
+            if (mode === "memory") {
+              this.tweens.killTweensOf(tile);
+              if (reducedMotion) tile.openness = up ? 1 : 0;
+              else this.tweens.add({ targets: tile, openness: up ? 1 : 0, duration: 360, ease: "Sine.easeInOut" });
+            } else if (up && !reducedMotion) {
               image.setAlpha(0.2);
               this.tweens.add({ targets: image, alpha: 1, duration: 240 });
             }
@@ -487,8 +500,15 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
       },
     },
   });
-  return { destroy() {
+  return {
+    activate(action, index) {
+      if (!alive || !activeScene || !onAction) return false;
+      activeScene.events.emit("tile-action", action, index);
+      return true;
+    },
+    destroy() {
     alive = false;
+    activeScene = undefined;
     parent.classList.remove(`phaser-${mode}-ready`);
     game.destroy(true);
     overlay.remove();

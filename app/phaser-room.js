@@ -43544,12 +43544,12 @@ function ae(e, t) {
 		n = !1, e.classList.remove("phaser-garden-ready"), o.destroy(!0);
 	} };
 }
-function oe(e, t, n, r = 1) {
-	let i = document.createElement("div");
-	i.className = "phaser-tile-layer", i.setAttribute("aria-hidden", "true"), e.append(i);
-	let a = !0, o = !1, s = window.matchMedia("(prefers-reduced-motion: reduce)").matches, c = /* @__PURE__ */ new Map(), l = new X.Game({
+function oe(e, t, n, r = 1, i) {
+	let a = document.createElement("div");
+	a.className = "phaser-tile-layer", a.setAttribute("aria-hidden", "true"), e.append(a);
+	let o = !0, s = !1, c = window.matchMedia("(prefers-reduced-motion: reduce)").matches, l, u = /* @__PURE__ */ new Map(), d = new X.Game({
 		type: X.CANVAS,
-		parent: i,
+		parent: a,
 		transparent: !0,
 		width: e.clientWidth,
 		height: e.clientHeight,
@@ -43557,34 +43557,44 @@ function oe(e, t, n, r = 1) {
 		scene: {
 			preload() {
 				this.load.on("loaderror", () => {
-					o = !0;
+					s = !0;
 				});
 				for (let e of new Map(n.map((e) => [e.id, e])).values()) this.textures.exists(e.id) || this.load.image(e.id, `./assets/${e.folder}/${e.id}.webp`);
 			},
 			create() {
-				if (a && !o) {
+				if (o && !s) {
 					if (t === "puzzle") {
 						let e = this.textures.get(n[0].id), t = e.getSourceImage();
 						for (let n = 0; n < r * 2; n++) e.add(String(n), 0, n % 2 * t.width / 2, Math.floor(n / 2) * t.height / r, t.width / 2, t.height / r);
 					}
-					e.classList.add(`phaser-${t}-ready`);
+					l = this, i && this.events.on("tile-action", i), e.classList.add(`phaser-${t}-ready`);
 				}
 			},
 			update() {
-				if (!a || o) return;
-				let r = e.getBoundingClientRect(), i = [...e.querySelectorAll(t === "memory" ? ".memory-card" : ".slot, .piece")], l = new Set(i);
-				c.forEach((e, t) => {
-					l.has(t) || (e.image.destroy(), c.delete(t));
+				if (!o || s) return;
+				let r = e.getBoundingClientRect(), i = [...e.querySelectorAll(t === "memory" ? ".memory-card" : ".slot, .piece")], a = new Set(i);
+				u.forEach((e, t) => {
+					a.has(t) || (e.image.destroy(), u.delete(t));
 				}), i.forEach((e) => {
 					let i = Number(e.dataset[t === "memory" ? "index" : "piece"]), a = t === "memory" ? n[i] : n[0];
 					if (!a || !this.textures.exists(a.id)) return;
-					let o = e.getBoundingClientRect(), l = t === "memory" ? e.getAttribute("aria-pressed") === "true" : !e.disabled || e.classList.contains("filled"), u = c.get(e);
-					u || (u = {
+					let o = e.getBoundingClientRect(), s = t === "memory" ? e.getAttribute("aria-pressed") === "true" && !e.classList.contains("closing") : !e.disabled || e.classList.contains("filled"), l = u.get(e);
+					l || (l = {
 						image: this.add.image(0, 0, a.id, t === "puzzle" ? String(i) : void 0),
-						up: l
-					}, c.set(e, u));
-					let d = u.image, f = t === "memory" ? l : !e.classList.contains("piece") || !e.disabled;
-					d.setVisible(f), d.setPosition(o.left - r.left + o.width / 2, o.top - r.top + o.height / 2), t === "memory" ? d.setScale(Math.min(Math.max(1, o.width - 10) / d.frame.realWidth, Math.max(1, o.height - 10) / d.frame.realHeight)) : d.setDisplaySize(Math.max(1, o.width - 10), Math.max(1, o.height - 10)), t === "puzzle" && d.setAlpha(e.classList.contains("slot") && !e.classList.contains("filled") ? .23 : 1), u.up !== l && (u.up = l, l && !s && (d.setAlpha(.2), this.tweens.add({
+						up: s,
+						openness: +!!s
+					}, u.set(e, l));
+					let d = l.image, f = t === "memory" ? l.openness > .5 : !e.classList.contains("piece") || !e.disabled;
+					if (d.setVisible(f), d.setPosition(o.left - r.left + o.width / 2, o.top - r.top + o.height / 2), t === "memory") {
+						let e = Math.min(Math.max(1, o.width - 10) / d.frame.realWidth, Math.max(1, o.height - 10) / d.frame.realHeight);
+						d.setScale(e * Math.abs(Math.cos(l.openness * Math.PI)), e);
+					} else d.setDisplaySize(Math.max(1, o.width - 10), Math.max(1, o.height - 10));
+					t === "puzzle" && d.setAlpha(e.classList.contains("slot") && !e.classList.contains("filled") ? .23 : 1), l.up !== s && (l.up = s, t === "memory" ? (this.tweens.killTweensOf(l), c ? l.openness = +!!s : this.tweens.add({
+						targets: l,
+						openness: +!!s,
+						duration: 360,
+						ease: "Sine.easeInOut"
+					})) : s && !c && (d.setAlpha(.2), this.tweens.add({
 						targets: d,
 						alpha: 1,
 						duration: 240
@@ -43593,8 +43603,13 @@ function oe(e, t, n, r = 1) {
 			}
 		}
 	});
-	return { destroy() {
-		a = !1, e.classList.remove(`phaser-${t}-ready`), l.destroy(!0), i.remove();
-	} };
+	return {
+		activate(e, t) {
+			return !o || !l || !i ? !1 : (l.events.emit("tile-action", e, t), !0);
+		},
+		destroy() {
+			o = !1, l = void 0, e.classList.remove(`phaser-${t}-ready`), d.destroy(!0), a.remove();
+		}
+	};
 }
 export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView, oe as createTileView };

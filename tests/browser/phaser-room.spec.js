@@ -55,6 +55,14 @@ test("memory and puzzle graphics load and release their canvases", async ({ page
     await expect(panel.locator("canvas")).toBeVisible();
     await page.locator("#gf-hint").click();
     await expect(panel).toHaveClass(new RegExp(`phaser-${mode}-ready`));
+    if (mode === "memory") {
+      await page.locator("#gf-action").click();
+      const firstCard = page.locator("#gf-cards button").first();
+      await firstCard.focus();
+      await firstCard.press("Enter");
+      await expect(firstCard).toBeFocused();
+      await expect(firstCard).toHaveAttribute("aria-pressed", "true");
+    }
     await page.locator("#gf-home-button").click();
     await expect(panel.locator("canvas")).toHaveCount(0);
   }

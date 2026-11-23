@@ -15,7 +15,9 @@ import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
-let memoryView: { destroy(): void } | undefined;
+import type { TileView } from "../phaser-room.js";
+
+let memoryView: TileView | undefined;
 let memoryGeneration = 0;
 let memoryViewLoading = false;
 
@@ -112,6 +114,7 @@ export function initMemory() {
     b.setAttribute("aria-pressed", String(n === state.memoryPairs));
     el("memory-settings").append(b);
   });
+  el("cards").replaceChildren();
   drawCards();
   progress(0, state.memoryPairs);
   feedback("Katso kuvat rauhassa.");
@@ -130,7 +133,7 @@ export function drawCards() {
     }));
     void import("../phaser-room.js").then(({ createTileView }) => {
       if (generation !== memoryGeneration) return;
-      memoryView = createTileView(el("memory"), "memory", art);
+      memoryView = createTileView(el("memory"), "memory", art, 1, (_action, index) => flip(index));
       memoryViewLoading = false;
     }).catch(() => { if (generation === memoryGeneration) memoryViewLoading = false; });
   }
@@ -143,14 +146,14 @@ export function drawCards() {
         : state.memoryPairs === 4
           ? "eight"
           : "twelve");
-  el("cards").replaceChildren();
   state.mem.forEach((m, i) => {
     const up = state.preview || m.found || state.opened.includes(i);
-    const b = button(
+    const b = el("cards").querySelector<HTMLButtonElement>(`[data-index="${i}"]`) ?? button(
       "",
-      () => flip(i),
+      () => { if (!memoryView?.activate("flip", i)) flip(i); },
       "memory-card" + (m.found ? " matched" : up ? " faceup" : ""),
     );
+    b.className = "memory-card" + (m.found ? " matched" : up ? " faceup" : "");
     const front =
       pack === "friends"
         ? '<span class="picture" data-cast="' +
@@ -175,7 +178,7 @@ export function drawCards() {
     b.setAttribute("aria-pressed", String(up));
     b.disabled = m.found || state.preview;
     b.dataset.index = String(i);
-    el("cards").append(b);
+    if (!b.isConnected) el("cards").append(b);
   });
 }
 

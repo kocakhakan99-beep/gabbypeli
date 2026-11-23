@@ -17,7 +17,15 @@ import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
-let puzzleView: { destroy(): void } | undefined;
+import type { TileView } from "../phaser-room.js";
+
+let puzzleView: TileView | undefined;
+
+function activateTile(action: "select" | "place", index: number): void {
+  if (puzzleView?.activate(action, index)) return;
+  if (action === "select") select(index);
+  else place(index);
+}
 let puzzleGeneration = 0;
 
 const scenes = [
@@ -113,7 +121,7 @@ export function initPuzzle() {
   el("board").setAttribute("aria-label", "Palapelialusta");
   el("tray").replaceChildren();
   for (let i = 0; i < state.puzzleSize; i++) {
-    const b = button("", () => place(i), "slot");
+    const b = button("", () => activateTile("place", i), "slot");
     b.innerHTML = crop(i);
     b.setAttribute(
       "aria-label",
@@ -132,7 +140,7 @@ export function initPuzzle() {
   }
   shuffle(Array.from({ length: state.puzzleSize }, (_, i) => i)).forEach(
     (i) => {
-      const b = button("", () => select(i), "piece");
+      const b = button("", () => activateTile("select", i), "piece");
       bindPieceDrag(b, i);
       b.innerHTML = crop(i);
       b.dataset.piece = String(i);
@@ -146,7 +154,10 @@ export function initPuzzle() {
   const rows = state.puzzleSize / 2;
   void import("../phaser-room.js").then(({ createTileView }) => {
     if (generation !== puzzleGeneration) return;
-    puzzleView = createTileView(el("puzzle"), "puzzle", [art], rows);
+    puzzleView = createTileView(el("puzzle"), "puzzle", [art], rows, (action, index) => {
+      if (action === "select") select(index);
+      else if (action === "place") place(index);
+    });
   }).catch(() => {});
   setAction("", null);
   feedback("Valitse ensin yksi pala.");
@@ -295,7 +306,7 @@ function bindPieceDrag(piece: HTMLButtonElement, index: number): void {
         root.append(ghost);
         destination = el("board").querySelector(`[data-piece="${index}"]`);
         piece.classList.add("dragging");
-        select(index);
+        activateTile("select", index);
       }
       destination?.classList.toggle("snap-ready", nearSlot(to));
       ghost.style.left = to.x + "px";
@@ -311,13 +322,13 @@ function bindPieceDrag(piece: HTMLButtonElement, index: number): void {
       destination = null;
       if (!point) return;
       if (snap) {
-        place(index);
+        activateTile("place", index);
         return;
       }
       const slot = document
         .elementFromPoint(point.x, point.y)
         ?.closest<HTMLButtonElement>("#gf-board .slot");
-      if (slot) place(Number(slot.dataset.piece));
+      if (slot) activateTile("place", Number(slot.dataset.piece));
     },
   });
 }
