@@ -43655,19 +43655,19 @@ function se(e, t) {
 				if (e.event instanceof MouseEvent && e.event.button !== 0 || n && n.surface.isConnected && t.handlers(n.surface)) return;
 				let r = t.find(e.downElement), a = i(e);
 				r && a && (n = {
-					id: e.id,
+					pointer: e,
 					touchId: e.event instanceof TouchEvent ? e.identifier : void 0,
 					surface: r,
 					previous: a
 				}, t.handlers(r)?.start(a));
 			}, o = (e) => {
-				if (n?.id !== e.id || n.touchId !== void 0) return;
+				if (n?.pointer !== e || n.touchId !== void 0) return;
 				let r = i(e);
 				if (!r) return;
 				let a = n.previous;
 				n.previous = r, t.handlers(n.surface)?.move(a, r);
 			}, s = (e) => {
-				if (n?.id !== e.id) return;
+				if (n?.pointer !== e) return;
 				if (e.wasCanceled) {
 					a();
 					return;
@@ -43686,7 +43686,7 @@ function se(e, t) {
 					x: i.clientX,
 					y: i.clientY
 				}, o = r.previous;
-				r.previous = a, t.handlers(r.surface)?.move(o, a);
+				r.previous = a, t.handlers(r.surface)?.move(o, a), !r.surface.isConnected && n === r && (n = void 0, r.pointer.reset());
 			}, { passive: !0 }), this.input.on("pointerdown", r), this.input.on("pointerdownoutside", r), this.input.on("pointermove", o), this.input.on("pointerup", s), this.input.on("pointerupoutside", s), this.game.events.on("blur", a), t.ready();
 		} }
 	}), a;

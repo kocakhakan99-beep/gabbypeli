@@ -522,7 +522,7 @@ export function startRoomInput(target: HTMLElement, bridge: {
   handlers(surface: HTMLElement): import("./games/stroke.js").StrokeHandlers | undefined;
 }): () => void {
   type Point = import("./games/stroke.js").Point;
-  let active: { id: number; touchId?: number; surface: HTMLElement; previous: Point } | undefined;
+  let active: { pointer: Phaser.Input.Pointer; touchId?: number; surface: HTMLElement; previous: Point } | undefined;
   const host = document.createElement("div");
   host.hidden = true;
   host.setAttribute("aria-hidden", "true");
@@ -563,7 +563,7 @@ export function startRoomInput(target: HTMLElement, bridge: {
           const point = position(pointer);
           if (!surface || !point) return;
           active = {
-            id: pointer.id,
+            pointer,
             touchId: pointer.event instanceof TouchEvent ? pointer.identifier : undefined,
             surface,
             previous: point,
@@ -571,7 +571,7 @@ export function startRoomInput(target: HTMLElement, bridge: {
           bridge.handlers(surface)?.start(point);
         };
         const move = (pointer: Phaser.Input.Pointer): void => {
-          if (active?.id !== pointer.id || active.touchId !== undefined) return;
+          if (active?.pointer !== pointer || active.touchId !== undefined) return;
           const point = position(pointer);
           if (!point) return;
           const previous = active.previous;
@@ -579,7 +579,7 @@ export function startRoomInput(target: HTMLElement, bridge: {
           bridge.handlers(active.surface)?.move(previous, point);
         };
         const up = (pointer: Phaser.Input.Pointer): void => {
-          if (active?.id !== pointer.id) return;
+          if (active?.pointer !== pointer) return;
           if (pointer.wasCanceled) {
             cancel();
             return;
@@ -601,6 +601,11 @@ export function startRoomInput(target: HTMLElement, bridge: {
           const previous = stroke.previous;
           stroke.previous = point;
           bridge.handlers(stroke.surface)?.move(previous, point);
+          // A completed gesture can replace its original touch target mid-stroke.
+          if (!stroke.surface.isConnected && active === stroke) {
+            active = undefined;
+            stroke.pointer.reset();
+          }
         }, { passive: true });
         this.input.on("pointerdown", down);
         this.input.on("pointerdownoutside", down);
