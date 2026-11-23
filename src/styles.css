@@ -3464,3 +3464,19 @@ body {
 #gabby-fi .bakery-loaded.phaser-tray-ready > .bakery-piece {
   visibility: hidden;
 }
+
+#gabby-fi .bakery-oven > canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+#gabby-fi .phaser-oven-ready .bakery-door,
+#gabby-fi .phaser-oven-ready .bakery-knob {
+  background: transparent;
+  border-color: transparent;
+}
+#gabby-fi .phaser-oven-ready .bakery-door::before,
+#gabby-fi .phaser-oven-ready .bakery-knob::after {
+  visibility: hidden;
+}
