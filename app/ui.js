@@ -164,7 +164,7 @@ export function setAction(label, fn) {
 export function finish(title, text, art) {
     const level = campaignLevel();
     const coins = awardCampaignLevel();
-    if (state.mode && (coins > 0 || (level === undefined && state.mode !== "memory")))
+    if (state.mode && coins > 0)
         completeGame(state.mode);
     else
         document.querySelector("#gf-sticker-reward").hidden = true;
