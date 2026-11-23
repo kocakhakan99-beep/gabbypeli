@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import {
   advanceAfterSuccess,
   button,
@@ -35,7 +36,11 @@ function plantBed(level: number): void {
   stopGarden();
   const generation = gardenGeneration;
   const field = el("garden-field");
-  const row = beds[level];
+  const adventure = campaignLevel();
+  const bedCount = adventure === undefined || adventure >= 6 ? 2 : 1;
+  const flowerCount = adventure === undefined ? 4 : adventure <= 2 ? 2 : adventure <= 7 ? 3 : 4;
+  const effort = adventure === undefined ? 25 : [50, 40, 34, 30, 28, 25, 23, 20, 18, 17][adventure - 1];
+  const row = beds[level].slice(0, flowerCount);
   let amounts: number[] = row.map(() => 0);
   const flowers: HTMLButtonElement[] = [];
   let stage: Stage = "soil";
@@ -56,7 +61,7 @@ function plantBed(level: number): void {
     '<span class="garden-shovel"></span><img class="watering-icon" src="./assets/furniture/watering.webp" alt=""><span class="garden-drops"></span><span class="garden-brush"></span>';
   field.append(tool);
   row.forEach((x, index) => {
-    const flower = button("", () => work(index, 25), "garden-flower");
+    const flower = button("", () => work(index, effort), "garden-flower");
     flower.setAttribute("aria-label", "Kukkapenkki " + (index + 1));
     flower.style.setProperty("--flower-x", x + "%");
     flower.style.setProperty("--flower-y", (index % 2 ? 48 : 58) + "%");
@@ -100,9 +105,9 @@ function plantBed(level: number): void {
       finished = true;
       feedback("Puutarha kukkii!");
       setAction(
-        level + 1 < beds.length ? "Seuraava kukkapenkki" : "Juhlitaan!",
+        level + 1 < bedCount ? "Seuraava kukkapenkki" : "Juhlitaan!",
         () => {
-          if (level + 1 < beds.length) plantBed(level + 1);
+          if (level + 1 < bedCount) plantBed(level + 1);
           else {
             stopGarden();
             finish("Puutarha kukkii!", "Sait puutarhurin tarran!", "fairy");
@@ -138,7 +143,7 @@ function plantBed(level: number): void {
         distanceToStroke(center, from, to) <=
         Math.min(rect.width, rect.height) * 0.7
       )
-        work(index, 25);
+        work(index, effort);
     });
   }
   bindStroke(field, {

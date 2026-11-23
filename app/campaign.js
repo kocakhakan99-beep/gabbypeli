@@ -1,8 +1,8 @@
-export const campaignGames = ["memory", "puzzle", "find"];
+export const campaignGames = ["memory", "puzzle", "find", "garden", "baking"];
 const key = (game) => `gabbypeli-campaign-${game}-v1`;
 export const levelCount = 10;
 export const coinReward = 25;
-const completed = { memory: 0, puzzle: 0, find: 0 };
+const completed = { memory: 0, puzzle: 0, find: 0, garden: 0, baking: 0 };
 let activeGame = "memory";
 let active;
 function readProgress(game) {

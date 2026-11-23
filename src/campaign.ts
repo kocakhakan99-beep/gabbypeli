@@ -1,9 +1,9 @@
-export const campaignGames = ["memory", "puzzle", "find"] as const;
+export const campaignGames = ["memory", "puzzle", "find", "garden", "baking"] as const;
 export type CampaignGame = (typeof campaignGames)[number];
 const key = (game: CampaignGame) => `gabbypeli-campaign-${game}-v1`;
 export const levelCount = 10;
 export const coinReward = 25;
-const completed: Record<CampaignGame, number> = { memory: 0, puzzle: 0, find: 0 };
+const completed: Record<CampaignGame, number> = { memory: 0, puzzle: 0, find: 0, garden: 0, baking: 0 };
 let activeGame: CampaignGame = "memory";
 let active: number | undefined;
 
