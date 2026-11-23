@@ -3810,3 +3810,33 @@ body {
   border-color: #ffdb65;
   background: linear-gradient(#e752df, #8c21b3);
 }
+
+/* Keep large tap targets in two rows on narrow screens. */
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game] {
+    display: block;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    background: url("../assets/rooms/adventure-path.webp") center / cover;
+  }
+  #gabby-fi #gf-levels[data-game]::before { content: none; }
+  #gabby-fi #gf-levels[data-game] button {
+    position: absolute;
+    left: var(--node-x);
+    top: var(--node-y);
+    transform: translate(-50%, -50%);
+    width: clamp(46px, 6vw, 66px);
+    min-height: 0;
+    aspect-ratio: 1;
+  }
+  #gabby-fi #gf-levels button:nth-child(1) { --node-x: 9%; --node-y: 61%; }
+  #gabby-fi #gf-levels button:nth-child(2) { --node-x: 22%; --node-y: 60%; }
+  #gabby-fi #gf-levels button:nth-child(3) { --node-x: 34%; --node-y: 49%; }
+  #gabby-fi #gf-levels button:nth-child(4) { --node-x: 49%; --node-y: 45%; }
+  #gabby-fi #gf-levels button:nth-child(5) { --node-x: 62%; --node-y: 51%; }
+  #gabby-fi #gf-levels button:nth-child(6) { --node-x: 51%; --node-y: 63%; }
+  #gabby-fi #gf-levels button:nth-child(7) { --node-x: 38%; --node-y: 71%; }
+  #gabby-fi #gf-levels button:nth-child(8) { --node-x: 53%; --node-y: 82%; }
+  #gabby-fi #gf-levels button:nth-child(9) { --node-x: 69%; --node-y: 76%; }
+  #gabby-fi #gf-levels button:nth-child(10) { --node-x: 86%; --node-y: 61%; }
+}
