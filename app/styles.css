@@ -2803,3 +2803,40 @@ body {
 #gabby-fi .hide-room[data-room="dj"] {
   background: url("../assets/rooms/music.webp") center / cover;
 }
+/* Individual object images are shared across activities. */
+#gabby-fi .picture[data-object] {
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#gabby-fi .picture[data-object="yarn"] {
+  background-image: url("../assets/objects/yarn.webp");
+}
+#gabby-fi .picture[data-object="cupcakes"] {
+  background-image: url("../assets/objects/cupcakes.webp");
+}
+#gabby-fi .picture[data-object="shell"] {
+  background-image: url("../assets/objects/shell.webp");
+}
+#gabby-fi .picture[data-object="watering"] {
+  background-image: url("../assets/objects/watering.webp");
+}
+#gabby-fi .picture[data-object="star"] {
+  background-image: url("../assets/objects/star.webp");
+}
+#gabby-fi .picture[data-object="berry"] {
+  background-image: url("../assets/objects/berry.webp");
+}
+#gabby-fi .picture[data-object="blocks"] {
+  background-image: url("../assets/objects/blocks.webp");
+}
+#gabby-fi .picture[data-object="train"] {
+  background-image: url("../assets/objects/train.webp");
+}
+#gabby-fi .picture[data-object="boat"] {
+  background-image: url("../assets/objects/boat.webp");
+}
+#gabby-fi .memory-front .picture[data-object],
+#gabby-fi .dollhouse-rooms .menu-art > .picture[data-object] {
+  background-size: contain;
+}

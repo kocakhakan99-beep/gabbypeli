@@ -205,8 +205,8 @@ test("object memory and puzzle use the new art without device speech", async ({
     .click();
   await expect(page.locator("#gf-title")).toContainText("Vene");
   const crop = page.locator("#gf-board .crop").first();
-  await expect(crop).toHaveCSS("background-image", /play-objects\.webp/);
-  await expect(crop).toHaveCSS("background-size", "600% 300%");
+  await expect(crop).toHaveCSS("background-image", /objects\/boat\.webp/);
+  await expect(crop).toHaveCSS("background-size", "200% 100%");
   await page.locator("#gf-tray [data-piece='0']").click();
   await page.locator("#gf-board [data-piece='0']").click();
   await expect(page.locator("#gf-board .filled")).toHaveCount(1);

@@ -14,6 +14,17 @@ const scenes = [
 ];
 export function cropPosition(piece) {
     const isObject = state.puzzleArt >= friends.length;
+    if (isObject) {
+        const rows = state.puzzleSize / 2;
+        const object = playObjects[state.puzzleArt - friends.length];
+        return {
+            x: (piece % 2) * 100,
+            y: rows === 1 ? 0 : (Math.floor(piece / 2) * 100) / (rows - 1),
+            columns: 2,
+            rows,
+            image: `url(../assets/objects/${object.id}.webp)`,
+        };
+    }
     const grid = 3;
     const atlasRows = isObject ? 3 : 2;
     const tile = isObject

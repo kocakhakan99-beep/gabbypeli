@@ -91,11 +91,9 @@ export function button(label, fn, cls = "tool") {
 export function picture(art) {
     const tile = playObjects.findIndex(({ id }) => id === art);
     if (tile >= 0) {
-        return ('<span class="picture" data-object aria-hidden="true" style="--tile-x:' +
-            (tile % 3) * 50 +
-            "%;--tile-y:" +
-            Math.floor(tile / 3) * 50 +
-            '%"></span>');
+        return ('<span class="picture" data-object="' +
+            art +
+            '" aria-hidden="true"></span>');
     }
     if (friends.some((friend) => friend.id === art)) {
         return ('<span class="picture" data-cast="' + art + '" aria-hidden="true"></span>');
