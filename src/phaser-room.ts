@@ -231,3 +231,51 @@ function thisScenePortion(scene: Phaser.Scene, x: number, y: number, recipe: str
   ];
   return scene.add.container(x, y, [cookie, ...chips]);
 }
+
+export interface OvenView {
+  update(angle: number, heat: number): void;
+  destroy(): void;
+}
+
+export function createOvenView(parent: HTMLElement): OvenView {
+  let graphics: Phaser.GameObjects.Graphics | undefined;
+  let angle = 0;
+  let heat = 0;
+  let alive = true;
+  function update(nextAngle: number, nextHeat: number): void {
+    angle = Phaser.Math.Clamp(nextAngle, 0, 65);
+    heat = nextHeat;
+    if (!graphics) return;
+    graphics.clear();
+    graphics.fillStyle(0xa05d96);
+    graphics.fillCircle(40, 40, 21);
+    graphics.lineStyle(4, 0xfff3d0);
+    graphics.strokeCircle(40, 40, 21);
+    const radians = Phaser.Math.DegToRad(heat - 90);
+    graphics.lineStyle(5, 0xffffff);
+    graphics.lineBetween(40 + Math.cos(radians) * 8, 40 + Math.sin(radians) * 8, 40 + Math.cos(radians) * 17, 40 + Math.sin(radians) * 17);
+    const height = 125 * Math.cos(Phaser.Math.DegToRad(angle));
+    const top = 205 - height;
+    graphics.fillStyle(0x75b5c6, 0.55);
+    graphics.fillRoundedRect(20, top, 280, height, 12);
+    graphics.lineStyle(6, 0x73b9ae);
+    graphics.strokeRoundedRect(20, top, 280, height, 12);
+    graphics.fillStyle(0xffe1a5);
+    graphics.fillRoundedRect(95, top + 12, 130, 8, 4);
+  }
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent, transparent: true, width: 320, height: 230,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: { create() {
+      if (!alive) return;
+      graphics = this.add.graphics();
+      parent.classList.add("phaser-oven-ready");
+      update(angle, heat);
+    } },
+  });
+  return { update, destroy() {
+    alive = false;
+    parent.classList.remove("phaser-oven-ready");
+    game.destroy(true);
+  } };
+}

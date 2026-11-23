@@ -43423,4 +43423,35 @@ function $(e, t, n, r) {
 	];
 	return e.add.container(t, n, [i, ...a]);
 }
-export { Q as createBakingTrayView, Z as createMixingView, ne as createRoomView };
+function re(e) {
+	let t, n = 0, r = 0, i = !0;
+	function a(e, i) {
+		if (n = X.Math.Clamp(e, 0, 65), r = i, !t) return;
+		t.clear(), t.fillStyle(10509718), t.fillCircle(40, 40, 21), t.lineStyle(4, 16774096), t.strokeCircle(40, 40, 21);
+		let a = X.Math.DegToRad(r - 90);
+		t.lineStyle(5, 16777215), t.lineBetween(40 + Math.cos(a) * 8, 40 + Math.sin(a) * 8, 40 + Math.cos(a) * 17, 40 + Math.sin(a) * 17);
+		let o = 125 * Math.cos(X.Math.DegToRad(n)), s = 205 - o;
+		t.fillStyle(7714246, .55), t.fillRoundedRect(20, s, 280, o, 12), t.lineStyle(6, 7584174), t.strokeRoundedRect(20, s, 280, o, 12), t.fillStyle(16769445), t.fillRoundedRect(95, s + 12, 130, 8, 4);
+	}
+	let o = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: 320,
+		height: 230,
+		scale: {
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
+		},
+		scene: { create() {
+			i && (t = this.add.graphics(), e.classList.add("phaser-oven-ready"), a(n, r));
+		} }
+	});
+	return {
+		update: a,
+		destroy() {
+			i = !1, e.classList.remove("phaser-oven-ready"), o.destroy(!0);
+		}
+	};
+}
+export { Q as createBakingTrayView, Z as createMixingView, re as createOvenView, ne as createRoomView };
