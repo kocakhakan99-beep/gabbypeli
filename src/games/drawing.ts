@@ -25,7 +25,7 @@ export function startDrawing(): void {
   const friendStamps = Array.from(
     el("drawing").querySelectorAll<HTMLButtonElement>("[data-friend-stamp]"),
   );
-  const characterAtlas = new Image();
+  const characterImages = new Map<number, HTMLImageElement>();
   const colors = Array.from(
     palette.querySelectorAll<HTMLButtonElement>("button"),
   );
@@ -41,15 +41,11 @@ export function startDrawing(): void {
   function paint(stroke: Stroke, from: Point, to: Point): void {
     if (!context) return;
     if (stroke.stamp?.kind === "friend") {
-      if (!characterAtlas.complete || !characterAtlas.naturalWidth) return;
-      const cell = 512;
+      const characterImage = characterImages.get(stroke.stamp.tile);
+      if (!characterImage?.complete || !characterImage.naturalWidth) return;
       const size = stroke.width;
       context.drawImage(
-        characterAtlas,
-        (stroke.stamp.tile % 3) * cell,
-        Math.floor(stroke.stamp.tile / 3) * cell,
-        cell,
-        cell,
+        characterImage,
         to.x - size / 2,
         to.y - size / 2,
         size,
@@ -112,11 +108,16 @@ export function startDrawing(): void {
       }
     }
   }
-  characterAtlas.addEventListener("load", redraw, { once: true });
-  characterAtlas.src = new URL(
-    "../../assets/gabby-friends.webp",
-    import.meta.url,
-  ).href;
+  for (const friend of friends) {
+    if (friend.tile === undefined) continue;
+    const image = new Image();
+    image.addEventListener("load", redraw, { once: true });
+    image.src = new URL(
+      `../../assets/friends/${friend.id}.webp`,
+      import.meta.url,
+    ).href;
+    characterImages.set(friend.tile, image);
+  }
 
   function updateStampSelection(): void {
     stamp.setAttribute("aria-pressed", String(selectedStamp?.kind === "paw"));

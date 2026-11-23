@@ -25,18 +25,14 @@ export function cropPosition(piece) {
             image: `url(../assets/objects/${object.id}.webp)`,
         };
     }
-    const grid = 3;
-    const atlasRows = isObject ? 3 : 2;
-    const tile = isObject
-        ? state.puzzleArt - friends.length
-        : (friends[state.puzzleArt]?.tile ?? state.puzzleArt);
-    const ax = tile % grid, ay = Math.floor(tile / grid), cols = 2, rows = state.puzzleSize / 2, x = piece % 2, y = Math.floor(piece / 2);
+    const rows = state.puzzleSize / 2;
+    const friend = friends[state.puzzleArt];
     return {
-        x: (100 * (ax * cols + x)) / (grid * cols - 1),
-        y: (100 * (ay * rows + y)) / (atlasRows * rows - 1),
-        columns: grid * cols,
-        rows: atlasRows * rows,
-        image: isObject ? "var(--object-atlas)" : "var(--friend-atlas)",
+        x: (piece % 2) * 100,
+        y: rows === 1 ? 0 : (Math.floor(piece / 2) * 100) / (rows - 1),
+        columns: 2,
+        rows,
+        image: `url(../assets/friends/${friend.id}.webp)`,
     };
 }
 export function crop(piece) {
