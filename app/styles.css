@@ -1,7 +1,7 @@
 #gabby-fi {
   --ink: #59306f;
   --pink: #e7479f;
-  --atlas: url("../assets/characters.webp");
+  --atlas: url("../assets/friends/gabby.webp");
   --friend-atlas: url("../assets/gabby-friends.webp");
   --object-atlas: url("../assets/play-objects.webp");
   max-width: 760px;
@@ -2839,4 +2839,35 @@ body {
 #gabby-fi .memory-front .picture[data-object],
 #gabby-fi .dollhouse-rooms .menu-art > .picture[data-object] {
   background-size: contain;
+}
+/* Individual character files shared by the rooms, cards and artwork. */
+#gabby-fi .picture[data-cast],
+#gabby-fi .picture[data-art] {
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat;
+}
+#gabby-fi .picture[data-cast="gabby"],
+#gabby-fi .picture[data-art="gabby"] {
+  background-image: url("../assets/friends/gabby.webp") !important;
+}
+#gabby-fi .picture[data-cast="pandy"],
+#gabby-fi .picture[data-art="pandy"] {
+  background-image: url("../assets/friends/pandy.webp") !important;
+}
+#gabby-fi .picture[data-cast="cakey"],
+#gabby-fi .picture[data-art="cakey"] {
+  background-image: url("../assets/friends/cakey.webp") !important;
+}
+#gabby-fi .picture[data-cast="mercat"],
+#gabby-fi .picture[data-art="mercat"] {
+  background-image: url("../assets/friends/mercat.webp") !important;
+}
+#gabby-fi .picture[data-cast="fairy"],
+#gabby-fi .picture[data-art="fairy"] {
+  background-image: url("../assets/friends/fairy.webp") !important;
+}
+#gabby-fi .picture[data-cast="dj"],
+#gabby-fi .picture[data-art="dj"] {
+  background-image: url("../assets/friends/dj.webp") !important;
 }

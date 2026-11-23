@@ -15,7 +15,7 @@ export function startDrawing() {
     const stamp = el("drawing-stamp");
     const undo = el("drawing-undo");
     const friendStamps = Array.from(el("drawing").querySelectorAll("[data-friend-stamp]"));
-    const characterAtlas = new Image();
+    const characterImages = new Map();
     const colors = Array.from(palette.querySelectorAll("button"));
     let color = colors[0].value;
     let wide = false;
@@ -29,11 +29,11 @@ export function startDrawing() {
         if (!context)
             return;
         if (stroke.stamp?.kind === "friend") {
-            if (!characterAtlas.complete || !characterAtlas.naturalWidth)
+            const characterImage = characterImages.get(stroke.stamp.tile);
+            if (!characterImage?.complete || !characterImage.naturalWidth)
                 return;
-            const cell = 512;
             const size = stroke.width;
-            context.drawImage(characterAtlas, (stroke.stamp.tile % 3) * cell, Math.floor(stroke.stamp.tile / 3) * cell, cell, cell, to.x - size / 2, to.y - size / 2, size, size);
+            context.drawImage(characterImage, to.x - size / 2, to.y - size / 2, size, size);
             context.fillStyle = "#ffe28a";
             for (const [x, y] of [
                 [-0.42, -0.4],
@@ -83,8 +83,14 @@ export function startDrawing() {
             }
         }
     }
-    characterAtlas.addEventListener("load", redraw, { once: true });
-    characterAtlas.src = new URL("../../assets/gabby-friends.webp", import.meta.url).href;
+    for (const friend of friends) {
+        if (friend.tile === undefined)
+            continue;
+        const image = new Image();
+        image.addEventListener("load", redraw, { once: true });
+        image.src = new URL(`../../assets/friends/${friend.id}.webp`, import.meta.url).href;
+        characterImages.set(friend.tile, image);
+    }
     function updateStampSelection() {
         stamp.setAttribute("aria-pressed", String(selectedStamp?.kind === "paw"));
         const selectedFriendTile = selectedStamp?.kind === "friend" ? selectedStamp.tile : undefined;
