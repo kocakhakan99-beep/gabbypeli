@@ -21,6 +21,7 @@ export function renderFind() {
     field.replaceChildren();
     const room = document.createElement("div");
     room.className = "hide-room";
+    room.dataset.room = friend.id;
     room.setAttribute("role", "group");
     room.setAttribute("aria-label", "Tutki huoneen huonekaluja");
     field.append(room);
@@ -62,6 +63,7 @@ export function renderFind() {
             });
             advanceAfterSuccess();
         }, "hide-spot " + item.id);
+        spot.style.setProperty("--spot-delay", `${index * 0.35}s`);
         spot.setAttribute("aria-label", "Tutki " + item.name.toLowerCase());
         spot.innerHTML =
             '<span class="hiding-friend">' +

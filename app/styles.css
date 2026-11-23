@@ -2503,3 +2503,56 @@ body {
     transition: none;
   }
 }
+
+/* Each friend welcomes the player into a different room. */
+#gabby-fi .hide-room[data-room="mercat"] {
+  background:
+    linear-gradient(#edfaff66, #e7f8ff55),
+    url("../assets/room-bathroom.webp") center / cover;
+}
+#gabby-fi .hide-room[data-room="fairy"],
+#gabby-fi .hide-room[data-room="pandy"] {
+  background:
+    linear-gradient(#f4ffe955, #f5ffe955),
+    url("../assets/room-garden.webp") center / cover;
+}
+#gabby-fi .hide-room[data-room="gabby"],
+#gabby-fi .hide-room[data-room="dj"] {
+  background:
+    linear-gradient(#f9edff99, #fff2ef88),
+    url("../assets/room-kitchen.webp") center / cover;
+}
+#gabby-fi .hide-spot:not(.opened):not(:disabled) .furniture {
+  animation: hide-invitation 2.8s ease-in-out var(--spot-delay) infinite;
+}
+#gabby-fi .hide-spot .hiding-friend {
+  opacity: 0;
+}
+#gabby-fi .hide-spot.opened .hiding-friend {
+  opacity: 1;
+  transition: opacity 280ms ease 100ms;
+}
+#gabby-fi .hide-spot:focus-visible {
+  outline: 4px solid #853fa5;
+  outline-offset: 3px;
+  border-radius: 14px;
+}
+#gabby-fi .hide-room[data-room="mercat"] .furniture {
+  filter: hue-rotate(55deg);
+}
+#gabby-fi .hide-room[data-room="fairy"] .furniture {
+  filter: hue-rotate(125deg);
+}
+@keyframes hide-invitation {
+  50% {
+    translate: 0 -4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .hide-spot:not(.opened) .furniture {
+    animation: none;
+  }
+  #gabby-fi .hide-spot.opened .hiding-friend {
+    transition: none;
+  }
+}
