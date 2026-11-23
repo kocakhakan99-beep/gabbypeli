@@ -166,7 +166,7 @@ test("object memory and puzzle use the new art without device speech", async ({
   await page.locator("#gf-open-memory").click();
   await page
     .locator("#gf-memory-packs")
-    .getByRole("button", { name: "Esineet" })
+    .getByRole("button", { name: "Esineet", exact: true })
     .click();
   await expect(page.locator("#gf-cards [data-object]")).toHaveCount(4);
   await page.locator("#gf-action").click();
