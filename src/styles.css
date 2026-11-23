@@ -3424,3 +3424,15 @@ body {
 #gabby-fi .hide-room.phaser-ready .hide-spot .hiding-friend {
   visibility: hidden;
 }
+
+#gabby-fi .bakery-bowl.mixing {
+  position: relative;
+}
+#gabby-fi .bakery-bowl.mixing canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gabby-fi .bakery-bowl.phaser-mixing-ready .bakery-spoon {
+  visibility: hidden;
+}

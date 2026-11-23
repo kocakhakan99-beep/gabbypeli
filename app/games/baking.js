@@ -7,7 +7,15 @@ const recipes = [
     { name: "Kuppikakut", piece: "kuppikakku", art: "cupcake", heat: 200 },
 ];
 let timer;
+let mixingView;
+let mixingGeneration = 0;
+function stopMixingView() {
+    mixingGeneration++;
+    mixingView?.destroy();
+    mixingView = undefined;
+}
 export function stopBakingGestures() {
+    stopMixingView();
     clearTimeout(timer);
     el("baking")
         .querySelectorAll("[data-gesture]")
@@ -23,6 +31,7 @@ export function startBaking() {
     game.append(scene);
     progress(0, 6);
     function show(step, instruction, html) {
+        stopMixingView();
         scene.querySelectorAll("[data-gesture]").forEach(stopStroke);
         scene.innerHTML = html;
         feedback("");
@@ -135,9 +144,20 @@ export function startBaking() {
         const spoon = scene.querySelector(".bakery-spoon");
         const meter = scene.querySelector("progress");
         let turns = 0;
+        let spoonPosition = { x: 0.5, y: 0.5 };
+        const generation = mixingGeneration;
+        void import("../phaser-room.js").then(({ createMixingView }) => {
+            if (generation !== mixingGeneration || !bowl.isConnected)
+                return;
+            mixingView = createMixingView(bowl);
+            mixingView.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
+        }).catch(() => {
+            // The existing spoon remains available if the graphics cannot load.
+        });
         function add(amount) {
             turns += amount;
             meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * 4)) * 100);
+            mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
             if (meter.value === 100)
                 tray(recipe);
         }
@@ -148,6 +168,11 @@ export function startBaking() {
                 const x = box.left + box.width / 2;
                 const y = box.top + box.height / 2;
                 const radius = box.width / 2;
+                spoonPosition = {
+                    x: (to.x - box.left) / box.width,
+                    y: (to.y - box.top) / box.height,
+                };
+                mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
                 spoon.style.left =
                     Math.max(15, Math.min(85, ((to.x - box.left) / box.width) * 100)) +
                         "%";

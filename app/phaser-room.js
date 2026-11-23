@@ -1,4 +1,4 @@
-// node_modules/phaser/dist/phaser.esm.js
+// ../phaser-work/node_modules/phaser/dist/phaser.esm.js
 var e = {
 	50792(e) {
 		var t = Object.prototype.hasOwnProperty, n = "~";
@@ -43322,4 +43322,46 @@ function te(e, t, n, r) {
 		}
 	};
 }
-export { te as createRoomView };
+function Q(e) {
+	let t, n, r, i = {
+		x: .5,
+		y: .5,
+		progress: 0
+	}, a = !0;
+	function o(e, a, o) {
+		i = {
+			x: Z.Math.Clamp(e, .15, .85),
+			y: Z.Math.Clamp(a, .15, .85),
+			progress: Z.Math.Clamp(o, 0, 1)
+		}, t && n && r && (n.setPosition(i.x * 300, i.y * 300), n.setRotation(Math.atan2(i.y - .5, i.x - .5) + .8), r.clear(), r.lineStyle(7, 16774089, .7), r.beginPath(), r.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + i.progress * Math.PI * 2), r.strokePath());
+	}
+	let s = new Z.Game({
+		type: Z.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: 300,
+		height: 300,
+		scale: {
+			mode: Z.Scale.FIT,
+			autoCenter: Z.Scale.CENTER_BOTH
+		},
+		scene: { create() {
+			if (!a) return;
+			t = this, r = this.add.graphics();
+			let s = this.add.ellipse(8, 50, 38, 85, 9131317, .25), c = this.add.rectangle(0, 32, 18, 100, 11429954).setOrigin(.5, .15), l = this.add.ellipse(0, 0, 48, 64, 14127708), u = this.add.ellipse(-6, -8, 20, 28, 16104576, .55);
+			n = this.add.container(150, 150, [
+				s,
+				c,
+				l,
+				u
+			]), e.classList.add("phaser-mixing-ready"), o(i.x, i.y, i.progress);
+		} }
+	});
+	return {
+		move: o,
+		destroy() {
+			a = !1, e.classList.remove("phaser-mixing-ready"), s.destroy(!0);
+		}
+	};
+}
+export { Q as createMixingView, te as createRoomView };
