@@ -15,6 +15,10 @@ import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
+let memoryView: { destroy(): void } | undefined;
+let memoryGeneration = 0;
+let memoryViewLoading = false;
+
 let pack: "friends" | "objects" | "mixed" = "friends";
 let previewTimer: ReturnType<typeof setTimeout> | undefined;
 let mismatchTimer: ReturnType<typeof setTimeout> | undefined;
@@ -30,6 +34,10 @@ const memoryFriends = [
 ];
 
 export function stopMemoryTimers(): void {
+  memoryGeneration++;
+  memoryView?.destroy();
+  memoryView = undefined;
+  memoryViewLoading = false;
   clearTimeout(previewTimer);
   clearTimeout(mismatchTimer);
   clearTimeout(closeTimer);
@@ -113,6 +121,19 @@ export function initMemory() {
 }
 
 export function drawCards() {
+  if (!memoryView && !memoryViewLoading) {
+    memoryViewLoading = true;
+    const generation = memoryGeneration;
+    const art = state.mem.map(({ friend }) => ({
+      id: friend.id,
+      folder: memoryFriends.some((item) => item.id === friend.id) ? "friends" as const : "objects" as const,
+    }));
+    void import("../phaser-room.js").then(({ createTileView }) => {
+      if (generation !== memoryGeneration) return;
+      memoryView = createTileView(el("memory"), "memory", art);
+      memoryViewLoading = false;
+    }).catch(() => { if (generation === memoryGeneration) memoryViewLoading = false; });
+  }
   el("cards").className =
     "memory " +
     (state.memoryPairs === 2

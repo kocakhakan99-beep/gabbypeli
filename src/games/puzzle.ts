@@ -17,6 +17,9 @@ import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
+let puzzleView: { destroy(): void } | undefined;
+let puzzleGeneration = 0;
+
 const scenes = [
   ...friends,
   ...playObjects.map((object) => ({ ...object, room: "Esinepalapelit" })),
@@ -138,6 +141,13 @@ export function initPuzzle() {
       el("tray").append(b);
     },
   );
+  const generation = puzzleGeneration;
+  const art = { id: f.id, folder: state.puzzleArt < friends.length ? "friends" as const : "objects" as const };
+  const rows = state.puzzleSize / 2;
+  void import("../phaser-room.js").then(({ createTileView }) => {
+    if (generation !== puzzleGeneration) return;
+    puzzleView = createTileView(el("puzzle"), "puzzle", [art], rows);
+  }).catch(() => {});
   setAction("", null);
   feedback("Valitse ensin yksi pala.");
   progress(0, state.puzzleSize);
@@ -246,6 +256,9 @@ export function showPuzzleHint() {
 }
 
 export function stopPuzzleDrag(): void {
+  puzzleGeneration++;
+  puzzleView?.destroy();
+  puzzleView = undefined;
   el("tray").querySelectorAll("button").forEach(stopStroke);
 }
 

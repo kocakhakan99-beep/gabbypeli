@@ -43544,4 +43544,57 @@ function ae(e, t) {
 		n = !1, e.classList.remove("phaser-garden-ready"), o.destroy(!0);
 	} };
 }
-export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView };
+function oe(e, t, n, r = 1) {
+	let i = document.createElement("div");
+	i.className = "phaser-tile-layer", i.setAttribute("aria-hidden", "true"), e.append(i);
+	let a = !0, o = !1, s = window.matchMedia("(prefers-reduced-motion: reduce)").matches, c = /* @__PURE__ */ new Map(), l = new X.Game({
+		type: X.CANVAS,
+		parent: i,
+		transparent: !0,
+		width: e.clientWidth,
+		height: e.clientHeight,
+		scale: { mode: X.Scale.RESIZE },
+		scene: {
+			preload() {
+				this.load.on("loaderror", () => {
+					o = !0;
+				});
+				for (let e of new Map(n.map((e) => [e.id, e])).values()) this.textures.exists(e.id) || this.load.image(e.id, `./assets/${e.folder}/${e.id}.webp`);
+			},
+			create() {
+				if (a && !o) {
+					if (t === "puzzle") {
+						let e = this.textures.get(n[0].id), t = e.getSourceImage();
+						for (let n = 0; n < r * 2; n++) e.add(String(n), 0, n % 2 * t.width / 2, Math.floor(n / 2) * t.height / r, t.width / 2, t.height / r);
+					}
+					e.classList.add(`phaser-${t}-ready`);
+				}
+			},
+			update() {
+				if (!a || o) return;
+				let r = e.getBoundingClientRect(), i = [...e.querySelectorAll(t === "memory" ? ".memory-card" : ".slot, .piece")], l = new Set(i);
+				c.forEach((e, t) => {
+					l.has(t) || (e.image.destroy(), c.delete(t));
+				}), i.forEach((e) => {
+					let i = Number(e.dataset[t === "memory" ? "index" : "piece"]), a = t === "memory" ? n[i] : n[0];
+					if (!a || !this.textures.exists(a.id)) return;
+					let o = e.getBoundingClientRect(), l = t === "memory" ? e.getAttribute("aria-pressed") === "true" : !e.disabled || e.classList.contains("filled"), u = c.get(e);
+					u || (u = {
+						image: this.add.image(0, 0, a.id, t === "puzzle" ? String(i) : void 0),
+						up: l
+					}, c.set(e, u));
+					let d = u.image, f = t === "memory" ? l : !e.classList.contains("piece") || !e.disabled;
+					d.setVisible(f), d.setPosition(o.left - r.left + o.width / 2, o.top - r.top + o.height / 2), t === "memory" ? d.setScale(Math.min(Math.max(1, o.width - 10) / d.frame.realWidth, Math.max(1, o.height - 10) / d.frame.realHeight)) : d.setDisplaySize(Math.max(1, o.width - 10), Math.max(1, o.height - 10)), t === "puzzle" && d.setAlpha(e.classList.contains("slot") && !e.classList.contains("filled") ? .23 : 1), u.up !== l && (u.up = l, l && !s && (d.setAlpha(.2), this.tweens.add({
+						targets: d,
+						alpha: 1,
+						duration: 240
+					})));
+				});
+			}
+		}
+	});
+	return { destroy() {
+		a = !1, e.classList.remove(`phaser-${t}-ready`), l.destroy(!0), i.remove();
+	} };
+}
+export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView, oe as createTileView };

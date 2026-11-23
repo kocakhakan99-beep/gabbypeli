@@ -408,3 +408,89 @@ export function createGardenView(parent: HTMLElement, flowers: HTMLButtonElement
     game.destroy(true);
   } };
 }
+
+export interface TileArt {
+  id: string;
+  folder: "friends" | "objects";
+}
+
+/** Keeps accessible HTML hit areas while Phaser draws the cards and puzzle crops. */
+export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", art: TileArt[], rows = 1): { destroy(): void } {
+  const overlay = document.createElement("div");
+  overlay.className = "phaser-tile-layer";
+  overlay.setAttribute("aria-hidden", "true");
+  parent.append(overlay);
+  let alive = true;
+  let failed = false;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const tiles = new Map<HTMLButtonElement, { image: Phaser.GameObjects.Image; up: boolean }>();
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent: overlay, transparent: true,
+    width: parent.clientWidth, height: parent.clientHeight,
+    scale: { mode: Phaser.Scale.RESIZE },
+    scene: {
+      preload() {
+        this.load.on("loaderror", () => { failed = true; });
+        for (const item of new Map(art.map((item) => [item.id, item])).values()) {
+          if (!this.textures.exists(item.id)) this.load.image(item.id, `./assets/${item.folder}/${item.id}.webp`);
+        }
+      },
+      create() {
+        if (!alive || failed) return;
+        if (mode === "puzzle") {
+          const texture = this.textures.get(art[0].id);
+          const source = texture.getSourceImage() as HTMLImageElement;
+          for (let index = 0; index < rows * 2; index++) {
+            texture.add(String(index), 0, (index % 2) * source.width / 2, Math.floor(index / 2) * source.height / rows, source.width / 2, source.height / rows);
+          }
+        }
+        parent.classList.add(`phaser-${mode}-ready`);
+      },
+      update(this: Phaser.Scene) {
+        if (!alive || failed) return;
+        const bounds = parent.getBoundingClientRect();
+        const buttons = [...parent.querySelectorAll<HTMLButtonElement>(mode === "memory" ? ".memory-card" : ".slot, .piece")];
+        const current = new Set(buttons);
+        tiles.forEach((tile, element) => {
+          if (!current.has(element)) { tile.image.destroy(); tiles.delete(element); }
+        });
+        buttons.forEach((button) => {
+          const index = Number(button.dataset[mode === "memory" ? "index" : "piece"]);
+          const item = mode === "memory" ? art[index] : art[0];
+          if (!item || !this.textures.exists(item.id)) return;
+          const rect = button.getBoundingClientRect();
+          const up = mode === "memory" ? button.getAttribute("aria-pressed") === "true" : !button.disabled || button.classList.contains("filled");
+          let tile = tiles.get(button);
+          if (!tile) {
+            const image = this.add.image(0, 0, item.id, mode === "puzzle" ? String(index) : undefined);
+            tile = { image, up };
+            tiles.set(button, tile);
+          }
+          const image = tile.image;
+          const visible = mode === "memory" ? up : !button.classList.contains("piece") || !button.disabled;
+          image.setVisible(visible);
+          image.setPosition(rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2);
+          if (mode === "memory") {
+            image.setScale(Math.min(Math.max(1, rect.width - 10) / image.frame.realWidth, Math.max(1, rect.height - 10) / image.frame.realHeight));
+          } else {
+            image.setDisplaySize(Math.max(1, rect.width - 10), Math.max(1, rect.height - 10));
+          }
+          if (mode === "puzzle") image.setAlpha(button.classList.contains("slot") && !button.classList.contains("filled") ? 0.23 : 1);
+          if (tile.up !== up) {
+            tile.up = up;
+            if (up && !reducedMotion) {
+              image.setAlpha(0.2);
+              this.tweens.add({ targets: image, alpha: 1, duration: 240 });
+            }
+          }
+        });
+      },
+    },
+  });
+  return { destroy() {
+    alive = false;
+    parent.classList.remove(`phaser-${mode}-ready`);
+    game.destroy(true);
+    overlay.remove();
+  } };
+}

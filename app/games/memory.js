@@ -5,6 +5,9 @@ import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
+let memoryView;
+let memoryGeneration = 0;
+let memoryViewLoading = false;
 let pack = "friends";
 let previewTimer;
 let mismatchTimer;
@@ -18,6 +21,10 @@ const memoryFriends = [
     { id: "dj", name: "DJ Catnip" },
 ];
 export function stopMemoryTimers() {
+    memoryGeneration++;
+    memoryView?.destroy();
+    memoryView = undefined;
+    memoryViewLoading = false;
     clearTimeout(previewTimer);
     clearTimeout(mismatchTimer);
     clearTimeout(closeTimer);
@@ -94,6 +101,21 @@ export function initMemory() {
         say("Katsotaan kaverien paikat yhdessä.");
 }
 export function drawCards() {
+    if (!memoryView && !memoryViewLoading) {
+        memoryViewLoading = true;
+        const generation = memoryGeneration;
+        const art = state.mem.map(({ friend }) => ({
+            id: friend.id,
+            folder: memoryFriends.some((item) => item.id === friend.id) ? "friends" : "objects",
+        }));
+        void import("../phaser-room.js").then(({ createTileView }) => {
+            if (generation !== memoryGeneration)
+                return;
+            memoryView = createTileView(el("memory"), "memory", art);
+            memoryViewLoading = false;
+        }).catch(() => { if (generation === memoryGeneration)
+            memoryViewLoading = false; });
+    }
     el("cards").className =
         "memory " +
             (state.memoryPairs === 2

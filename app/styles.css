@@ -3508,3 +3508,19 @@ body {
 #gabby-fi .phaser-garden-ready .garden-tool {
   z-index: 2;
 }
+
+#gabby-fi #gf-memory,
+#gabby-fi #gf-puzzle {
+  position: relative;
+}
+#gabby-fi .phaser-tile-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+#gabby-fi .phaser-memory-ready .memory-front .picture,
+#gabby-fi .phaser-puzzle-ready .slot .crop,
+#gabby-fi .phaser-puzzle-ready .piece .crop {
+  visibility: hidden;
+}

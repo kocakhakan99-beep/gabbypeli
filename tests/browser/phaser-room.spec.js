@@ -43,3 +43,20 @@ test("tapping and dragging both open furniture", async ({ page }) => {
   await page.mouse.up();
   await expect(nextSpot).toHaveClass(/opened/);
 });
+
+test("memory and puzzle graphics load and release their canvases", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  for (const mode of ["memory", "puzzle"]) {
+    await page.locator(`#gf-open-${mode}`).click();
+    const panel = page.locator(`#gf-${mode}`);
+    await expect(panel).toHaveClass(new RegExp(`phaser-${mode}-ready`));
+    await expect(panel.locator("canvas")).toBeVisible();
+    await page.locator("#gf-hint").click();
+    await expect(panel).toHaveClass(new RegExp(`phaser-${mode}-ready`));
+    await page.locator("#gf-home-button").click();
+    await expect(panel.locator("canvas")).toHaveCount(0);
+  }
+  expect(errors).toEqual([]);
+});
