@@ -11,7 +11,6 @@ import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
 
-import { startDrawing } from "./games/drawing.js";
 import { startGarden, stopGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 
@@ -36,7 +35,7 @@ const starters: Record<GameMode, () => void> = {
   sizes: renderSizes,
   baking: startBaking,
   bubbles: startBubbles,
-  drawing: startDrawing,
+  drawing: home,
   garden: startGarden,
 };
 
@@ -55,6 +54,10 @@ export function home(): void {
 }
 
 export function open(which: GameMode): void {
+  if (which === "drawing") {
+    home();
+    return;
+  }
   cancelAdvance();
   stopGestures();
   stopSpeech();

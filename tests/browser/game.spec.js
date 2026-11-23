@@ -7,7 +7,7 @@ for (const width of [360, 768]) {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/");
     await page.locator("#gf-sound").click();
-    for (const id of ["sizes", "bubbles", "learn"])
+    for (const id of ["sizes", "bubbles", "learn", "drawing"])
       await expect(page.locator("#gf-open-" + id)).toBeHidden();
     await page.locator("#gf-open-memory").click();
     await page.locator("#gf-action").click();

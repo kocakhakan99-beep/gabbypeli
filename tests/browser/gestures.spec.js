@@ -25,45 +25,6 @@ async function swipe(page, points) {
   await session.detach();
 }
 
-test("one finger draws a continuous line, undo clears it, and completion earns a sticker", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await page.locator("#gf-sound").click();
-  await page.locator("#gf-open-drawing").click();
-  const paper = page.locator("#gf-drawing-paper");
-  await paper.scrollIntoViewIfNeeded();
-  const box = await paper.boundingBox();
-  const { x, y } = { x: box.x + 28, y: box.y + 35 };
-  await swipe(page, [
-    { x, y },
-    { x: x + 50, y },
-    { x: x + 100, y },
-  ]);
-  const ink = () =>
-    paper.evaluate((canvas) => {
-      const pixels = canvas
-        .getContext("2d")
-        .getImageData(0, 0, canvas.width, canvas.height).data;
-      let painted = 0;
-      for (let i = 3; i < pixels.length; i += 4) if (pixels[i]) painted++;
-      return painted;
-    });
-  expect(await ink()).toBeGreaterThan(1000);
-  await page.locator("#gf-drawing-undo").click();
-  expect(await ink()).toBe(0);
-  await paper.scrollIntoViewIfNeeded();
-  const again = await paper.boundingBox();
-  await swipe(page, [
-    { x: again.x + 28, y: again.y + 35 },
-    { x: again.x + 100, y: again.y + 35 },
-  ]);
-  await page.locator("#gf-action").click();
-  await expect(page.locator("#gf-win")).toBeVisible();
-  await page.locator("#gf-other").click();
-  await expect(page.locator("#gf-stickers .earned")).toHaveText("Taiteilija");
-});
-
 test("one swipe opens multiple flowers and the next bed also works by keyboard", async ({
   page,
 }) => {
@@ -157,32 +118,3 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   ).toBeVisible();
 });
 
-test("a swipe leaves a row of colored paw stamps that can be undone", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await page.locator("#gf-sound").click();
-  await page.locator("#gf-open-drawing").click();
-  await page.locator("#gf-drawing-stamp").click();
-  const paper = page.locator("#gf-drawing-paper");
-  await paper.scrollIntoViewIfNeeded();
-  const { x, y } = await paper.boundingBox();
-  await swipe(page, [
-    { x: x + 30, y: y + 45 },
-    { x: x + 145, y: y + 45 },
-  ]);
-  const ink = () =>
-    paper.evaluate((canvas) => {
-      const pixels = canvas
-        .getContext("2d")
-        .getImageData(0, 0, canvas.width, canvas.height).data;
-      return pixels.reduce(
-        (total, channel, index) =>
-          total + (index % 4 === 3 && channel > 0 ? 1 : 0),
-        0,
-      );
-    });
-  expect(await ink()).toBeGreaterThan(4000);
-  await page.locator("#gf-drawing-undo").click();
-  await expect.poll(ink).toBe(0);
-});

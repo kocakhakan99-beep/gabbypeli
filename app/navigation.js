@@ -9,7 +9,6 @@ import { startBaking, stopBakingGestures } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
-import { startDrawing } from "./games/drawing.js";
 import { startGarden, stopGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 function stopGestures() {
@@ -32,7 +31,7 @@ const starters = {
     sizes: renderSizes,
     baking: startBaking,
     bubbles: startBubbles,
-    drawing: startDrawing,
+    drawing: home,
     garden: startGarden,
 };
 export function home() {
@@ -50,6 +49,10 @@ export function home() {
         el(`open-${previousRoom}`).focus();
 }
 export function open(which) {
+    if (which === "drawing") {
+        home();
+        return;
+    }
     cancelAdvance();
     stopGestures();
     stopSpeech();
