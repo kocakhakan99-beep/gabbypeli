@@ -1,9 +1,9 @@
-export type CampaignGame = "memory" | "puzzle";
-const games: CampaignGame[] = ["memory", "puzzle"];
+export const campaignGames = ["memory", "puzzle", "find"] as const;
+export type CampaignGame = (typeof campaignGames)[number];
 const key = (game: CampaignGame) => `gabbypeli-campaign-${game}-v1`;
 export const levelCount = 10;
 export const coinReward = 25;
-const completed = { memory: 0, puzzle: 0 };
+const completed: Record<CampaignGame, number> = { memory: 0, puzzle: 0, find: 0 };
 let activeGame: CampaignGame = "memory";
 let active: number | undefined;
 
@@ -36,7 +36,7 @@ export function awardCampaignLevel(): number {
 
 export function renderCampaign(game: CampaignGame, start: (level: number) => void): void {
   const progress = readProgress(game);
-  document.querySelector("#gf-coins")!.textContent = String(games.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
+  document.querySelector("#gf-coins")!.textContent = String(campaignGames.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
   const map = document.querySelector("#gf-levels")!;
   map.replaceChildren();
   for (let level = 1; level <= levelCount; level++) {

@@ -51,7 +51,10 @@ export function home() {
         el(`open-${previousRoom}`).focus();
 }
 export function open(which, level) {
-    setCampaignLevel(which === "memory" || which === "puzzle" ? level : undefined, which === "puzzle" ? "puzzle" : "memory");
+    if (which === "memory" || which === "puzzle" || which === "find")
+        setCampaignLevel(level, which);
+    else
+        setCampaignLevel();
     if (which === "drawing") {
         home();
         return;

@@ -1,4 +1,4 @@
-import { campaignLevel, renderCampaign } from "./campaign.js";
+import { campaignGames, campaignLevel, renderCampaign } from "./campaign.js";
 import { cancelAdvance, iconButton } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
@@ -38,11 +38,11 @@ for (const mode of [
 let mapGame = "memory";
 function updateMap() {
     renderCampaign(mapGame, (level) => open(mapGame, level));
-    for (const game of ["memory", "puzzle"]) {
+    for (const game of campaignGames) {
         document.querySelector(`#gf-map-${game}`).setAttribute("aria-pressed", String(mapGame === game));
     }
 }
-for (const game of ["memory", "puzzle"]) {
+for (const game of campaignGames) {
     document.querySelector(`#gf-map-${game}`).addEventListener("click", () => {
         mapGame = game;
         updateMap();

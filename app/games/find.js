@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess, button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
 import { ding, unlock } from "../audio.js";
 import { el } from "../dom.js";
@@ -60,7 +61,10 @@ const roomSurprises = {
 export function renderFind() {
     stopFind();
     const generation = roomGeneration;
-    const friend = friends[state.learnIndex];
+    const level = campaignLevel();
+    const roomCount = level === undefined ? friends.length : Math.min(friends.length, 1 + Math.floor(level / 2));
+    const offset = level === undefined ? 0 : (level - 1) % friends.length;
+    const friend = friends[(offset + state.learnIndex) % friends.length];
     state.learnDone = false;
     heading(friend.id, "Kuka piilottelee?", "Kosketa huonekaluja. Kuka niiden takaa löytyy?", friend.room);
     const portrait = el("portrait");
@@ -78,8 +82,8 @@ export function renderFind() {
     field.append(room);
     feedback("");
     setAction("", null);
-    progress(state.learnIndex, friends.length);
-    const furniture = roomObjects[friend.id];
+    progress(state.learnIndex, roomCount);
+    const furniture = shuffle(roomObjects[friend.id]).slice(0, level === undefined ? 4 : level <= 2 ? 2 : level <= 5 ? 3 : 4);
     const surprise = roomSurprises[friend.id];
     const hidingPlace = Math.floor(Math.random() * furniture.length);
     const roomItems = shuffle(furniture).map((item, index) => ({
@@ -117,14 +121,14 @@ export function renderFind() {
             portrait.setAttribute("aria-label", friend.name);
             feedback("Löysit kaverin! " + friend.name + "!");
             ding("discovery");
-            progress(state.learnIndex + 1, friends.length);
-            setAction(state.learnIndex === friends.length - 1
+            progress(state.learnIndex + 1, roomCount);
+            setAction(state.learnIndex === roomCount - 1
                 ? "Juhlitaan!"
                 : "Seuraava kaveri", () => {
                 state.learnIndex++;
-                if (state.learnIndex === friends.length) {
+                if (state.learnIndex === roomCount) {
                     stopFind();
-                    finish("Tarkat silmät!", "Löysit kaikki kuusi kaveria!", "gabby");
+                    finish("Tarkat silmät!", "Löysit kaikki tämän leikin kaverit!", "gabby");
                 }
                 else
                     renderFind();
