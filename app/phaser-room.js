@@ -43454,4 +43454,52 @@ function re(e) {
 		}
 	};
 }
-export { Q as createBakingTrayView, Z as createMixingView, re as createOvenView, ne as createRoomView };
+function ie(e, t) {
+	let n = 0, r = !0, i, a = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	function o(e) {
+		if (i) {
+			if (i.clear(), t === "wash") {
+				if (n === 0) return;
+				if (n === 2) {
+					i.lineStyle(12, 10479871, .8), i.lineBetween(140, 94, 140, 166);
+					for (let t = 0; t < 8; t++) {
+						let n = 100 + (t * 11 + (a ? 0 : e / 18)) % 65;
+						i.fillStyle(15072255, .9), i.fillEllipse(140, n, 9, 5);
+					}
+				}
+				for (let t = 0; t < 12; t++) {
+					let r = 125 + t % 4 * 18, o = 170 + Math.floor(t / 4) * 10 + (a ? 0 : Math.sin(e / 240 + t) * 3);
+					i.fillStyle(16777215, n === 2 ? .45 : .85), i.fillCircle(r, o, 5 + t % 3);
+				}
+			} else n & 1 && (i.fillStyle(16774105), i.fillEllipse(150, 162, 145, 68)), n & 2 && (i.fillStyle(16760141), i.fillCircle(160, 150, 26), i.fillStyle(16771233, .8), i.fillEllipse(153, 144, 12, 9)), n & 4 && (i.fillStyle(16776690, .85), i.fillEllipse(150, 161, 170, 70));
+		}
+	}
+	let s = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: 300,
+		height: 240,
+		scale: {
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
+		},
+		scene: {
+			create() {
+				r && (i = this.add.graphics(), e.classList.add("phaser-preparation-ready"), o(0));
+			},
+			update(e) {
+				o(e);
+			}
+		}
+	});
+	return {
+		setStage(e) {
+			n = e, o(0);
+		},
+		destroy() {
+			r = !1, e.classList.remove("phaser-preparation-ready"), s.destroy(!0);
+		}
+	};
+}
+export { Q as createBakingTrayView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView };

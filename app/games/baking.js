@@ -10,9 +10,12 @@ let timer;
 let mixingView;
 let trayView;
 let ovenView;
+let preparationView;
 let mixingGeneration = 0;
 function stopMixingView() {
     mixingGeneration++;
+    preparationView?.destroy();
+    preparationView = undefined;
     ovenView?.destroy();
     ovenView = undefined;
     mixingView?.destroy();
@@ -106,13 +109,25 @@ export function startBaking() {
         const soap = scene.querySelector(".wash-soap");
         const tap = scene.querySelector(".wash-tap");
         const sink = scene.querySelector(".baking-wash");
+        let washStage = 0;
+        const washGeneration = mixingGeneration;
+        void import("../phaser-room.js").then(({ createPreparationView }) => {
+            if (washGeneration !== mixingGeneration || !sink.isConnected)
+                return;
+            preparationView = createPreparationView(sink, "wash");
+            preparationView.setStage(washStage);
+        }).catch(() => { });
         soap.onclick = () => {
+            washStage = 1;
+            preparationView?.setStage(washStage);
             sound();
             sink.classList.add("soapy");
             soap.disabled = true;
             tap.disabled = false;
         };
         tap.onclick = () => {
+            washStage = 2;
+            preparationView?.setStage(washStage);
             tap.disabled = true;
             sink.classList.add("rinsing");
             timer = setTimeout(() => ingredients(recipe), 850);
@@ -131,12 +146,22 @@ export function startBaking() {
             ...scene.querySelectorAll(".bakery-ingredients > div"),
         ];
         let added = 0;
+        let ingredientMask = 0;
+        const ingredientGeneration = mixingGeneration;
+        void import("../phaser-room.js").then(({ createPreparationView }) => {
+            if (ingredientGeneration !== mixingGeneration || !bowl.isConnected)
+                return;
+            preparationView = createPreparationView(bowl, "ingredients");
+            preparationView.setStage(ingredientMask);
+        }).catch(() => { });
         for (const item of items)
             transfer(item, bowl, () => {
                 if (item.hidden)
                     return;
                 item.hidden = true;
                 bowl.dataset.added = String(++added);
+                ingredientMask |= item.classList.contains("bakery-flour") ? 1 : item.classList.contains("bakery-egg") ? 2 : 4;
+                preparationView?.setStage(ingredientMask);
                 sound();
                 if (added === items.length)
                     mix(recipe);

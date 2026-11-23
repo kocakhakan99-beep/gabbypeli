@@ -279,3 +279,74 @@ export function createOvenView(parent: HTMLElement): OvenView {
     game.destroy(true);
   } };
 }
+
+export interface PreparationView {
+  setStage(stage: number): void;
+  destroy(): void;
+}
+
+/** Animates washing and the ingredients accumulating in the bowl. */
+export function createPreparationView(parent: HTMLElement, mode: "wash" | "ingredients"): PreparationView {
+  let stage = 0;
+  let alive = true;
+  let graphics: Phaser.GameObjects.Graphics | undefined;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function draw(time: number): void {
+    if (!graphics) return;
+    graphics.clear();
+    if (mode === "wash") {
+      if (stage === 0) return;
+      if (stage === 2) {
+        graphics.lineStyle(12, 0x9fe8ff, 0.8);
+        graphics.lineBetween(140, 94, 140, 166);
+        for (let i = 0; i < 8; i++) {
+          const y = 100 + ((i * 11 + (reducedMotion ? 0 : time / 18)) % 65);
+          graphics.fillStyle(0xe5fbff, 0.9);
+          graphics.fillEllipse(140, y, 9, 5);
+        }
+      }
+      for (let i = 0; i < 12; i++) {
+        const x = 125 + (i % 4) * 18;
+        const y = 170 + Math.floor(i / 4) * 10 + (reducedMotion ? 0 : Math.sin(time / 240 + i) * 3);
+        graphics.fillStyle(0xffffff, stage === 2 ? 0.45 : 0.85);
+        graphics.fillCircle(x, y, 5 + (i % 3));
+      }
+      return;
+    }
+    if (stage & 1) {
+      graphics.fillStyle(0xfff3d9);
+      graphics.fillEllipse(150, 162, 145, 68);
+    }
+    if (stage & 2) {
+      graphics.fillStyle(0xffbd4d);
+      graphics.fillCircle(160, 150, 26);
+      graphics.fillStyle(0xffe8a1, 0.8);
+      graphics.fillEllipse(153, 144, 12, 9);
+    }
+    if (stage & 4) {
+      graphics.fillStyle(0xfffdf2, 0.85);
+      graphics.fillEllipse(150, 161, 170, 70);
+    }
+  }
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent, transparent: true, width: 300, height: 240,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: {
+      create() {
+        if (!alive) return;
+        graphics = this.add.graphics();
+        parent.classList.add("phaser-preparation-ready");
+        draw(0);
+      },
+      update(time: number) { draw(time); },
+    },
+  });
+  return {
+    setStage(value) { stage = value; draw(0); },
+    destroy() {
+      alive = false;
+      parent.classList.remove("phaser-preparation-ready");
+      game.destroy(true);
+    },
+  };
+}

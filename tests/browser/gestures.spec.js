@@ -112,6 +112,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await page.goto("/");
   await page.locator("#gf-open-baking").click();
   await page.getByRole("button", { name: "Piparit" }).click();
+  await expect(page.locator(".baking-wash")).toHaveClass(/phaser-preparation-ready/);
   await page.getByRole("button", { name: "Ota saippuaa" }).click();
   await page.getByRole("button", { name: "Huuhtele kädet" }).click();
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])

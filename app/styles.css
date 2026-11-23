@@ -3480,3 +3480,18 @@ body {
 #gabby-fi .phaser-oven-ready .bakery-knob::after {
   visibility: hidden;
 }
+
+#gabby-fi .baking-wash,
+#gabby-fi .bakery-bowl {
+  position: relative;
+}
+#gabby-fi .phaser-preparation-ready > canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+#gabby-fi .phaser-preparation-ready .wash-stream,
+#gabby-fi .phaser-preparation-ready.soapy .wash-hands::after {
+  visibility: hidden;
+}

@@ -9,7 +9,7 @@ import {
   setAction,
 } from "../ui.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
-import type { BakingTrayView, MixingView, OvenView } from "../phaser-room.js";
+import type { BakingTrayView, MixingView, OvenView, PreparationView } from "../phaser-room.js";
 
 type Recipe = { name: string; piece: string; art: string; heat: number };
 const recipes: Recipe[] = [
@@ -20,10 +20,13 @@ let timer: ReturnType<typeof setTimeout> | undefined;
 let mixingView: MixingView | undefined;
 let trayView: BakingTrayView | undefined;
 let ovenView: OvenView | undefined;
+let preparationView: PreparationView | undefined;
 let mixingGeneration = 0;
 
 function stopMixingView(): void {
   mixingGeneration++;
+  preparationView?.destroy();
+  preparationView = undefined;
   ovenView?.destroy();
   ovenView = undefined;
   mixingView?.destroy();
@@ -146,13 +149,24 @@ export function startBaking(): void {
     const soap = scene.querySelector<HTMLButtonElement>(".wash-soap")!;
     const tap = scene.querySelector<HTMLButtonElement>(".wash-tap")!;
     const sink = scene.querySelector(".baking-wash")!;
+    let washStage = 0;
+    const washGeneration = mixingGeneration;
+    void import("../phaser-room.js").then(({ createPreparationView }) => {
+      if (washGeneration !== mixingGeneration || !sink.isConnected) return;
+      preparationView = createPreparationView(sink as HTMLElement, "wash");
+      preparationView.setStage(washStage);
+    }).catch(() => {});
     soap.onclick = () => {
+      washStage = 1;
+      preparationView?.setStage(washStage);
       sound();
       sink.classList.add("soapy");
       soap.disabled = true;
       tap.disabled = false;
     };
     tap.onclick = () => {
+      washStage = 2;
+      preparationView?.setStage(washStage);
       tap.disabled = true;
       sink.classList.add("rinsing");
       timer = setTimeout(() => ingredients(recipe), 850);
@@ -176,11 +190,20 @@ export function startBaking(): void {
       ...scene.querySelectorAll<HTMLElement>(".bakery-ingredients > div"),
     ];
     let added = 0;
+    let ingredientMask = 0;
+    const ingredientGeneration = mixingGeneration;
+    void import("../phaser-room.js").then(({ createPreparationView }) => {
+      if (ingredientGeneration !== mixingGeneration || !bowl.isConnected) return;
+      preparationView = createPreparationView(bowl, "ingredients");
+      preparationView.setStage(ingredientMask);
+    }).catch(() => {});
     for (const item of items)
       transfer(item, bowl, () => {
         if (item.hidden) return;
         item.hidden = true;
         bowl.dataset.added = String(++added);
+        ingredientMask |= item.classList.contains("bakery-flour") ? 1 : item.classList.contains("bakery-egg") ? 2 : 4;
+        preparationView?.setStage(ingredientMask);
         sound();
         if (added === items.length) mix(recipe);
       });
