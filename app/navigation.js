@@ -2,7 +2,7 @@ import { el } from "./dom.js";
 import { cancelAdvance, feedback, setAction } from "./ui.js";
 import { initMemory, stopMemoryTimers } from "./games/memory.js";
 import { initPuzzle, stopPuzzleDrag } from "./games/puzzle.js";
-import { renderFind } from "./games/find.js";
+import { renderFind, stopFind } from "./games/find.js";
 import { renderLearn } from "./games/learning.js";
 import { renderSizes, stopSizeGestures } from "./games/sizes.js";
 import { startBaking, stopBakingGestures } from "./games/baking.js";
@@ -13,6 +13,7 @@ import { startDrawing } from "./games/drawing.js";
 import { startGarden } from "./games/garden.js";
 import { stopStroke } from "./games/stroke.js";
 function stopGestures() {
+    stopFind();
     stopMemoryTimers();
     stopStroke(el("portrait"));
     stopBakingGestures();

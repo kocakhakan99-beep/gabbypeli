@@ -13,6 +13,16 @@ import { el } from "../dom.js";
 import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
+import type { RoomView } from "../phaser-room.js";
+
+let roomView: RoomView | undefined;
+let roomGeneration = 0;
+
+export function stopFind(): void {
+  roomGeneration++;
+  roomView?.destroy();
+  roomView = undefined;
+}
 
 const roomObjects: Record<string, { id: string; name: string }[]> = {
   gabby: [
@@ -63,6 +73,8 @@ const roomSurprises: Record<string, { id: string; name: string }> = {
 };
 
 export function renderFind(): void {
+  stopFind();
+  const generation = roomGeneration;
   const friend = friends[state.learnIndex];
   state.learnDone = false;
   heading(
@@ -90,14 +102,26 @@ export function renderFind(): void {
   const furniture = roomObjects[friend.id];
   const surprise = roomSurprises[friend.id];
   const hidingPlace = Math.floor(Math.random() * furniture.length);
-  shuffle(furniture).forEach((item, index) => {
+  const roomItems = shuffle(furniture).map((item, index) => ({
+    id: item.id,
+    hidden: index === hidingPlace,
+  }));
+  roomItems.forEach((roomItem, index) => {
+    const item = furniture.find((object) => object.id === roomItem.id)!;
     const isHiding = index === hidingPlace;
+    let pointer: { id: number; x: number; y: number; distance: number } | null = null;
+    let suppressClick = false;
     const spot = button(
       "",
       () => {
+        if (suppressClick) {
+          suppressClick = false;
+          return;
+        }
         if (state.learnDone || spot.classList.contains("opened")) return;
         unlock();
         spot.classList.add("opened");
+        roomView?.reveal(index);
         if (!isHiding) {
           spot.setAttribute(
             "aria-label",
@@ -123,9 +147,10 @@ export function renderFind(): void {
             : "Seuraava kaveri",
           () => {
             state.learnIndex++;
-            if (state.learnIndex === friends.length)
+            if (state.learnIndex === friends.length) {
+              stopFind();
               finish("Tarkat silmät!", "Löysit kaikki kuusi kaveria!", "gabby");
-            else renderFind();
+            } else renderFind();
           },
         );
         advanceAfterSuccess();
@@ -134,6 +159,32 @@ export function renderFind(): void {
     );
     spot.style.setProperty("--spot-delay", `${index * 0.35}s`);
     spot.setAttribute("aria-label", "Tutki " + item.name.toLowerCase());
+    spot.addEventListener("pointerdown", (event) => {
+      if (spot.disabled || spot.classList.contains("opened") || !event.isPrimary) return;
+      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0 };
+      spot.setPointerCapture(event.pointerId);
+    });
+    spot.addEventListener("pointermove", (event) => {
+      if (!pointer || pointer.id !== event.pointerId) return;
+      pointer.distance = Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y);
+      roomView?.drag(index, pointer.distance / Math.max(48, spot.clientWidth * 0.35));
+    });
+    spot.addEventListener("pointerup", (event) => {
+      if (!pointer || pointer.id !== event.pointerId) return;
+      const moved = pointer.distance >= Math.max(28, spot.clientWidth * 0.2);
+      pointer = null;
+      if (moved) {
+        spot.click();
+        suppressClick = true;
+        window.setTimeout(() => { suppressClick = false; }, 0);
+      } else {
+        roomView?.drag(index, 0);
+      }
+    });
+    spot.addEventListener("pointercancel", () => {
+      pointer = null;
+      roomView?.drag(index, 0);
+    });
     spot.innerHTML =
       '<span class="hiding-friend">' +
       picture(isHiding ? friend.id : surprise.id) +
@@ -142,4 +193,19 @@ export function renderFind(): void {
       '.webp" alt="" draggable="false">';
     room.append(spot);
   });
+  {
+    const canvas = document.createElement("div");
+    canvas.className = "phaser-room-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    room.append(canvas);
+    void import("../phaser-room.js").then(({ createRoomView }) => {
+      if (generation !== roomGeneration || !room.isConnected) return;
+      roomView = createRoomView(canvas, roomItems, friend.id, surprise.id);
+      room.querySelectorAll<HTMLButtonElement>(".hide-spot").forEach((spot, index) => {
+        if (spot.classList.contains("opened")) roomView?.reveal(index);
+      });
+    }).catch(() => {
+      canvas.remove();
+    });
+  }
 }
