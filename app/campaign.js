@@ -34,6 +34,15 @@ export function awardCampaignLevel() {
 }
 export function renderCampaign(game, start) {
     const progress = readProgress(game);
+    const names = {
+        memory: "Muistipeli", puzzle: "Palapeli", find: "Piilopeli",
+        garden: "Puutarha", baking: "Leipomo",
+    };
+    const meter = document.querySelector("#gf-map-progress");
+    meter.value = progress;
+    meter.setAttribute("aria-label", names[game] + ", eteneminen");
+    document.querySelector("#gf-map-progress-label").textContent =
+        names[game] + " · " + progress + " / " + levelCount;
     document.querySelector("#gf-coins").textContent = String(campaignGames.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
     const map = document.querySelector("#gf-levels");
     map.replaceChildren();
