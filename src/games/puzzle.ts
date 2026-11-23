@@ -82,6 +82,7 @@ export function initPuzzle() {
   const level = campaignLevel();
   state.puzzleSize = level === undefined ? freeSize : level <= 3 ? 2 : level <= 6 ? 4 : 6;
   state.puzzleArt = level === undefined ? freeArt : level - 1;
+  document.querySelector<HTMLElement>("#gf-puzzle-free-heading")!.hidden = level !== undefined;
   el("puzzle-settings").hidden = level !== undefined;
   el("scenes").hidden = level !== undefined;
   stopPuzzleDrag();

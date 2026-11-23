@@ -71,6 +71,7 @@ export function initMemory() {
         { friend: f, found: false },
     ]));
     const packSettings = el("memory-packs");
+    document.querySelector("#gf-memory-free-heading").hidden = level !== undefined;
     packSettings.hidden = level !== undefined;
     el("memory-settings").hidden = level !== undefined;
     packSettings.replaceChildren();

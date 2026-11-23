@@ -3674,3 +3674,78 @@ body {
   #gabby-fi #gf-levels { gap: 5px; padding: 10px; }
   #gabby-fi #gf-levels button { min-height: 48px; }
 }
+
+#gabby-fi .free-play-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border: 3px solid #fff;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #f9e9ff, #e6faff);
+  color: #4f2469;
+  box-shadow: 0 4px #cba8d5;
+}
+#gabby-fi .free-play-heading[hidden] { display: none; }
+#gabby-fi .free-play-heading .picture {
+  flex: 0 0 72px;
+  height: 72px;
+}
+#gabby-fi .free-play-heading strong,
+#gabby-fi .free-play-heading span:not(.picture) { display: block; }
+#gabby-fi .free-play-heading strong { font-size: 1.25rem; }
+#gabby-fi .free-play-heading span:not(.picture) { font-size: .9rem; }
+#gabby-fi #gf-memory .settings,
+#gabby-fi #gf-puzzle .settings {
+  padding: 10px;
+  border-radius: 18px;
+  background: #f7e8fb;
+}
+#gabby-fi #gf-win {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(20px, 5vw, 38px);
+  border: 5px solid white;
+  border-radius: 32px;
+  background: linear-gradient(#fff1f7ed, #efddffed), url("../assets/rooms/kitchen.webp") center / cover;
+  box-shadow: 0 8px #a86dc0, 0 14px 24px #7a4a8655;
+}
+#gabby-fi #gf-win .celebration-banner {
+  margin: -4px auto 12px;
+  padding: 10px 20px;
+  border: 3px solid white;
+  border-radius: 24px;
+  background: linear-gradient(#ff8cc7, #df278e);
+  color: white;
+  font-size: clamp(1.25rem, 5vw, 2rem);
+  font-weight: 900;
+  text-shadow: 0 2px #8b2878;
+}
+#gabby-fi #gf-win-art { width: clamp(120px, 35vw, 210px); height: clamp(120px, 35vw, 210px); margin: 0 auto; }
+#gabby-fi #gf-win-title { color: #62208a; }
+#gabby-fi #gf-coin-reward {
+  display: inline-block;
+  border: 3px solid white;
+  font-size: 1.2rem;
+  font-weight: 900;
+  box-shadow: 0 4px #d3a650;
+}
+#gabby-fi #gf-coin-reward[hidden] { display: none; }
+#gabby-fi #gf-next-level {
+  min-height: 55px;
+  margin: 8px;
+  padding: 12px 22px;
+  border: 3px solid white;
+  border-radius: 22px;
+  background: linear-gradient(#ff78be, #e31f83);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 4px #a52372;
+}
+#gabby-fi #gf-win .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+#gabby-fi #gf-win .actions button { min-width: 56px; min-height: 52px; }
+@media (max-width: 480px) {
+  #gabby-fi .free-play-heading .picture { flex-basis: 54px; height: 54px; }
+  #gabby-fi #gf-win { padding: 18px; }
+}
