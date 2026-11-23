@@ -3762,3 +3762,74 @@ body {
   height: 18px;
   accent-color: #f5b82e;
 }
+
+#gabby-fi .home-house {
+  position: relative;
+  width: min(100%, 640px);
+  margin: 0 auto 20px;
+  padding: 0 4% 10px;
+  filter: drop-shadow(0 9px 8px #7b37764d);
+}
+#gabby-fi .home-house-roof {
+  height: clamp(55px, 12vw, 112px);
+  border: 5px solid #ffd0f5;
+  border-radius: 52% 52% 18px 18px / 84% 84% 18px 18px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 13px, #a931961e 14px 16px),
+    linear-gradient(#ffadea, #de56bb);
+}
+#gabby-fi .home-house-rooms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 6px;
+  background: #ffc7e1;
+  border: 4px solid #fff1ee;
+  border-radius: 0 0 23px 23px;
+}
+#gabby-fi .home-house-rooms span {
+  height: clamp(62px, 14vw, 140px);
+  border-radius: 16px 16px 8px 8px;
+  background: center / cover url("../assets/rooms/kitchen.webp");
+}
+#gabby-fi .home-house-rooms span:nth-child(2) { background-image: url("../assets/rooms/garden.webp"); }
+#gabby-fi .home-house-rooms span:nth-child(3) { background-image: url("../assets/rooms/playroom.webp"); }
+#gabby-fi .home-house > .picture {
+  position: absolute;
+  width: 31%;
+  height: 92%;
+  bottom: 0;
+  left: -2%;
+  filter: drop-shadow(2px 4px 4px #6d305b77);
+}
+#gabby-fi #gf-levels {
+  --map-room: url("../assets/rooms/playroom.webp");
+  position: relative;
+  isolation: isolate;
+  grid-template-rows: repeat(2, auto);
+  row-gap: 20px;
+  background: linear-gradient(#fff4fb66, #f5b5e866), var(--map-room) center / cover;
+}
+#gabby-fi #gf-levels[data-game="find"] { --map-room: url("../assets/rooms/music.webp"); }
+#gabby-fi #gf-levels[data-game="garden"] { --map-room: url("../assets/rooms/garden.webp"); }
+#gabby-fi #gf-levels[data-game="baking"] { --map-room: url("../assets/rooms/kitchen.webp"); }
+#gabby-fi #gf-levels::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 25% 7%;
+  border: 12px solid #ffd4ef;
+  border-left: 0;
+  border-radius: 0 80px 80px 0;
+  box-shadow: 0 0 0 2px #fff8;
+}
+#gabby-fi #gf-levels button:nth-child(n+6) { grid-row: 2; }
+#gabby-fi #gf-levels button:nth-child(6) { grid-column: 5; }
+#gabby-fi #gf-levels button:nth-child(7) { grid-column: 4; }
+#gabby-fi #gf-levels button:nth-child(8) { grid-column: 3; }
+#gabby-fi #gf-levels button:nth-child(9) { grid-column: 2; }
+#gabby-fi #gf-levels button:nth-child(10) { grid-column: 1; }
+#gabby-fi #gf-levels button[aria-current="step"] {
+  border-color: #ffdb65;
+  background: linear-gradient(#e752df, #8c21b3);
+}

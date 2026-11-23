@@ -46,13 +46,15 @@ export function renderCampaign(game: CampaignGame, start: (level: number) => voi
   document.querySelector("#gf-map-progress-label")!.textContent =
     names[game] + " · " + progress + " / " + levelCount;
   document.querySelector("#gf-coins")!.textContent = String(campaignGames.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
-  const map = document.querySelector("#gf-levels")!;
+  const map = document.querySelector<HTMLElement>("#gf-levels")!;
+  map.dataset.game = game;
   map.replaceChildren();
   for (let level = 1; level <= levelCount; level++) {
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = String(level);
     button.disabled = level > progress + 1;
+    if (level === progress + 1) button.setAttribute("aria-current", "step");
     button.dataset.completed = String(level <= progress);
     button.setAttribute("aria-label", `Taso ${level}${level <= progress ? ", suoritettu" : button.disabled ? ", lukittu" : ""}`);
     button.onclick = () => start(level);
