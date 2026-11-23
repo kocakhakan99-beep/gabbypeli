@@ -26,7 +26,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   await navigation.getByRole("button", { name: "Tarrakirja" }).tap();
   await expect(page.locator("#gf-sticker-book")).toBeVisible();
   await expect(page.locator("#gf-free-games")).toBeHidden();
-  await navigation.getByRole("button", { name: "Hiekkalaatikko" }).tap();
+  await navigation.getByRole("button", { name: "Leikit" }).tap();
   await expect(page.locator("#gf-free-games")).toBeVisible();
   await expect(page.locator("#gf-sticker-book")).toBeHidden();
   await navigation.getByRole("button", { name: "Koti" }).tap();
