@@ -17,6 +17,7 @@ import { stopStroke } from "./games/stroke.js";
 
 function stopGestures(): void {
   stopMemoryTimers();
+  stopStroke(el("portrait"));
   stopBakingGestures();
   stopPuzzleDrag();
   stopSizeGestures();

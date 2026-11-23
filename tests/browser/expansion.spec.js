@@ -146,10 +146,11 @@ test("learning and picture hunt still complete after TypeScript migration", asyn
     "Pandi Pörrö",
     "DJ Catnip",
   ]) {
-    await page
-      .locator("#gf-choices")
-      .getByRole("button", { name: friend, exact: true })
-      .click();
+    for (const spot of await page.locator(".hide-spot").all()) {
+      if (await page.locator("#gf-action").isVisible()) break;
+      await spot.click();
+    }
+    await expect(page.locator("#gf-feedback")).toContainText(friend);
     await page.locator("#gf-action").click();
   }
   await expect(page.locator("#gf-win")).toBeVisible();
