@@ -1,98 +1,118 @@
-import { advanceAfterSuccess } from "../ui.js";
+import { advanceAfterSuccess, button, heading, progress, feedback, finish, setAction, } from "../ui.js";
 import { el } from "../dom.js";
-import { button, heading, progress, feedback, finish, setAction, } from "../ui.js";
-import { say, ding, unlock } from "../audio.js";
+import { ding, unlock } from "../audio.js";
 import { bindStroke, distanceToStroke } from "./stroke.js";
 const beds = [
     [24, 49, 76],
     [17, 37, 60, 82],
 ];
-const flowerColors = ["#ff88bc", "#ffd778", "#ba96ff", "#ffa6c9"];
+const colors = ["#ff88bc", "#ffd778", "#ba96ff", "#ffa6c9"];
 export function startGarden() {
     plantBed(0);
 }
 function plantBed(level) {
     const field = el("garden-field");
-    heading("fairy", "Auta kukat kasvamaan", "Liu’uta sormea nuppujen yli tai kosketa niitä.", "Kisukeijun puutarha");
-    field.replaceChildren();
-    const wateringCan = document.createElement("span");
-    wateringCan.className = "garden-watering-can";
-    wateringCan.setAttribute("aria-hidden", "true");
-    wateringCan.innerHTML =
-        '<img class="watering-icon" src="./assets/furniture/watering.webp" alt="" draggable="false"><span class="garden-drops"></span>';
-    field.append(wateringCan);
     const row = beds[level];
-    const grown = new Set();
+    let amounts = row.map(() => 0);
     const flowers = [];
-    progress(0, row.length);
-    feedback("");
-    setAction("", null);
-    say("Liu'uta sormea nuppujen yli. Katsotaan, miten kukat aukeavat!");
-    function bloom(index) {
-        if (grown.has(index))
-            return;
-        unlock();
-        grown.add(index);
-        flowers[index].classList.add("bloomed");
-        flowers[index].setAttribute("aria-disabled", "true");
-        flowers[index].setAttribute("aria-label", "Avautunut kukka " + (index + 1));
-        const butterfly = document.createElement("span");
-        butterfly.className = "garden-butterfly";
-        butterfly.setAttribute("aria-hidden", "true");
-        butterfly.style.setProperty("--butterfly-x", row[index] + "%");
-        butterfly.style.setProperty("--butterfly-y", (index % 2 ? 28 : 38) + "%");
-        butterfly.style.setProperty("--butterfly-color", flowerColors[(index + 1) % flowerColors.length]);
-        butterfly.innerHTML = "<span></span><span></span>";
-        field.append(butterfly);
-        progress(grown.size, row.length);
-        ding("sprinkle");
-        if (grown.size !== row.length)
-            return;
-        feedback("Kaikki kukat aukesivat!");
-        say("Kaikki kukat aukesivat!");
-        setAction(level + 1 < beds.length ? "Seuraava kukkapenkki" : "Juhlitaan!", () => {
-            if (level + 1 < beds.length)
-                plantBed(level + 1);
-            else
-                finish("Puutarha kukkii!", "Sait puutarhurin tarran!", "fairy");
-        });
-        advanceAfterSuccess();
-    }
+    let stage = "soil";
+    let finished = false;
+    let lastTick = 0;
+    heading("fairy", "Puutarhan pikku apuri", "Muokkaa multa, kastele kukat ja siisti penkki.", "Kisukeijun puutarha");
+    field.replaceChildren();
+    field.dataset.stage = stage;
+    const tool = document.createElement("span");
+    tool.className = "garden-watering-can garden-tool";
+    tool.setAttribute("aria-hidden", "true");
+    tool.innerHTML =
+        '<span class="garden-shovel"></span><img class="watering-icon" src="./assets/furniture/watering.webp" alt=""><span class="garden-drops"></span><span class="garden-brush"></span>';
+    field.append(tool);
     row.forEach((x, index) => {
-        const flower = button("", () => bloom(index), "garden-flower");
-        flower.setAttribute("aria-label", "Avaa nuppu " + (index + 1));
+        const flower = button("", () => work(index, 25), "garden-flower");
+        flower.setAttribute("aria-label", "Kukkapenkki " + (index + 1));
         flower.style.setProperty("--flower-x", x + "%");
         flower.style.setProperty("--flower-y", (index % 2 ? 48 : 58) + "%");
-        flower.style.setProperty("--petal", flowerColors[index]);
+        flower.style.setProperty("--petal", colors[index]);
         flower.innerHTML =
-            '<span class="garden-stem"></span><span class="garden-bud"></span><span class="garden-petals"></span>';
+            '<span class="garden-soil"></span><span class="garden-stem"></span><span class="garden-bud"></span><span class="garden-petals"></span><span class="garden-meter"><span></span></span><span class="garden-leaf"></span>';
         flowers.push(flower);
         field.append(flower);
     });
-    function water(from, to) {
+    progress(0, row.length);
+    feedback("Muokataan ensin multa lapiolla.");
+    setAction("", null);
+    function work(index, amount) {
+        if (finished || amounts[index] >= 100)
+            return;
+        unlock();
+        amounts[index] = Math.min(100, amounts[index] + amount);
+        const flower = flowers[index];
+        flower.style.setProperty("--growth", String(amounts[index] / 100));
+        flower.style.setProperty("--garden-progress", amounts[index] + "%");
+        flower.setAttribute("aria-label", `Kukkapenkki ${index + 1}, ${amounts[index]} prosenttia`);
+        if (amounts[index] < 100)
+            return;
+        flower.classList.add(stage + "-done");
+        ding("sprinkle");
+        progress(amounts.filter((value) => value === 100).length, row.length);
+        if (!amounts.every((value) => value === 100))
+            return;
+        if (stage === "soil") {
+            stage = "water";
+            feedback("Multa on valmis! Kastellaan kukat.");
+        }
+        else if (stage === "water") {
+            stage = "tidy";
+            feedback("Kukat kasvoivat! Siistitään lehdet.");
+        }
+        else {
+            finished = true;
+            feedback("Puutarha kukkii!");
+            setAction(level + 1 < beds.length ? "Seuraava kukkapenkki" : "Juhlitaan!", () => {
+                if (level + 1 < beds.length)
+                    plantBed(level + 1);
+                else
+                    finish("Puutarha kukkii!", "Sait puutarhurin tarran!", "fairy");
+            });
+            advanceAfterSuccess();
+            return;
+        }
+        field.dataset.stage = stage;
+        amounts = row.map(() => 0);
+        flowers.forEach((item) => {
+            item.style.setProperty("--garden-progress", "0%");
+            item.style.setProperty("--growth", "0");
+        });
+        progress(0, row.length);
+    }
+    function move(from, to, force = false) {
         const bounds = field.getBoundingClientRect();
-        wateringCan.style.left = to.x - bounds.left + "px";
-        wateringCan.style.top = to.y - bounds.top + "px";
+        tool.style.left = to.x - bounds.left + "px";
+        tool.style.top = to.y - bounds.top + "px";
+        const now = performance.now();
+        if (!force && now - lastTick < 100)
+            return;
+        lastTick = now;
         flowers.forEach((flower, index) => {
-            if (grown.has(index))
-                return;
             const rect = flower.getBoundingClientRect();
             const center = {
                 x: rect.left + rect.width / 2,
                 y: rect.top + rect.height / 2,
             };
             if (distanceToStroke(center, from, to) <=
-                Math.min(rect.height, rect.width) / 2)
-                bloom(index);
+                Math.min(rect.width, rect.height) * 0.7)
+                work(index, 25);
         });
     }
     bindStroke(field, {
         start(point) {
-            unlock();
+            lastTick = 0;
             field.classList.add("watering");
-            water(point, point);
+            move(point, point, true);
         },
-        move: water,
+        move(from, to) {
+            move(from, to);
+        },
         end() {
             field.classList.remove("watering");
         },

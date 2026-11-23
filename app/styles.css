@@ -2871,3 +2871,171 @@ body {
 #gabby-fi .picture[data-art="dj"] {
   background-image: url("../assets/friends/dj.webp") !important;
 }
+#gabby-fi .memory.twelve {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 620px;
+}
+#gabby-fi .garden-soil {
+  width: 105%;
+  height: 34%;
+  top: 100% !important;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #a57657, #6a4539);
+  box-shadow: 0 4px #593c34;
+}
+#gabby-fi .garden-flower .garden-stem,
+#gabby-fi .garden-flower .garden-bud {
+  opacity: 0;
+}
+#gabby-fi .garden-flower.soil-done .garden-stem,
+#gabby-fi .garden-flower.soil-done .garden-bud {
+  opacity: 1;
+}
+#gabby-fi .garden-flower.soil-done .garden-bud {
+  scale: calc(0.45 + var(--growth, 0) * 0.55);
+}
+#gabby-fi .garden-flower.water-done .garden-bud {
+  opacity: 0;
+}
+#gabby-fi .garden-flower.water-done .garden-petals {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+#gabby-fi .garden-flower:nth-of-type(even) .garden-petals {
+  border-radius: 30%;
+  filter: hue-rotate(30deg);
+}
+#gabby-fi .garden-meter {
+  top: -8px !important;
+  width: 80%;
+  height: 9px;
+  transform: translateX(-50%);
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#gabby-fi .garden-meter span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--garden-progress, 0%);
+  background: #f07aba;
+}
+#gabby-fi .garden-leaf {
+  top: 95% !important;
+  width: 22px;
+  height: 12px;
+  border-radius: 100% 0;
+  background: #77a854;
+  transform: rotate(-25deg);
+  opacity: 0;
+}
+#gabby-fi [data-stage="tidy"] .garden-flower:not(.tidy-done) .garden-leaf {
+  opacity: 1;
+}
+#gabby-fi .garden-tool .watering-icon,
+#gabby-fi .garden-tool .garden-drops,
+#gabby-fi .garden-shovel,
+#gabby-fi .garden-brush {
+  display: none;
+}
+#gabby-fi [data-stage="water"] .garden-tool .watering-icon,
+#gabby-fi [data-stage="water"] .garden-tool .garden-drops {
+  display: block;
+}
+#gabby-fi [data-stage="soil"] .garden-shovel,
+#gabby-fi [data-stage="tidy"] .garden-brush {
+  display: block;
+  width: 12px;
+  height: 75%;
+  margin: 0 auto;
+  border-radius: 9px;
+  background: #b27c58;
+  transform: rotate(35deg);
+}
+#gabby-fi .garden-shovel::after,
+#gabby-fi .garden-brush::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -8px;
+  width: 34px;
+  height: 30px;
+  left: -11px;
+  border-radius: 7px 7px 45% 45%;
+  background: #a7cde1;
+}
+#gabby-fi .garden-brush::after {
+  background: #eec87d;
+}
+#gabby-fi .baking-wash {
+  min-height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  background:
+    linear-gradient(#ffffff77, #ffffff55),
+    url("../assets/rooms/bathroom.webp") center / cover;
+  border-radius: 24px;
+  padding: 22px;
+}
+#gabby-fi .baking-wash button {
+  width: 95px;
+  height: 110px;
+  border: 4px solid white;
+  border-radius: 24px;
+  background: #f5d6ed;
+  box-shadow: 0 4px #bc93b9;
+  position: relative;
+}
+#gabby-fi .wash-soap span {
+  display: block;
+  width: 50px;
+  height: 65px;
+  margin: auto;
+  background: #f4a7d2;
+  border: 3px solid #fff;
+  border-radius: 12px;
+}
+#gabby-fi .wash-soap span::before {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 8px;
+  background: #b262a9;
+  border-radius: 8px;
+  top: 12px;
+  left: 33px;
+}
+#gabby-fi .wash-tap span {
+  display: block;
+  width: 58px;
+  height: 40px;
+  border: 10px solid #a5cad8;
+  border-bottom: 0;
+  border-radius: 30px 30px 0 0;
+  margin: auto;
+}
+#gabby-fi .wash-tap:not(:disabled) {
+  animation: target-pulse 2s infinite;
+}
+#gabby-fi .wash-hands {
+  flex-basis: 100%;
+  height: 30px;
+  text-align: center;
+}
+#gabby-fi .soapy .wash-hands::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #e3fbff;
+  box-shadow:
+    24px -7px #fff,
+    -24px -4px #e4f9ff,
+    12px -22px #fff;
+  animation: bubble-float 1s infinite;
+}

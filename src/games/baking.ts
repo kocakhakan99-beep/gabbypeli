@@ -39,6 +39,12 @@ const decorated = new Map<number, string>();
 
 export function stopBakingGestures(): void {
   clearTimeout(ovenTimer);
+  el("baking").querySelector(".baking-wash")?.remove();
+  const controls = el("baking-check").parentElement;
+  if (controls) controls.hidden = false;
+  el("baking-steps").hidden = false;
+  const recipeCard = el("baking").querySelector<HTMLElement>(".recipe-card");
+  if (recipeCard) recipeCard.hidden = false;
   stopStroke(el("baking-add"));
   stopStroke(el("baking-plate"));
 }
@@ -92,7 +98,40 @@ export function startBaking(): void {
     };
   });
   showRecipe();
-  playBakingDialogue();
+  const kitchen = el("baking-kitchen");
+  const controls = el("baking-check").parentElement;
+  const wash = document.createElement("div");
+  wash.className = "baking-wash";
+  wash.innerHTML =
+    '<button type="button" class="wash-soap" aria-label="Ota saippuaa"><span aria-hidden="true"></span></button><button type="button" class="wash-tap" aria-label="Huuhtele kädet" disabled><span aria-hidden="true"></span></button><div class="wash-hands" aria-hidden="true"></div>';
+  kitchen.before(wash);
+  kitchen.hidden = true;
+  if (controls) controls.hidden = true;
+  el("baking-steps").hidden = true;
+  const recipeCard = el("baking").querySelector<HTMLElement>(".recipe-card");
+  if (recipeCard) recipeCard.hidden = true;
+  heading(
+    "cakey",
+    "Pestään kädet",
+    "Ota saippuaa ja huuhtele kädet hanassa.",
+    "Hileen keittiö",
+  );
+  const soap = wash.querySelector<HTMLButtonElement>(".wash-soap")!;
+  const tap = wash.querySelector<HTMLButtonElement>(".wash-tap")!;
+  soap.onclick = () => {
+    wash.classList.add("soapy");
+    soap.disabled = true;
+    tap.disabled = false;
+    feedback("Nyt huuhdellaan kädet.");
+  };
+  tap.onclick = () => {
+    wash.remove();
+    if (controls) controls.hidden = false;
+    el("baking-steps").hidden = false;
+    if (recipeCard) recipeCard.hidden = false;
+    showRecipe();
+    playBakingDialogue();
+  };
 }
 
 function bindDecorating(): void {

@@ -81,7 +81,7 @@ export function initMemory() {
     packSettings.append(choice);
   }
   el("memory-settings").replaceChildren();
-  [2, 3, 4].forEach((n) => {
+  [2, 3, 4, 5, 6].forEach((n) => {
     const b = button(n + " paria", () => {
       state.memoryPairs = n;
       initMemory();
@@ -104,7 +104,9 @@ export function drawCards() {
       ? "four"
       : state.memoryPairs === 3
         ? "six"
-        : "eight");
+        : state.memoryPairs === 4
+          ? "eight"
+          : "twelve");
   el("cards").replaceChildren();
   state.mem.forEach((m, i) => {
     const up = state.preview || m.found || state.opened.includes(i);
