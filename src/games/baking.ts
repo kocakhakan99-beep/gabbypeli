@@ -10,7 +10,7 @@ import {
   setAction,
 } from "../ui.js";
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
-import type { BakingTrayView, MixingView, PreparationView } from "../phaser-room.js";
+import type { BakingTrayView, MixingView } from "../phaser-room.js";
 
 import { orders, recipes, stepAsset, type BakingStep, type Recipe, type RecipeId } from "./baking-recipes.js";
 
@@ -23,13 +23,10 @@ export function resetBakingVisit(): void {
 let timer: ReturnType<typeof setTimeout> | undefined;
 let mixingView: MixingView | undefined;
 let trayView: BakingTrayView | undefined;
-let preparationView: PreparationView | undefined;
 let mixingGeneration = 0;
 
 function stopMixingView(): void {
   mixingGeneration++;
-  preparationView?.destroy();
-  preparationView = undefined;
   mixingView?.destroy();
   mixingView = undefined;
   trayView?.destroy();
@@ -280,11 +277,15 @@ export function startBaking(): void {
       "Käännä hanan vipua sivulle avataksesi veden.",
       `
       <div class="baking-wash">
+        <img class="wash-tiles" src="${stepAsset("wash-tiles")}" alt="">
+        <img class="wash-counter" src="${stepAsset("wash-counter")}" alt="">
+        <img class="wash-spout" src="${stepAsset("wash-spout")}" alt="">
+        <span class="wash-stream" aria-hidden="true"></span>
         <button type="button" class="wash-soap wash-object" aria-label="Ota saippuaa" disabled>
           <span class="wash-object-base"></span><span class="wash-object-moving"></span>
         </button>
         <button type="button" class="wash-tap wash-object" aria-label="Avaa hana">
-          <span class="wash-object-base"></span><span class="wash-object-moving"></span><span class="wash-stream" aria-hidden="true"></span>
+          <span class="wash-object-moving"></span>
         </button>
         <div class="wash-hands">${image("sink")}
           <button type="button" class="wash-scrub" aria-label="Pese kädet" disabled>
@@ -301,15 +302,7 @@ export function startBaking(): void {
     const hands = scene.querySelector<HTMLImageElement>(".wash-state")!;
     const scrub = scene.querySelector<HTMLButtonElement>(".wash-scrub")!;
     const dry = scene.querySelector<HTMLButtonElement>(".wash-dry")!;
-    let washStage = 0;
     let waterOn = false;
-    const washGeneration = mixingGeneration;
-    void import("../phaser-room.js").then(({ createPreparationView }) => {
-      if (washGeneration !== mixingGeneration || !sink.isConnected) return;
-      preparationView = createPreparationView(sink);
-      preparationView.setStage(washStage);
-    }).catch(() => {});
-
     function handle(
       object: HTMLButtonElement,
       measure: (start: Point, point: Point, distance: number) => number,
@@ -335,9 +328,7 @@ export function startBaking(): void {
     }
 
     handle(soap, (start, point) => (point.y - start.y) / 14, () => {
-      washStage = 1;
       hands.src = stepAsset("hands-soapy");
-      preparationView?.setStage(washStage);
       sound();
       sink.classList.add("soapy");
       soap.disabled = true;
@@ -355,40 +346,67 @@ export function startBaking(): void {
     handle(tap, (start, point) => Math.abs(point.x - start.x) / 18, () => {
       if (!waterOn) {
         waterOn = true;
-        washStage = 3;
-        preparationView?.setStage(washStage);
-        sink.classList.add("rinsing");
+        sink.classList.add("rinsing", "wash-water-on");
         tap.disabled = true;
         soap.disabled = false;
         soap.focus({ preventScroll: true });
         el("instruction").textContent = "Paina saippuapumppua alaspäin.";
         return;
       }
-      washStage = 2;
-      preparationView?.setStage(washStage);
       tap.disabled = true;
       sink.classList.add("rinsing");
       timer = setTimeout(() => {
-        sink.classList.remove("rinsing", "soapy");
-        washStage = 0;
-        preparationView?.setStage(washStage);
+        sink.classList.remove("rinsing", "soapy", "wash-water-on");
         hands.src = stepAsset("hands-wet");
         dry.hidden = false;
         el("instruction").textContent = "Vedä pyyhe käsien päälle.";
         dry.focus({ preventScroll: true });
       }, 650);
     });
-    transfer(dry, scrub, () => {
+    const towel = dry.querySelector("img")!;
+    let towelOrigin: Point;
+    let wiped = false;
+
+    function overBasin(point: Point): boolean {
+      const target = scrub.parentElement!.getBoundingClientRect();
+      const inset = 14;
+      return point.x >= target.left - inset && point.x <= target.right + inset &&
+        point.y >= target.top - inset && point.y <= target.bottom + inset;
+    }
+
+    function dryHands(): void {
       if (dry.disabled) return;
       dry.disabled = true;
+      dry.style.removeProperty("translate");
+      sink.classList.remove("wash-drying");
+      towel.src = stepAsset("wash-towel-wet");
       hands.src = stepAsset("hands-dry");
+      el("instruction").textContent = "Kädet ovat kuivat. Nyt leivotaan!";
       timer = setTimeout(() => {
         washed = true;
         if (mixDough()) ingredients(recipe);
         else prepare(recipe);
-      }, 450);
-    });
+      }, 600);
+    }
 
+    gesture(dry, {
+      start(point) { towelOrigin = point; wiped = false; },
+      move(from, point) {
+        dry.style.translate = `${point.x - towelOrigin.x}px ${point.y - towelOrigin.y}px`;
+        const over = overBasin(point);
+        sink.classList.toggle("wash-drying", over);
+        if (over && Math.hypot(point.x - from.x, point.y - from.y) > 3) wiped = true;
+      },
+      end(point) {
+        dry.style.removeProperty("translate");
+        sink.classList.remove("wash-drying");
+        if (!point) return;
+        if (wiped || overBasin(point)) dryHands();
+        else if (Math.hypot(point.x - towelOrigin.x, point.y - towelOrigin.y) > 10)
+          feedback("Vie pyyhe altaalla olevien käsien päälle.");
+      },
+    });
+    dry.onclick = (event) => { if (event.detail === 0) dryHands(); };
   }
 
   function ingredients(recipe: Recipe): void {

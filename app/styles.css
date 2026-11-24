@@ -2840,92 +2840,92 @@ body {
 #gabby-fi .garden-brush::after {
   background: #eec87d;
 }
+/* The station assets use a single coordinate space from the tiles to the worktop. */
 #gabby-fi .baking-wash {
-  display: grid;
-  grid-template-columns: 25% 42% 25%;
-  align-items: end;
-  justify-content: center;
-  min-height: clamp(250px, 48vw, 360px);
-  padding: 32px 12px 28px;
-  background: url("../assets/rooms/kitchen.webp") center / cover;
-  border-radius: 24px;
-  isolation: isolate;
-}
-#gabby-fi .baking-wash button {
-  background: transparent;
-  border: 0;
-  padding: 0;
   position: relative;
-  z-index: 2;
-  cursor: pointer;
-  min-height: 48px;
+  isolation: isolate;
+  width: min(100%, 580px);
+  aspect-ratio: 1.38;
+  min-height: 175px;
+  border-radius: 20px;
+  background: linear-gradient(#fff2e7, #f7d9f0);
 }
-#gabby-fi .baking-wash button img {
-  display: block;
-  width: 100%;
-  height: clamp(72px, 18vw, 135px);
+#gabby-fi .baking-wash > img {
+  position: absolute;
   object-fit: contain;
-  object-position: bottom;
   pointer-events: none;
-  filter: drop-shadow(0 5px 5px #42264055);
 }
-#gabby-fi .wash-soap {
-  grid-area: 1 / 1;
+#gabby-fi .baking-wash > .wash-tiles { inset: 2% 4% auto; width: 92%; height: 42%; object-fit: fill; }
+#gabby-fi .baking-wash > .wash-counter { inset: auto 0 5%; width: 100%; height: 39%; object-fit: fill; }
+#gabby-fi .wash-spout { left: 46%; bottom: 54%; width: 14%; height: 30%; }
+#gabby-fi .bakery-scene .baking-wash .wash-object {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
 }
-#gabby-fi .wash-tap {
-  grid-area: 1 / 2;
-  width: min(100%, clamp(72px, 18vw, 135px));
-  justify-self: center;
+#gabby-fi .baking-wash .wash-tap { left: 56%; bottom: 53%; width: 19%; height: 25%; }
+#gabby-fi .baking-wash .wash-soap { left: 10%; bottom: 28%; width: 17%; height: 38%; }
+#gabby-fi .baking-wash .wash-dry { right: 5%; bottom: 30%; width: 22%; min-height: 46px; z-index: 6; }
+#gabby-fi .baking-wash .wash-dry img { display: block; height: auto; width: 100%; }
+#gabby-fi .wash-object-base,
+#gabby-fi .wash-object-moving {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--wash-object) center / 100% 100% no-repeat;
 }
-#gabby-fi .wash-tap:disabled {
-  cursor: default;
+#gabby-fi .wash-tap { --wash-object: url("../assets/gabby/bakery/steps/wash-lever.webp"); }
+#gabby-fi .wash-tap .wash-object-moving {
+  transform-origin: 28% 72%;
+  rotate: calc(var(--wash-motion, 0) * 32deg);
+}
+#gabby-fi .wash-soap { --wash-object: url("../assets/gabby/bakery/steps/wash-pump.webp"); }
+#gabby-fi .wash-soap .wash-object-base { clip-path: inset(24% 0 0); }
+#gabby-fi .wash-soap .wash-object-moving {
+  clip-path: inset(0 0 75%);
+  translate: 0 calc(var(--wash-motion, 0) * 8%);
+}
+#gabby-fi .wash-hands {
+  position: absolute;
+  left: 27%;
+  bottom: 22%;
+  width: 46%;
+  height: 33%;
+  z-index: 2;
+}
+#gabby-fi .wash-hands > img { width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
+#gabby-fi .bakery-scene .baking-wash .wash-scrub {
+  position: absolute;
+  inset: 0 11%;
+  width: 78%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  touch-action: none;
+}
+#gabby-fi .baking-wash .wash-scrub img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  translate: calc(var(--wash-motion, 0) * 12%) 0;
 }
 #gabby-fi .wash-stream {
   position: absolute;
-  top: 47%;
-  left: 8%;
-  width: 10%;
-  height: 70%;
-  border-radius: 0 0 40% 40%;
-  pointer-events: none;
-  background: repeating-linear-gradient(0deg, #d1fbff 0 8px, #64cde8 8px 16px);
+  left: 47.5%;
+  top: 29%;
+  width: 6%;
+  height: 34%;
+  z-index: 3;
   opacity: 0;
+  pointer-events: none;
+  background: url("../assets/gabby/bakery/steps/wash-water.webp") center / 100% 100% no-repeat;
 }
-#gabby-fi .rinsing .wash-stream {
-  opacity: 0.88;
-  animation: rinse-flow 380ms linear infinite;
-}
-@keyframes rinse-flow {
-  to {
-    background-position-y: 16px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  #gabby-fi .rinsing .wash-stream {
-    animation: none;
-  }
-}
-#gabby-fi .wash-hands {
-  grid-area: 2 / 2;
-  height: 48px;
-  border: 5px solid #fff1f9;
-  border-radius: 15px 15px 45% 45%;
-  background: #c0e6eb;
-  text-align: center;
-}
-#gabby-fi .soapy .wash-hands::after {
-  content: "";
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #e3fbff;
-  box-shadow:
-    24px -7px #fff,
-    -24px -4px #e4f9ff,
-    12px -22px #fff;
-  animation: bubble-float 1s infinite;
-}
+#gabby-fi .wash-water-on .wash-stream { opacity: .82; }
+#gabby-fi .wash-drying .wash-hands { filter: drop-shadow(0 0 4px #fff8bb); }
+
 #gabby-fi #gf-baking[data-recipe="cookie"] .cupcake {
   width: 44px;
   height: 44px;
@@ -2997,9 +2997,6 @@ body {
   background:
     linear-gradient(#fff8, #fff5),
     url("../assets/rooms/kitchen.webp") center / cover;
-}
-#gabby-fi .bakery-scene .baking-wash {
-  width: 100%;
 }
 #gabby-fi .bakery-recipe {
   display: grid;
@@ -3338,21 +3335,7 @@ body {
   visibility: hidden;
 }
 
-#gabby-fi .baking-wash,
-#gabby-fi .bakery-bowl {
-  position: relative;
-}
-#gabby-fi .phaser-preparation-ready > canvas {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-#gabby-fi .phaser-preparation-ready .wash-stream,
-#gabby-fi .phaser-preparation-ready.soapy .wash-hands::after {
-  visibility: hidden;
-}
-
+#gabby-fi .bakery-bowl { position: relative; }
 #gabby-fi .phaser-garden-ready > canvas {
   position: absolute;
   inset: 0;
@@ -4901,13 +4884,6 @@ body {
   object-fit: contain;
   pointer-events: none;
 }
-#gabby-fi .bakery-scene .baking-wash button img {
-  width: 100%;
-  height: clamp(72px, 18vw, 135px);
-}
-#gabby-fi .bakery-scene .baking-wash .wash-dry img {
-  height: 48px;
-}
 #gabby-fi .bakery-work-target {
   display: grid;
   place-items: center;
@@ -4950,38 +4926,6 @@ body {
   object-fit: contain;
   pointer-events: none;
 }
-#gabby-fi .wash-hands:has(img) {
-  position: relative;
-  border: 0;
-  background: none;
-  height: auto;
-}
-#gabby-fi .wash-hands img {
-  display: block;
-  width: 100%;
-  height: 75px;
-  object-fit: contain;
-}
-#gabby-fi .wash-hands img.wash-state {
-  position: absolute;
-  inset: 0 25% auto;
-  width: 50%;
-  height: 58px;
-}
-#gabby-fi .soapy .wash-hands:has(img)::after {
-  pointer-events: none;
-  position: absolute;
-  inset: 20% 45% auto;
-}
-#gabby-fi .baking-wash :is(.wash-scrub, .wash-dry) {
-  grid-area: 3 / 1 / 3 / -1;
-  justify-self: center;
-  padding: 6px 12px;
-  border-radius: 12px;
-  background: #fff7fb;
-}
-
-
 #gabby-fi .bakery-tray.bakery-shaped-pan {
   background: var(--shaped-pan) center / contain no-repeat;
 }
@@ -5043,40 +4987,56 @@ body {
 #gabby-fi .garden-crop-tool > .watering-icon {
   background: var(--gabby-garden-watering_can, none) center / contain no-repeat;
 }
-#gabby-fi .garden-crop-art,
-#gabby-fi .garden-crop-plot {
-  grid-area: 1 / 1;
-  align-self: stretch;
-  width: min(100%, 340px);
-}
-#gabby-fi .garden-crop-art {
+#gabby-fi .garden-crop-bed {
   position: relative;
+  grid-area: 1 / 1;
+  width: min(100%, 390px);
+  aspect-ratio: 320 / 230;
+}
+#gabby-fi .garden-crop-soil,
+#gabby-fi .garden-crop-stones {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+}
+#gabby-fi .garden-crop-soil { left: 20%; bottom: 6%; width: 60%; height: 26%; }
+#gabby-fi .garden-crop-stones { left: 12%; bottom: 9%; width: 19%; height: 15%; }
+#gabby-fi .garden-crop-art {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   z-index: 2;
-  margin-bottom: 36px;
 }
 #gabby-fi .garden-crop-plot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  z-index: 3;
   touch-action: none;
   display: grid;
   align-content: end;
   justify-items: center;
-  padding: 0 8px 5px;
+  padding: 0;
   border: 0;
-  border-radius: 18px;
   color: #42233c;
   font-weight: 800;
-  background:
-    radial-gradient(ellipse closest-side, var(--crop-soil, #ab6d56) 45%, #83533c 86%, transparent 100%) center bottom 25px / 78% 34px no-repeat,
-    linear-gradient(transparent 60%, #fff9e8 85%);
+  text-shadow: 0 0 5px #fff8e4, 0 0 3px #fff8e4;
+  background: transparent;
 }
-#gabby-fi .garden-crop-plot[data-soil="dug"] { --crop-soil: #593326; }
-#gabby-fi .garden-crop-plot[data-soil="sown"] { --crop-soil: #ba8764; }
-#gabby-fi .garden-crop-plot[data-soil="wet"] { --crop-soil: #67442d; }
-#gabby-fi .garden-crop-plot.garden-crop-hint { outline: 3px dashed #833598; }
+#gabby-fi .garden-crop-plot:focus-visible { outline: none; }
+#gabby-fi .garden-crop-plot:is(:focus-visible, .garden-crop-hint)::after {
+  content: "";
+  position: absolute;
+  inset: auto 24% 8%;
+  height: 22%;
+  border: 3px dashed #864ca4;
+  border-radius: 50%;
+  pointer-events: none;
+}
 #gabby-fi .garden-crop-watering .garden-crop-art::after {
   content: "";
   position: absolute;
-  inset: auto 30% 0;
+  inset: auto 30% 17%;
   height: 56px;
   background: var(--gabby-garden-water_splash, none) center / contain no-repeat;
 }
@@ -5085,7 +5045,7 @@ body {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: minmax(250px, 1fr);
   }
-  #gabby-fi .garden-crop-tool { grid-area: 1 / 2; }
+  #gabby-fi .garden-crop-tool { grid-area: 1 / 2; align-self: end; margin-bottom: 32px; }
   #gabby-fi .garden-crop-choices { grid-column: 1 / -1; }
 }
 
@@ -5133,54 +5093,12 @@ body {
 #gabby-fi .garden-extra-crops label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 4px; }
 #gabby-fi #gf-garden-field.garden-crop-field:has(.garden-crop-choices) { height: auto; }
 
-#gabby-fi .bakery-scene .baking-wash .wash-object,
-#gabby-fi .bakery-scene .baking-wash .wash-scrub,
 #gabby-fi .bakery-scene .bakery-step-action,
 #gabby-fi .bakery-scene .bakery-decorations button {
   border: 0;
   box-shadow: none;
   background: transparent;
   cursor: grab;
-}
-#gabby-fi .bakery-scene .baking-wash .wash-tap,
-#gabby-fi .bakery-scene .baking-wash .wash-soap {
-  aspect-ratio: 1;
-}
-#gabby-fi .wash-tap { --wash-object: url("../assets/furniture/tap.webp"); }
-#gabby-fi .wash-soap { --wash-object: url("../assets/furniture/soap.webp"); }
-#gabby-fi .wash-object-base,
-#gabby-fi .wash-object-moving {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--wash-object) center / 100% 100% no-repeat;
-}
-#gabby-fi .wash-tap .wash-object-base { clip-path: polygon(0 0, 79% 0, 79% 29%, 76% 57%, 100% 57%, 100% 100%, 0 100%); }
-#gabby-fi .wash-tap .wash-object-moving {
-  clip-path: polygon(79% 29%, 100% 29%, 100% 57%, 76% 57%);
-  transform-origin: 84% 65%;
-  rotate: calc(var(--wash-motion, 0) * 38deg);
-}
-#gabby-fi .wash-soap .wash-object-base { clip-path: inset(23% 0 0); }
-#gabby-fi .wash-soap .wash-object-moving {
-  clip-path: inset(0 0 77%);
-  translate: 0 calc(var(--wash-motion, 0) * 9%);
-}
-#gabby-fi .baking-wash .wash-scrub {
-  position: absolute;
-  z-index: 4;
-  grid-area: auto;
-  justify-self: stretch;
-  width: 72%;
-  inset: 0 14%;
-  min-height: 44px;
-  padding: 0;
-}
-#gabby-fi .baking-wash .wash-scrub img.wash-state {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  translate: calc(var(--wash-motion, 0) * 9%) 0;
 }
 #gabby-fi .bakery-work-target img { translate: var(--work-offset, 0) 0; pointer-events: none; }
 #gabby-fi .bakery-work-target[role="button"] { touch-action: none; }
@@ -5206,27 +5124,20 @@ body {
   z-index: 3;
   width: 48px;
   height: 48px;
-  left: 24%;
-  bottom: 62px;
+  left: 32%;
+  bottom: 21%;
   translate: var(--weed-offset, 0) 0;
-  background: var(--gabby-garden-leaf_green, none) center / contain no-repeat;
+  background: url("../assets/nabby-garden-v6/shared/weed_clover.webp") center / contain no-repeat;
 }
 #gabby-fi .garden-crop-plot[data-work]:not([data-work=""]) { cursor: grab; }
 
 #gabby-fi .garden-harvest-basket {
   grid-area: 2 / 1;
   z-index: 2;
-  min-width: 100px;
-  min-height: 48px;
-  align-content: center;
-  text-align: center;
-  padding: 4px 10px;
-  border: 4px double #a66045;
-  border-radius: 8px 8px 28px 28px;
-  color: #633b42;
-  font-weight: 800;
-  background: repeating-linear-gradient(90deg, #f4d09b 0 8px, #ebbd83 8px 11px);
+  width: 92px;
+  height: 58px;
 }
+#gabby-fi .garden-harvest-basket img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 #gabby-fi .bakery-order-card {
   display: grid;
   justify-items: center;
@@ -5241,7 +5152,7 @@ body {
   background: #fff8f1;
 }
 @media (min-width: 768px) {
-  #gabby-fi .garden-harvest-basket { grid-area: 1 / 2; }
+  #gabby-fi .garden-harvest-basket { grid-area: 1 / 2; align-self: end; margin-bottom: 32px; }
 }
 
 #gabby-fi .memory-card { touch-action: none; }

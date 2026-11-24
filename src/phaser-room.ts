@@ -232,61 +232,6 @@ export function createBakingTrayView(parent: HTMLElement, portionImage: string):
   };
 }
 
-export interface PreparationView {
-  setStage(stage: number): void;
-  destroy(): void;
-}
-
-/** Animates the soap and rinse water. */
-export function createPreparationView(parent: HTMLElement): PreparationView {
-  let stage = 0;
-  let alive = true;
-  let graphics: Phaser.GameObjects.Graphics | undefined;
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  function draw(time: number): void {
-    if (!graphics) return;
-    graphics.clear();
-    if (stage === 0) return;
-    if (stage >= 2) {
-      graphics.lineStyle(12, 0x9fe8ff, 0.8);
-      graphics.lineBetween(140, 94, 140, 166);
-      for (let i = 0; i < 8; i++) {
-        const y = 100 + ((i * 11 + (reducedMotion ? 0 : time / 18)) % 65);
-        graphics.fillStyle(0xe5fbff, 0.9);
-        graphics.fillEllipse(140, y, 9, 5);
-      }
-    }
-    if (stage === 3) return;
-    for (let i = 0; i < 12; i++) {
-      const x = 125 + (i % 4) * 18;
-      const y = 170 + Math.floor(i / 4) * 10 + (reducedMotion ? 0 : Math.sin(time / 240 + i) * 3);
-      graphics.fillStyle(0xffffff, stage === 2 ? 0.45 : 0.85);
-      graphics.fillCircle(x, y, 5 + (i % 3));
-    }
-  }
-  const game = new Phaser.Game({
-    type: Phaser.CANVAS, parent, transparent: true, width: 300, height: 240,
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: {
-      create() {
-        if (!alive) return;
-        graphics = this.add.graphics();
-        parent.classList.add("phaser-preparation-ready");
-        draw(0);
-      },
-      update(time: number) { draw(time); },
-    },
-  });
-  return {
-    setStage(value) { stage = value; draw(0); },
-    destroy() {
-      alive = false;
-      parent.classList.remove("phaser-preparation-ready");
-      game.destroy(true);
-    },
-  };
-}
-
 export function createGardenView(parent: HTMLElement, flowers: HTMLButtonElement[]): { destroy(): void } {
   let alive = true;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -605,7 +550,7 @@ export function createCropView(parent: HTMLElement, crop: string, initialFrame: 
       create() {
         if (!alive || !this.textures.exists(texture)) return;
         scene = this;
-        plant = this.add.image(160, 225, texture).setOrigin(0.5, 1);
+        plant = this.add.image(160, 187, texture).setOrigin(0.5, 1);
         parent.classList.add("garden-crop-rendered");
         update(false);
       },
@@ -618,7 +563,7 @@ export function createCropView(parent: HTMLElement, crop: string, initialFrame: 
     const visible = !!frame && scene.textures.get(texture).has(frame);
     plant.setVisible(visible);
     if (!visible) return;
-    const scale = frame.endsWith("_seed") ? 0.25 : 0.72;
+    const scale = frame.endsWith("_seed") ? 0.25 : 0.65;
     plant.setFrame(frame).setScale(scale);
     if (animate && !reduced) {
       plant.setScale(scale * 0.9);

@@ -20,7 +20,7 @@ export const recipes = {
             { action: "Täytä vuoka", instruction: "Annostele taikinaa jokaiseen vuokaan.", image: "liner", result: "filled-liner", repeat: true },
         ],
         after: [
-            { action: "Lisää kuorrute", instruction: "Kuorruta kuppikakut yksi kerrallaan.", image: "results/plain_cupcake_pink.webp", tool: "frosting", result: "frosting", repeat: true },
+            { action: "Lisää kuorrute", instruction: "Kuorruta kuppikakut yksi kerrallaan.", image: "results/plain_cupcake_pink.webp", tool: "piping-bag", result: "frosting", repeat: true },
         ],
         decorations: [
             { name: "Mustikka", image: "cupcake-blueberry", tool: "tart-blueberry" },
@@ -46,7 +46,7 @@ export const recipes = {
             { action: "Painele taikina", instruction: "Painele taikina torttuvuokaan.", image: "tart-pan", tool: "tart-dough", result: "tart-raw" },
         ],
         after: [
-            { action: "Täytä torttu", instruction: "Lisää täyte paistettuun pohjaan.", image: "tart-shell", tool: "tart-cream", result: "tart-cream" },
+            { action: "Täytä torttu", instruction: "Lisää täyte paistettuun pohjaan.", image: "tart-shell", tool: "piping-bag", result: "tart-cream" },
         ],
         decorations: [
             { name: "Mansikka", image: "tart-red", tool: "tart-strawberry" },

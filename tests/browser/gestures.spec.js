@@ -72,12 +72,12 @@ test("a puzzle piece follows a finger and lands in its matching slot", async ({
 
 test("a finger circles the bowl, drags paper onto the tray and opens the oven", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto("/");
   await page.locator("#gf-open-baking").click();
   await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   await page.getByRole("button", { name: "Piparit" }).click();
-  await expect(page.locator(".baking-wash")).toHaveClass(/phaser-preparation-ready/);
+  await expect(page.locator(".wash-counter")).toBeVisible();
   async function moveWash(name, offsets) {
     const object = page.getByRole("button", { name, exact: true });
     await object.scrollIntoViewIfNeeded();
@@ -94,7 +94,12 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await moveWash("Huuhtele kädet", [[24, 0]]);
   const towel = page.getByRole("button", { name: "Kuivaa kädet" });
   await towel.scrollIntoViewIfNeeded();
-  await swipe(page, [await center(towel), await center(page.locator(".wash-scrub"))]);
+  await page.locator(".baking-wash").screenshot({ path: testInfo.outputPath("wash-station.png") });
+  const basin = page.locator(".wash-hands");
+  const handPoint = await center(basin);
+  const startTowel = await center(towel);
+  await swipe(page, [startTowel, handPoint, { x: handPoint.x - 10, y: handPoint.y }, startTowel]);
+  await expect(page.locator(".wash-dry img")).toHaveAttribute("src", /wash-towel-wet/);
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
     await page.getByRole("button", { name }).press("Enter");
   const bowl = page.locator(".bakery-bowl.mixing");

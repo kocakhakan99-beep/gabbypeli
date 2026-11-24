@@ -130,6 +130,15 @@ export function openCropGarden(field: HTMLElement, adventureOrder?: readonly Cro
     let dragStart: Point;
     let misses = 0;
 
+    const bed = document.createElement("div");
+    bed.className = "garden-crop-bed";
+    const soil = document.createElement("img");
+    soil.className = "garden-crop-soil";
+    soil.alt = "";
+    const stones = document.createElement("img");
+    stones.className = "garden-crop-stones";
+    stones.src = "./assets/nabby-garden-v6/shared/stones_pair.webp";
+    stones.alt = "";
     const art = document.createElement("div");
     art.className = "garden-crop-art";
     art.setAttribute("aria-hidden", "true");
@@ -145,11 +154,13 @@ export function openCropGarden(field: HTMLElement, adventureOrder?: readonly Cro
     icon.setAttribute("aria-hidden", "true");
     const label = document.createElement("span");
     action.append(icon, label);
-    field.replaceChildren(art, target, action);
+    bed.append(soil, stones, art, target);
+    field.replaceChildren(bed, action);
 
     function render(): void {
       const instruction = instructions[phase];
       target.dataset.soil = phase === 0 ? "dry" : phase === 1 ? "dug" : phase === 2 ? "sown" : "wet";
+      soil.src = `./assets/nabby-garden-v6/shared/${["soil_dry", "soil_hole", "soil_seed"][phase] ?? "soil_wet"}.webp`;
       target.textContent = states[phase];
       target.setAttribute("aria-label", instruction ? instruction + " · " + states[phase] : states[phase]);
       field.dataset.cropPhase = String(phase);
@@ -192,7 +203,8 @@ export function openCropGarden(field: HTMLElement, adventureOrder?: readonly Cro
       const next = order?.[bedIndex + 1];
       basket = document.createElement("div");
       basket.className = "garden-harvest-basket";
-      basket.textContent = "Satokori";
+      basket.setAttribute("aria-label", "Satokori");
+      basket.innerHTML = '<img src="./assets/nabby-garden-v6/shared/basket_bow.webp" alt="">';
       field.append(basket);
       target.setAttribute("aria-label", "Siirrä sato koriin");
       target.removeAttribute("aria-disabled");
@@ -247,7 +259,7 @@ export function openCropGarden(field: HTMLElement, adventureOrder?: readonly Cro
         action.style.removeProperty("translate");
         action.style.removeProperty("rotate");
         if (!point || Math.hypot(point.x - dragStart.x, point.y - dragStart.y) < 12) return;
-        const rect = art.getBoundingClientRect();
+        const rect = bed.getBoundingClientRect();
         if (point.x >= rect.left && point.x <= rect.right &&
             point.y >= rect.top && point.y <= target.getBoundingClientRect().bottom) advance();
         else {

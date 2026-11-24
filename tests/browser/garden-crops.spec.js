@@ -21,7 +21,7 @@ for (const [name, id, harvest, ending] of crops) {
     if (id === "sunflower") await page.setViewportSize({ width: 1280, height: 900 });
     const paths = [];
     page.on("request", (request) => {
-      if (request.url().includes("/nabby-garden-v6/")) paths.push(new URL(request.url()).pathname);
+      if (/\/nabby-garden-v6\/(?!shared\/)/.test(request.url())) paths.push(new URL(request.url()).pathname);
     });
     await openCrop(page, name);
     const field = page.locator("#gf-garden-field");

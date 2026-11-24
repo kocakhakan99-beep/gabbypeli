@@ -43419,52 +43419,7 @@ function $(e, t) {
 		}
 	};
 }
-function re(e) {
-	let t = 0, n = !0, r, i = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	function a(e) {
-		if (r && (r.clear(), t !== 0)) {
-			if (t >= 2) {
-				r.lineStyle(12, 10479871, .8), r.lineBetween(140, 94, 140, 166);
-				for (let t = 0; t < 8; t++) {
-					let n = 100 + (t * 11 + (i ? 0 : e / 18)) % 65;
-					r.fillStyle(15072255, .9), r.fillEllipse(140, n, 9, 5);
-				}
-			}
-			if (t !== 3) for (let n = 0; n < 12; n++) {
-				let a = 125 + n % 4 * 18, o = 170 + Math.floor(n / 4) * 10 + (i ? 0 : Math.sin(e / 240 + n) * 3);
-				r.fillStyle(16777215, t === 2 ? .45 : .85), r.fillCircle(a, o, 5 + n % 3);
-			}
-		}
-	}
-	let o = new X.Game({
-		type: X.CANVAS,
-		parent: e,
-		transparent: !0,
-		width: 300,
-		height: 240,
-		scale: {
-			mode: X.Scale.FIT,
-			autoCenter: X.Scale.CENTER_BOTH
-		},
-		scene: {
-			create() {
-				n && (r = this.add.graphics(), e.classList.add("phaser-preparation-ready"), a(0));
-			},
-			update(e) {
-				a(e);
-			}
-		}
-	});
-	return {
-		setStage(e) {
-			t = e, a(0);
-		},
-		destroy() {
-			n = !1, e.classList.remove("phaser-preparation-ready"), o.destroy(!0);
-		}
-	};
-}
-function ie(e, t) {
+function re(e, t) {
 	let n = !0, r = window.matchMedia("(prefers-reduced-motion: reduce)").matches, i = [], a = new X.Game({
 		type: X.CANVAS,
 		parent: e,
@@ -43500,7 +43455,7 @@ function ie(e, t) {
 		n = !1, e.classList.remove("phaser-garden-ready"), a.destroy(!0);
 	} };
 }
-function ae(e, t, n, r = 1, i) {
+function ie(e, t, n, r = 1, i) {
 	let a = document.createElement("div");
 	a.className = "phaser-tile-layer", a.setAttribute("aria-hidden", "true"), e.append(a);
 	let o = !0, s = !1, c = window.matchMedia("(prefers-reduced-motion: reduce)").matches, l, u = /* @__PURE__ */ new Map(), d = new X.Game({
@@ -43584,7 +43539,7 @@ function ae(e, t, n, r = 1, i) {
 		}
 	};
 }
-function oe(e, t) {
+function ae(e, t) {
 	let n, r = document.createElement("div");
 	r.hidden = !0, r.setAttribute("aria-hidden", "true"), e.append(r);
 	function i(e) {
@@ -43663,7 +43618,7 @@ function oe(e, t) {
 		} }
 	}), a;
 }
-function se(e, t, n) {
+function oe(e, t, n) {
 	let r = "garden-v6-crop", i = new URL(`./assets/nabby-garden-v6/${t}/`, document.baseURI), a = !0, o = n, s, c, l = window.matchMedia("(prefers-reduced-motion: reduce)").matches, u = new X.Game({
 		type: X.CANVAS,
 		parent: e,
@@ -43679,7 +43634,7 @@ function se(e, t, n) {
 				this.load.atlas(r, new URL(t + ".webp", i).href, new URL(t + ".json", i).href);
 			},
 			create() {
-				a && this.textures.exists(r) && (c = this, s = this.add.image(160, 225, r).setOrigin(.5, 1), e.classList.add("garden-crop-rendered"), d(!1));
+				a && this.textures.exists(r) && (c = this, s = this.add.image(160, 187, r).setOrigin(.5, 1), e.classList.add("garden-crop-rendered"), d(!1));
 			}
 		}
 	});
@@ -43688,7 +43643,7 @@ function se(e, t, n) {
 		c.tweens.killTweensOf(s);
 		let t = !!o && c.textures.get(r).has(o);
 		if (s.setVisible(t), !t) return;
-		let n = o.endsWith("_seed") ? .25 : .72;
+		let n = o.endsWith("_seed") ? .25 : .65;
 		s.setFrame(o).setScale(n), e && !l && (s.setScale(n * .9), c.tweens.add({
 			targets: s,
 			scale: n,
@@ -43704,4 +43659,4 @@ function se(e, t, n) {
 		}
 	};
 }
-export { $ as createBakingTrayView, se as createCropView, ie as createGardenView, Q as createMixingView, re as createPreparationView, Z as createRoomView, ae as createTileView, oe as startRoomInput };
+export { $ as createBakingTrayView, oe as createCropView, re as createGardenView, Q as createMixingView, Z as createRoomView, ie as createTileView, ae as startRoomInput };
