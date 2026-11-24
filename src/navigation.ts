@@ -14,6 +14,7 @@ import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
 
+import { startDrawing } from "./games/drawing.js";
 import { startGarden, stopGarden } from "./games/garden.js";
 import { enableSceneStrokes, sceneStrokeHandlers, sceneStrokeTarget, stopStroke } from "./games/stroke.js";
 
@@ -42,7 +43,7 @@ const starters: Record<GameMode, () => void> = {
   sizes: renderSizes,
   baking: startBaking,
   bubbles: startBubbles,
-  drawing: home,
+  drawing: startDrawing,
   garden: startGarden,
 };
 
@@ -66,10 +67,6 @@ export function open(which: GameMode, level?: number): void {
   stopFreePlayClock();
   if (which === "memory" || which === "puzzle" || which === "find" || which === "garden" || which === "baking") setCampaignLevel(level, which);
   else setCampaignLevel();
-  if (which === "drawing") {
-    home();
-    return;
-  }
   cancelAdvance();
   stopGestures();
   stopSpeech();

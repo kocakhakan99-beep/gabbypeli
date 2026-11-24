@@ -97,7 +97,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   expect(
     Number(await page.locator(".bakery-progress").getAttribute("value")),
   ).toBeGreaterThan(0);
-  await swipe(page, circle);
+  await swipe(page, [...circle].reverse());
   const roller = page.getByRole("button", { name: "Kauli taikina" });
   await roller.scrollIntoViewIfNeeded();
   await swipe(page, [

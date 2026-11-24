@@ -55,7 +55,7 @@ export function startBaking(): void {
   let stage = 0;
   let total = 1;
   const toppings: string[] = [];
-  const mixingGoal = adventure === undefined ? 4 : 2 + (adventure - 1) / 3;
+  const mixingGoal = adventure === undefined ? 4 : [2, 2, 3, 3, 3, 4, 4, 4, 5, 5][adventure - 1];
   heading(
     "cakey",
     "Hileen leipomo",
@@ -340,13 +340,13 @@ export function startBaking(): void {
     show(
       "Sekoita taikina pyörittämällä sormea kulhossa.",
       `
-      <div class="bakery-bowl mixing" tabindex="0" aria-label="Sekoita taikina"><span class="bakery-spoon" aria-hidden="true"></span></div>
+      <div class="bakery-bowl mixing" role="button" tabindex="0" aria-label="Sekoita taikina"><span class="bakery-spoon" aria-hidden="true"></span></div>
       <progress class="bakery-progress" value="0" max="100" aria-label="Taikina sekoitettu"></progress>`,
     );
     const bowl = scene.querySelector<HTMLElement>(".bakery-bowl")!;
     const spoon = scene.querySelector<HTMLElement>(".bakery-spoon")!;
     const meter = scene.querySelector<HTMLProgressElement>("progress")!;
-    let turns = 0;
+    let mixedAngle = 0;
     let spoonPosition = { x: 0.5, y: 0.5 };
     const generation = mixingGeneration;
     void import("../phaser-room.js").then(({ createMixingView }) => {
@@ -357,8 +357,8 @@ export function startBaking(): void {
       // The existing spoon remains available if the graphics cannot load.
     });
     function add(amount: number): void {
-      turns += amount;
-      meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * mixingGoal)) * 100);
+      mixedAngle += Math.abs(amount);
+      meter.value = Math.min(100, (mixedAngle / (Math.PI * mixingGoal) + 1e-12) * 100);
       mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
       if (meter.value === 100) prepare(recipe);
     }

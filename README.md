@@ -1,6 +1,6 @@
 # Gabbypeli
 
-Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Viisi avattavaa leikkiä, suomenkieliset ohjeet ja selaimeen tallentuva tarrakirja.
+Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Kuusi avattavaa leikkiä, suomenkieliset ohjeet ja selaimeen tallentuva tarrakirja.
 
 ## Kehittäminen
 
@@ -24,7 +24,7 @@ GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikea
 
 ## Pelit ja dokumentaatio
 
-Nukketalosta avautuvat Muistipeli, Palapeli, Kuka piilottelee?, Kisukeijun puutarha ja Hileen leipomo. Jokainen niistä toimii Seikkailussa ja Hiekkalaatikossa.
+Nukketalosta avautuvat Muistipeli, Palapeli, Kuka piilottelee?, Kisukeijun puutarha ja Hileen leipomo. Jokainen niistä toimii Seikkailussa ja Hiekkalaatikossa. Taidepöytä avautuu vapaaseen leikkiin.
 
 [Dokumentaatiohakemistosta](docs/README.md) löytyvät kaikkien yhdeksän toteutetun leikin speksit, julkaisutilat, assettien käyttökohteet ja testit. [AGENTS.md](AGENTS.md) määrittää, milloin dokumentaatio päivitetään koodin yhteydessä.
 
@@ -45,3 +45,5 @@ Peli toistaa vain nykyiset Gabby-äänitteet. Äänitteet on luetteloitu tiedost
 - `assets/friends/`, `assets/objects/`, `assets/menu/` ja `assets/stickers/` sisältävät erilliset hahmo-, esine-, valikko- ja tarrakuvat
 
 Peliä kehitetään henkilökohtaisena faniprojektina. Projektiin ei ole lisätty avointa lisenssiä.
+
+Kotinäkymän kuvitusohje ja julkaisun tarkistuslista löytyvät [KOTINAKYMA.md](KOTINAKYMA.md)-tiedostosta.

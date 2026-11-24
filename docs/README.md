@@ -12,7 +12,7 @@ Valitse pelin tunnisteella oikea speksi. Jokainen speksi kattaa julkaisutilan, p
 | Pikku puuhat | Piilotettu Hiekkalaatikon toteutus | [learn](games/learn.md) |
 | Isot ja pienet | Piilotettu Hiekkalaatikon toteutus | [sizes](games/sizes.md) |
 | Kuplataika | Piilotettu Hiekkalaatikon toteutus | [bubbles](games/bubbles.md) |
-| Taidepöytä | Koristehuone, pelin aloitus pois käytöstä | [drawing](games/drawing.md) |
+| Taidepöytä | Hiekkalaatikko | [drawing](games/drawing.md) |
 
 | Muutoksen kohde | Aloita tästä |
 | --- | --- |

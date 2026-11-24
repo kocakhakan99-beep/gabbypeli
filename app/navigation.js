@@ -12,6 +12,7 @@ import { startBaking, stopBakingGestures } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
+import { startDrawing } from "./games/drawing.js";
 import { startGarden, stopGarden } from "./games/garden.js";
 import { enableSceneStrokes, sceneStrokeHandlers, sceneStrokeTarget, stopStroke } from "./games/stroke.js";
 let inputStarted = false;
@@ -37,7 +38,7 @@ const starters = {
     sizes: renderSizes,
     baking: startBaking,
     bubbles: startBubbles,
-    drawing: home,
+    drawing: startDrawing,
     garden: startGarden,
 };
 export function home() {
@@ -62,10 +63,6 @@ export function open(which, level) {
         setCampaignLevel(level, which);
     else
         setCampaignLevel();
-    if (which === "drawing") {
-        home();
-        return;
-    }
     cancelAdvance();
     stopGestures();
     stopSpeech();

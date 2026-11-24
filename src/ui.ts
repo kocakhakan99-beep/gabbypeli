@@ -200,8 +200,6 @@ export function finish(
     completeGame(state.mode);
   else document.querySelector<HTMLElement>("#gf-sticker-reward")!.hidden = true;
   const reward = document.querySelector<HTMLElement>("#gf-coin-reward")!;
-  const banner = document.querySelector<HTMLElement>("#gf-celebration-banner")!;
-  banner.textContent = level === undefined ? "Hienosti tehty!" : "Taso suoritettu!";
   const stars = document.querySelector<HTMLElement>("#gf-celebration-stars")!;
   const earned = el("stars").querySelectorAll(".star.earned").length;
   const total = el("stars").querySelectorAll(".star").length;
@@ -213,12 +211,14 @@ export function finish(
   }));
   document.querySelector<HTMLElement>("#gf-reward-rule")!.hidden = level === undefined;
   reward.hidden = level === undefined;
+  reward.dataset.earned = String(coins > 0);
   reward.classList.toggle("coins-earned", coins > 0);
   reward.textContent = coins ? `+${coins} kisukolikkoa` : "Taso suoritettu uudelleen!";
   document.querySelector<HTMLElement>("#gf-next-level")!.hidden = level === undefined || level >= levelCount;
   setAction("", null);
   el("content").hidden = true;
   el("win").hidden = false;
+  el("win-banner").textContent = level === undefined ? "Hienosti tehty!" : "Taso suoritettu!";
   el("win-title").textContent = title;
   el("win-text").textContent = text;
   const result = document.querySelector<HTMLImageElement>("#gf-result-image")!;

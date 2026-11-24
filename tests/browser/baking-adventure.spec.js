@@ -45,7 +45,7 @@ test("ten bakery orders progress in Adventure and use the same wash visit", asyn
     if ([2, 4, 6, 8, 9, 10].includes(level)) {
       for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"]) await action(page, name);
       const bowl = page.locator(".bakery-bowl.mixing");
-      const presses = Math.ceil(2 + (level - 1) / 3);
+      const presses = [2, 2, 3, 3, 3, 4, 4, 4, 5, 5][level - 1];
       for (let index = 0; index < presses; index++) await bowl.press("Enter");
     }
     for (const [step, minimum] of steps)

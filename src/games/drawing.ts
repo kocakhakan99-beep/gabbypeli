@@ -140,7 +140,7 @@ export function startDrawing(): void {
     setAction(
       strokes.length ? "Kuva on valmis" : "",
       strokes.length
-        ? () => finish("Hieno taikakuva!", "Sait taiteilijan tarran!", "gabby")
+        ? () => finish("Hieno taikakuva!", "Sinä teit oman taikakuvan!", "gabby")
         : null,
     );
   }
