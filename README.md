@@ -51,3 +51,5 @@ Peli toistaa vain nykyiset Gabby-äänitteet. Äänitteet on luetteloitu tiedost
 - `assets/friends/`, `assets/objects/`, `assets/menu/` ja `assets/stickers/` sisältävät erilliset hahmo-, esine-, valikko- ja tarrakuvat
 
 Peliä kehitetään henkilökohtaisena faniprojektina. Projektiin ei ole lisätty avointa lisenssiä.
+
+Kotinäkymän kuvitusohje ja julkaisun tarkistuslista löytyvät [KOTINAKYMA.md](KOTINAKYMA.md)-tiedostosta.
