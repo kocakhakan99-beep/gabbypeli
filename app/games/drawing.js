@@ -1,15 +1,30 @@
 import { el } from "../dom.js";
 import { heading, progress, feedback, finish, setAction } from "../ui.js";
 import { say, ding } from "../audio.js";
-import { bindStroke } from "./stroke.js";
+import { bindStroke, stopStroke } from "./stroke.js";
 import { friends } from "../data.js";
 let strokes = [];
+let drawingGeneration = 0;
+export function stopDrawing() {
+    drawingGeneration++;
+    stopStroke(el("drawing-paper"));
+    const sheet = document.getElementById("gf-drawing-sheet");
+    if (sheet)
+        stopStroke(sheet);
+}
 export function startDrawing() {
+    stopDrawing();
+    const generation = drawingGeneration;
     heading("gabby", "Piirrä oma taikakuva", "Valitse väri tai hahmo ja liu’uta sormea paperilla.", "Taidepöytä");
     const canvas = el("drawing-paper");
     const context = canvas.getContext("2d");
     if (!context)
         return;
+    const sheet = document.querySelector("#gf-drawing-sheet");
+    const frame = document.querySelector("#gf-drawing-frame");
+    const finishing = document.querySelector("#gf-drawing-finishing");
+    const preview = sheet.querySelector("canvas");
+    const previewContext = preview.getContext("2d");
     const palette = el("drawing-colors");
     const brush = el("drawing-brush");
     const stamp = el("drawing-stamp");
@@ -87,7 +102,10 @@ export function startDrawing() {
         if (friend.tile === undefined)
             continue;
         const image = new Image();
-        image.addEventListener("load", redraw, { once: true });
+        image.addEventListener("load", () => { if (generation === drawingGeneration) {
+            redraw();
+            update();
+        } }, { once: true });
         image.src = new URL(`../../assets/friends/${friend.id}.webp`, import.meta.url).href;
         characterImages.set(friend.tile, image);
     }
@@ -100,10 +118,40 @@ export function startDrawing() {
     function update() {
         undo.disabled = strokes.length === 0;
         progress(strokes.length ? 1 : 0, 1);
-        setAction(strokes.length ? "Kuva on valmis" : "", strokes.length
-            ? () => finish("Hieno taikakuva!", "Sinä teit oman taikakuvan!", "gabby")
-            : null);
+        finishing.hidden = !strokes.length;
+        previewContext?.clearRect(0, 0, preview.width, preview.height);
+        previewContext?.drawImage(canvas, 0, 0, preview.width, preview.height);
     }
+    function frameDrawing() {
+        if (!strokes.length || finishing.hidden)
+            return;
+        finishing.hidden = true;
+        finish("Hieno taikakuva!", "Sinä teit oman taikakuvan!", "gabby", {
+            src: canvas.toDataURL(),
+            alt: "Oma piirustus",
+        });
+    }
+    sheet.onclick = (event) => { if (event.detail === 0)
+        frameDrawing(); };
+    let sheetOrigin;
+    bindStroke(sheet, {
+        start(point) { sheetOrigin = point; },
+        move(_previous, point) {
+            sheet.style.translate = `${point.x - sheetOrigin.x}px ${point.y - sheetOrigin.y}px`;
+        },
+        end(point) {
+            sheet.style.removeProperty("translate");
+            if (!point || Math.hypot(point.x - sheetOrigin.x, point.y - sheetOrigin.y) < 12)
+                return;
+            const target = frame.getBoundingClientRect();
+            if (point.x >= target.left && point.y >= target.top &&
+                point.x <= target.right && point.y <= target.bottom)
+                frameDrawing();
+            else
+                feedback("Vedä piirustus kehykseen.");
+        },
+    });
+    setAction("", null);
     context.clearRect(0, 0, canvas.width, canvas.height);
     colors.forEach((button) => {
         button.setAttribute("aria-pressed", String(button.value === color));
@@ -205,6 +253,8 @@ export function startDrawing() {
             }
         },
         end() {
+            if (active)
+                update();
             active = undefined;
         },
     });

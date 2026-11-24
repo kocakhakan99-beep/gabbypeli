@@ -31,7 +31,7 @@ Phaser piirtää esineet ja niiden liikkeen tarpeen mukaan. Nykyistä osoitinsil
 
 ## Toteutuksen tila
 
-Leipomossa käsienpesun esineet, tilauskortti, työvälineet ja koristeet reagoivat osoittimen liikkeisiin. Puutarhan kasvatus käyttää siementä, lapiota, kastelukannua sekä rikkaruohon ja sadon siirtoa. Muistipelin kortin voi kääntää pyyhkäisyllä. Alla olevan suunnitelman jäljellä olevat toiminnalliset vaiheet, kuvat ja julkaisutyö kootaan pelispekseihin kunkin pelin toteutuksen yhteydessä.
+Leipomossa käsienpesun esineet, tilauskortti, työvälineet ja koristeet reagoivat osoittimen liikkeisiin. Puutarhan kasvatus käyttää siementä, lapiota, kastelukannua sekä rikkaruohon ja sadon siirtoa. Muistipelissä esikatselu suljetaan kortista ja kortti kääntyy pyyhkäisyllä. Piilopelissä siirretään huonekaluja ja avataan seuraava ovi vedolla. Muistipeli ja Palapeli siirtyvät juhlaan suorituksen valmistuttua. Taidepöydässä valmis piirustus vedetään kehykseen. Alla olevan suunnitelman jäljellä olevat toiminnalliset vaiheet, kuvat ja julkaisutyö kootaan pelispekseihin kunkin pelin toteutuksen yhteydessä.
 
 ## Toteutusjärjestys
 

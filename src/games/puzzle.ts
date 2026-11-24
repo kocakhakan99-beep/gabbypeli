@@ -235,7 +235,7 @@ export function place(i: number) {
       "Valmis kuva: " + scenes[state.puzzleArt].name,
     );
     feedback("Kuva on valmis! Sinä kokosit sen!");
-    setAction("Juhlitaan!", () =>
+    setAction("", () =>
       finish(
         "Taikakuva on valmis!",
         "Kokosit kuvan itse. Annetaan yhdessä ylävitoset!",
@@ -243,7 +243,7 @@ export function place(i: number) {
       ),
     );
     say("Kuva on valmis! Sinä kokosit sen!");
-    advanceAfterSuccess();
+    advanceAfterSuccess(850);
   } else {
     feedback("Se sopi! Valitse seuraava pala.");
     say("Se sopi! Valitse seuraava pala.");

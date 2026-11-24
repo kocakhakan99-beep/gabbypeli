@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gabbypeli</title>
-    <link rel="stylesheet" href="./app/styles.css?v=gabby-object-gestures" />
+    <link rel="stylesheet" href="./app/styles.css?v=gabby-room-objects" />
   </head>
   <body>
     <div id="gabby-fi" lang="fi">
@@ -542,6 +542,12 @@
                   height="720"
                   aria-label="Piirustuspaperi"
                 ></canvas>
+                <div id="gf-drawing-finishing" hidden>
+                  <button type="button" id="gf-drawing-sheet" aria-label="Siirrä piirustus kehykseen">
+                    <canvas width="96" height="72" aria-hidden="true"></canvas>
+                  </button>
+                  <div id="gf-drawing-frame" aria-label="Kehys">Kehys</div>
+                </div>
               </div>
               <div id="gf-garden" hidden>
                 <div class="garden-mode-picker" role="group" aria-label="Puutarhan pelimuoto" hidden>

@@ -164,7 +164,7 @@ export function cancelAdvance(): void {
   if (advanceTimer !== undefined) clearTimeout(advanceTimer);
   advanceTimer = undefined;
 }
-export function advanceAfterSuccess(): void {
+export function advanceAfterSuccess(delay = 3500): void {
   cancelAdvance();
   const action = state.action;
   if (!action) return;
@@ -173,7 +173,7 @@ export function advanceAfterSuccess(): void {
     if (state.action !== action || el("play").hidden) return;
     state.action = null;
     action();
-  }, 3500);
+  }, delay);
 }
 export function setAction(label: string, fn: (() => void) | null) {
   cancelAdvance();

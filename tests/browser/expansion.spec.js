@@ -122,7 +122,7 @@ test("memory pairs and all puzzle sizes finish through visible buttons", async (
           button.getAttribute("aria-label").replace(/^Kortti \d+: /, ""),
         ),
       );
-    await page.locator("#gf-action").click();
+    await page.locator("#gf-cards .faceup").first().press("Enter");
     const groups = Object.groupBy(
       cards.map((name, index) => ({ name, index })),
       (card) => card.name,
@@ -131,7 +131,6 @@ test("memory pairs and all puzzle sizes finish through visible buttons", async (
       for (const card of group)
         await page.locator("#gf-cards button").nth(card.index).click();
     }
-    await page.locator("#gf-action").click();
     await expect(page.locator("#gf-win")).toBeVisible();
     await page.locator("#gf-again").click();
   }
@@ -146,7 +145,6 @@ test("memory pairs and all puzzle sizes finish through visible buttons", async (
       await page.locator(`#gf-tray button[data-piece="${piece}"]`).click();
       await page.locator(`#gf-board button[data-piece="${piece}"]`).click();
     }
-    await page.locator("#gf-action").click();
     await expect(page.locator("#gf-win")).toBeVisible();
     await page.locator("#gf-again").click();
   }
@@ -166,11 +164,11 @@ test("learning and picture hunt still complete after TypeScript migration", asyn
     "DJ Catnip",
   ]) {
     for (const spot of await page.locator(".hide-spot").all()) {
-      if (await page.locator("#gf-action").isVisible()) break;
-      await spot.click();
+      if ((await page.locator("#gf-feedback").textContent()).includes("Löysit kaverin!")) break;
+      await spot.press("Enter");
     }
     await expect(page.locator("#gf-feedback")).toContainText(friend);
-    await page.locator("#gf-action").click();
+    if (friend !== "DJ Catnip") await page.locator(".find-next-door").press("Enter");
   }
   await expect(page.locator("#gf-win")).toBeVisible();
 });
@@ -213,7 +211,7 @@ test("object memory and puzzle use the new art without device speech", async ({
     .getByRole("button", { name: "Esineet", exact: true })
     .click();
   await expect(page.locator("#gf-cards [data-object]")).toHaveCount(4);
-  await page.locator("#gf-action").click();
+  await page.locator("#gf-cards button").first().press("Enter");
   await page.locator("#gf-cards button").first().click();
   await expect(page.locator("#gf-feedback")).toContainText("samanlainen");
   await page.locator("#gf-home-button").click();

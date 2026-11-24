@@ -15,7 +15,7 @@
 - Seikkailun valinta jättää nukketalon näkyviin. Huone avaa oman 10 tason kartan. Ensimmäinen pelaamaton taso ja suoritetut tasot ovat valittavissa. Uusi taso antaa 25 kisukolikkoa ja kirjaa yhden suorituksen tarrapalkintoihin. Kolikkosaldo johdetaan kaikkien viiden pelin tasosuorituksista.
 - Voittoruudussa voi pelata tason uudelleen, siirtyä seuraavalle tasolle (tasot 1–9) tai palata saman huoneen kartalle. Uusintasuoritus ei lisää palkintoja. Kartan paluu vie nukketaloon Seikkailu valittuna.
 - Hiekkalaatikossa huone avautuu suoraan. Jos aikaraja on valittu, se koskee avattua peliä ja käynnistyy uudelleen pelin uudelleenkäynnistyksessä. Ajan päättyessä pelialue piilotetaan, eleet ja äänet pysäytetään ja kohdistus siirtyy päättymisotsikkoon. Vapaa peli ei kasvata kolikko- tai tarrakertymää.
-- Pelinvaihto ja poistuminen katkaisevat automaattisen etenemisen, eleet ja äänet. Pelit, jotka kutsuvat `advanceAfterSuccess`, käynnistävät seuraavan toiminnon 3,5 sekunnin kuluttua, ellei pelaaja valitse sitä itse tai poistu.
+- Pelinvaihto ja poistuminen katkaisevat automaattisen etenemisen, eleet ja äänet. Pelit, jotka kutsuvat `advanceAfterSuccess`, käynnistävät seuraavan toiminnon oletuksena 3,5 sekunnin kuluttua. Muistipeli, Palapeli ja Piilopelin viimeinen huone avaavat juhlan noin sekunnissa. Poistuminen peruuttaa ajastimen.
 - Interaktiiviset DOM-elementit kantavat näppäimistötoimintoja ja saavutettavia nimiä myös silloin, kun Phaser piirtää pelialueen. Säilytä kosketus- ja näppäimistöreitit sekä näkymien purku vaihdettaessa peliä tai pelin vaihetta.
 
 ## Tallennus

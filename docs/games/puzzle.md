@@ -4,7 +4,7 @@
 
 ## Pelisäännöt
 
-Raahaa pala oikeaan paikkaan tai valitse pala ja sitten paikka. Haalea mallikuva ja vihje ohjaavat sovittamista. Kaikkien palojen asettaminen päättää pelin. Hiekkalaatikossa on 15 kuvaa (kuusi hahmoa ja yhdeksän esinettä) ja 2, 4 tai 6 palaa. Seikkailu käyttää kuvia luettelon järjestyksessä, yhden per taso. Tasoilla 1–3 on kaksi, 4–6 neljä ja 7–10 kuusi palaa.
+Raahaa pala oikeaan paikkaan tai valitse pala ja sitten paikka. Haalea mallikuva ja vihje ohjaavat sovittamista. Viimeisen palan sovitus paljastaa valmiin kuvan, jonka jälkeen juhla avautuu automaattisesti. Hiekkalaatikossa on 15 kuvaa (kuusi hahmoa ja yhdeksän esinettä) ja 2, 4 tai 6 palaa. Seikkailu käyttää kuvia luettelon järjestyksessä, yhden per taso. Tasoilla 1–3 on kaksi, 4–6 neljä ja 7–10 kuusi palaa.
 
 ## Assetit ja käyttötilanteet
 

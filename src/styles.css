@@ -5248,3 +5248,52 @@ body {
 #gabby-fi .memory-card:not(.faceup) .memory-inner {
   transform: rotateY(calc(var(--card-drag, 0) * 85deg));
 }
+
+#gabby-fi .hide-spot.moving:not(.opened) .furniture-image {
+  transform: translateX(calc(var(--hide-drag, 0) * -80%)) rotate(calc(var(--hide-drag, 0) * -10deg));
+  animation: none;
+  transition: none;
+}
+#gabby-fi .find-next-door {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 4px;
+  touch-action: none;
+  cursor: grab;
+}
+#gabby-fi .find-next-door img {
+  display: block;
+  width: 90px;
+  height: auto;
+  translate: var(--door-travel, 0px) 0;
+  pointer-events: none;
+}
+#gabby-fi .find-settings { flex-basis: 100%; }
+#gabby-fi .find-settings label { margin-inline-end: 10px; }
+
+#gabby-fi #gf-drawing-finishing { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 12px; }
+#gabby-fi #gf-drawing-sheet,
+#gabby-fi #gf-drawing-frame {
+  width: 105px;
+  min-height: 77px;
+  display: grid;
+  place-items: center;
+  color: #663e65;
+}
+#gabby-fi #gf-drawing-sheet {
+  position: relative;
+  z-index: 1;
+  border: 1px solid #e0bee6;
+  border-radius: 3px;
+  background: #fffaf0;
+  box-shadow: 0 3px 5px #66406645;
+  touch-action: none;
+  cursor: grab;
+}
+#gabby-fi #gf-drawing-sheet canvas { max-width: 100%; pointer-events: none; }
+#gabby-fi #gf-drawing-frame {
+  border: 6px double #a967a6;
+  border-radius: 10px;
+  background: #fae9f4;
+}

@@ -113,8 +113,8 @@ export function initMemory() {
     el("cards").replaceChildren();
     drawCards();
     progress(0, state.memoryPairs);
-    feedback("Katso kuvat rauhassa.");
-    setAction("Piilota kortit", () => hidePreview());
+    feedback("Katso kuvat rauhassa. Pyyhkäise korttia, kun olet valmis.");
+    setAction("", null);
     previewTimer = setTimeout(() => hidePreview(), 5200);
     if (pack === "friends")
         say("Katsotaan kaverien paikat yhdessä.");
@@ -147,8 +147,13 @@ export function drawCards() {
                         : "twelve");
     state.mem.forEach((m, i) => {
         const up = state.preview || m.found || state.opened.includes(i);
-        const b = el("cards").querySelector(`[data-index="${i}"]`) ?? button("", () => { if (!memoryView?.activate("flip", i))
-            flip(i); }, "memory-card" + (m.found ? " matched" : up ? " faceup" : ""));
+        const turn = () => {
+            if (state.preview)
+                hidePreview();
+            else if (!memoryView?.activate("flip", i))
+                flip(i);
+        };
+        const b = el("cards").querySelector(`[data-index="${i}"]`) ?? button("", turn, "memory-card" + (m.found ? " matched" : up ? " faceup" : ""));
         b.className = "memory-card" + (m.found ? " matched" : up ? " faceup" : "");
         const frame = memoryFrames[m.friend.id];
         const artAttribute = memoryFriends.some((friend) => friend.id === m.friend.id) ? "data-cast" : "data-object";
@@ -170,13 +175,11 @@ export function drawCards() {
                 ? m.friend.name + (m.found ? ", pari löytyi" : "")
                 : "kuvapuoli piilossa"));
         b.setAttribute("aria-pressed", String(up));
-        b.disabled = m.found || state.preview;
+        b.disabled = m.found;
         b.dataset.index = String(i);
         if (!b.isConnected)
             el("cards").append(b);
         let origin;
-        const turn = () => { if (!memoryView?.activate("flip", i))
-            flip(i); };
         bindStroke(b, {
             start(point) { origin = point; },
             move(_previous, point) {
@@ -218,11 +221,11 @@ export function flip(i) {
         ding("pair");
         if (state.matched === state.memoryPairs) {
             feedback("Kaikki parit löytyivät!");
-            setAction("Juhlitaan!", () => finish(pack === "friends"
+            setAction("", () => finish(pack === "friends"
                 ? "Kaikki kaverit löytyivät!"
                 : "Kaikki esineparit löytyivät!", "Gabby ja Pandi Pörrö taputtavat sinulle. Hienoa muistamista!", "gabby"));
             say("Kaikki parit löytyivät! Hienoa!");
-            advanceAfterSuccess();
+            advanceAfterSuccess(850);
         }
         else {
             feedback("Pari löytyi! Etsi seuraava.");
@@ -268,6 +271,6 @@ export function showMemoryHint() {
     say(pack === "friends"
         ? "Katsotaan kaverien paikat yhdessä."
         : "Katsotaan esineiden paikat yhdessä.");
-    setAction("Piilota kortit", () => hidePreview());
+    setAction("", null);
     previewTimer = setTimeout(() => hidePreview(), 5200);
 }

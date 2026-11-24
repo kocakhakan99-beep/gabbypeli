@@ -150,11 +150,46 @@ test("a side swipe turns an individual memory card", async ({ page }) => {
   await page.goto("/");
   await page.locator("#gf-open-memory").click();
   await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
-  await page.locator("#gf-action").press("Enter");
+  await page.locator("#gf-cards button").first().press("Enter");
   const card = page.locator("#gf-cards .memory-card").first();
   await card.scrollIntoViewIfNeeded();
   const box = await card.boundingBox();
   const start = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
   await swipe(page, [start, { x: start.x + 34, y: start.y }]);
   await expect(card).toHaveAttribute("aria-pressed", "true");
+});
+
+test("dragging the room door opens the next hide-and-seek room", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#gf-open-find").tap();
+  await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
+  for (const spot of await page.locator(".hide-spot").all()) {
+    await spot.press("Enter");
+    if (await page.locator(".find-next-door").isVisible()) break;
+  }
+  const door = page.locator(".find-next-door");
+  await door.scrollIntoViewIfNeeded();
+  const box = await door.boundingBox();
+  const start = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  await door.tap();
+  await expect(page.locator(".hide-room")).toHaveAttribute("data-room", "gabby");
+  await swipe(page, [start, { x: start.x + 40, y: start.y }]);
+  await expect(page.locator(".hide-room")).toHaveAttribute("data-room", "cakey");
+});
+
+test("dragging the artwork into its frame reveals the same drawing", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#gf-open-drawing").tap();
+  await page.locator("#gf-drawing-paper").tap();
+  const sheet = page.locator("#gf-drawing-sheet");
+  await sheet.scrollIntoViewIfNeeded();
+  const source = await sheet.boundingBox();
+  const target = await page.locator("#gf-drawing-frame").boundingBox();
+  await swipe(page, [
+    { x: source.x + source.width / 2, y: source.y + source.height / 2 },
+    { x: target.x + target.width / 2, y: target.y + target.height / 2 },
+  ]);
+  const result = page.getByRole("img", { name: "Oma piirustus" });
+  await expect(result).toBeVisible();
+  await expect(result).toHaveAttribute("src", /^data:image\/png;base64,/);
 });

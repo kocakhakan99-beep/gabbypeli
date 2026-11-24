@@ -9,7 +9,7 @@ test("the Phaser room opens furniture and cleans up on leaving", async ({ page }
   await expect(room).toHaveClass(/phaser-ready/);
   await expect(room.locator("canvas")).toBeVisible();
   const firstSpot = room.locator(".hide-spot").first();
-  await firstSpot.click();
+  await firstSpot.press("Enter");
   await expect(firstSpot).toHaveClass(/opened/);
   await page.locator("#gf-home-button").click();
   await expect(page.locator("#gf-home")).toBeVisible();
@@ -17,7 +17,7 @@ test("the Phaser room opens furniture and cleans up on leaving", async ({ page }
   expect(errors).toEqual([]);
 });
 
-test("tapping and dragging both open furniture", async ({ page }) => {
+test("short movement leaves furniture closed and a deliberate drag opens it", async ({ page }) => {
   await page.goto("/");
   await page.locator("#gf-open-find").click();
   const room = page.locator(".hide-room");
@@ -30,7 +30,7 @@ test("tapping and dragging both open furniture", async ({ page }) => {
   await page.mouse.down();
   await page.mouse.move(x - 8, y, { steps: 2 });
   await page.mouse.up();
-  await expect(spot).toHaveClass(/opened/);
+  await expect(spot).not.toHaveClass(/opened/);
 
   await page.locator("#gf-home-button").click();
   await page.locator("#gf-open-find").click();
@@ -56,7 +56,7 @@ test("memory and puzzle graphics load and release their canvases", async ({ page
     await page.locator("#gf-hint").click();
     await expect(panel).toHaveClass(new RegExp(`phaser-${mode}-ready`));
     if (mode === "memory") {
-      await page.locator("#gf-action").click();
+      await page.locator("#gf-cards button").first().press("Enter");
       const firstCard = page.locator("#gf-cards button").first();
       await firstCard.focus();
       await firstCard.press("Enter");

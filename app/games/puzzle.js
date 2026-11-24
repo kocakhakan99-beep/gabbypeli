@@ -200,9 +200,9 @@ export function place(i) {
         board.append(reveal);
         board.setAttribute("aria-label", "Valmis kuva: " + scenes[state.puzzleArt].name);
         feedback("Kuva on valmis! Sinä kokosit sen!");
-        setAction("Juhlitaan!", () => finish("Taikakuva on valmis!", "Kokosit kuvan itse. Annetaan yhdessä ylävitoset!", state.puzzleArt < friends.length ? scenes[state.puzzleArt].id : "fairy"));
+        setAction("", () => finish("Taikakuva on valmis!", "Kokosit kuvan itse. Annetaan yhdessä ylävitoset!", state.puzzleArt < friends.length ? scenes[state.puzzleArt].id : "fairy"));
         say("Kuva on valmis! Sinä kokosit sen!");
-        advanceAfterSuccess();
+        advanceAfterSuccess(850);
     }
     else {
         feedback("Se sopi! Valitse seuraava pala.");
