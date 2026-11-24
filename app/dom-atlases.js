@@ -3,7 +3,6 @@ const styleFrames = {
     home: "door_mat facade_trim flower_pot_pink flower_pot_yellow heart_whiskers roof_ear_left roof_ear_right room_locked_left room_locked_right".split(" "),
     ui: "button_green_large button_purple_large coin counter_paw icon_games icon_home icon_settings icon_sound icon_stickers logo_main".split(" "),
     rewards: "banner_complete button_home button_next button_replay coin_stack star_empty star_gold".split(" "),
-    bakery: "batter_dollop_large bowl_batter bowl_egg bowl_empty bowl_flour egg_whole flour_sack milk_bottle oven_body oven_door_frame oven_glass oven_handle oven_light oven_rack parchment raw_pink spoon temperature_knob tray".split(" "),
     garden: "leaf_green shovel water_splash watering_can".split(" "),
     controls: "blank_chip chip_selected_large progress_fill progress_track slider_thumb toggle_knob toggle_off_track toggle_track_on".split(" "),
 };

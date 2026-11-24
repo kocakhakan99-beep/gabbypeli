@@ -22,7 +22,7 @@ test("ten bakery orders progress in Adventure and use the same wash visit", asyn
   await page.setViewportSize({ width: 320, height: 740 });
   const failedImages = [];
   page.on("response", (response) => {
-    if (response.url().includes("/assets/gabby/bakery/steps/") && !response.ok())
+    if (response.url().includes("/assets/gabby/bakery/sets/") && !response.ok())
       failedImages.push(response.url());
   });
   await page.goto("/");
@@ -34,6 +34,7 @@ test("ten bakery orders progress in Adventure and use the same wash visit", asyn
   for (const [index, [recipeId, count]] of orders.entries()) {
     const level = index + 1;
     const [name, steps, decorations, heat] = recipes[recipeId];
+    const assetSet = ["cookie", "cupcake", "bun", "tart"][recipeId];
     if (level === 10) {
       await expect(page.locator(".bakery-recipe")).toHaveCount(4);
       await action(page, name);
@@ -71,7 +72,12 @@ test("ten bakery orders progress in Adventure and use the same wash visit", asyn
         if (level === 8) await action(page, decorations[1]);
       } else await action(page, decorations[0], count);
     }
-    await expect(page.getByRole("img", { name, exact: true })).toBeVisible();
+    const result = page.getByRole("img", { name, exact: true });
+    await expect(result).toBeVisible();
+    await expect(result).toHaveAttribute("src", new RegExp(`/bakery/sets/${assetSet}/`));
+    expect(await page.locator("#gf-result-details img").evaluateAll(
+      (images, slug) => images.every((image) => image.src.includes(`/bakery/sets/${slug}/`)), assetSet,
+    )).toBe(true);
     await expect(page.locator("#gf-coin-reward")).toHaveText("+25 kisukolikkoa");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     if (level < 10) await page.locator("#gf-next-level").click();

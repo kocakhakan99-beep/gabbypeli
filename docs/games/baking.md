@@ -15,30 +15,24 @@
 
 ## Assetit ja käyttötilanteet
 
-| Käyttö | Assetti ja varanäkymä |
+Leipomon reseptikuvien osoitteet muodostetaan reseptin tunnisteesta. Kukin aktiivinen työvaihe käyttää oman settinsä kuvia. Valitsin näyttää kunkin reseptin kuvan omalla kortillaan. Kuvissa ei ole tekstiä, määriä tai mittareita.
+
+| Setti ja lähde | Käyttö ja kuvat |
 | --- | --- |
-| Huonevalinta, kartta ja keittiö | `home/room_bakery`, `rooms/bakery-map-tall.webp`, `rooms/bakery-map-wide.webp`, `rooms/kitchen.webp`, `room-kitchen.webp` ja Hileen potretti |
-| Reseptivalinta ja tilaus | Valmiiden leivonnaisten kuvat. Määrä ja koristelutoive näytetään DOM-tekstinä |
-| Piparien muotoilu ja koristelu | `dough`, `rolling-pin`, `cookie-sheet`, `cat-cutter`, `cat-cutout`, `cookie-sprinkle`, `cookie-star` |
-| Kuppikakkujen täyttö ja koristelu | `cupcake-tray`, `liner`, `filled-liner`, `piping-bag`, `frosting`, `cupcake-blueberry`, `cupcake-strawberry` |
-| Korvapuustien muotoilu, kohotus ja paisto | `bun-sheet`, `bun-filling`, `bun-log`, `bun-raw`, `bun-proofed`, `bun-baked`, `bun-glazed`. Tarjotinkuvat havainnollistavat tilaa ja tilauksen määrä on tekstinä |
-| Torttupohja, täyte ja marjat | `tart-dough`, `tart-pan`, `tart-raw`, `tart-shell`, `tart-cream`, `piping-bag`, `tart-blueberry`, `tart-strawberry`, `tart-raspberry`, `tart-red`, `tart-raspberry-result`, `tart-mixed`, `tart-slice`. Kahden marjan tilauksessa tuloksena on yleinen sekamarjatorttukuva sekä valintojen nimet |
-| Käsienpesupiste ja pyyhe | V5:n `wash-tiles`, `wash-counter` ja `sink` muodostavat pesuaseman. `wash-spout` on kiinteä ja `wash-lever` liikkuu. `wash-pump` jakautuu CSS:ssä kiinteään pulloon ja painettavaan päähän. `wash-water` on erillinen vesikerros. Kädet näkyvät eri vaiheissa, ja pyyhe vaihtuu kuivasta kosteaksi, kun se käy käsien päällä. Pyyhkeellä voi pyyhkäistä altaan yli ja jatkaa vetoa sen ulkopuolelle. Aloituksessa Gabbyn tervehdys puhehaulla |
-| Aineiden siirto ja sekoitus | `bakery/flour_sack`, `bakery/egg_whole` ja `bakery/milk_bottle` näkyvät nimettyjen siirtopainikkeiden kuvituksena. Erilliskuvat toimivat varakuvina ja nimet säilyvät näkyvissä. Aineen siirtäminen piilottaa sen painikkeen. Kulhon tilat ovat `bowl_empty`, `bowl_flour`, `bowl_egg`, `bowl_batter`. `spoon` DOMissa ja Phaserissa, sekoituksen mittari DOMissa |
-| Paperi, pelti ja annosten paikat | `parchment`, `tray` ja reseptin annosframe. Phaser näyttää pellillä paperin ja asetetut annokset, DOM säilyttää samat tilat |
-| Uunin käyttö ja paisto | `oven_body`, `oven_door_frame`, `oven_glass`, `oven_handle`, `oven_rack`, `oven_light`, `temperature_knob`. V4:n runko, keskipisteestään pyörivä nuppi, ritilä sekä samankokoiset luukun kehys, lasi ja kahva korvaavat vanhat kuvat samoilla atlasavaimilla ja erilliskuvapoluilla. CSS skaalaa osat yhdessä. Luukku avautuu alareunan ympäri ja kaksi näkyvää saranaa pysyvät aukon alareunassa luukun liikkuessa. Näytön lämpötila on DOM-tekstiä. Nykyinen paistovalo syttyy tavoitelämmössä. Phaser näyttää paperille lastatun pellin annokset. Muotoiltujen vuokien annokset näkyvät DOMissa |
-| Toimintopalaute ja valmistuminen | `piece` vaihetoiminnoissa. Yhteinen juhlanäkymä näyttää Hileen ja reseptin tuloskuvan. `assets/gabby/bakery/results/` sisältää kissapiparin `baked_cookie_1.webp` ja kuppikakun `plain_cupcake_pink.webp`. Kuvien lähteet ovat samannimiset V5-framet arkistoista `bakery_cat_cookies.zip` ja `bakery_cupcakes.zip`. Ruudun otsikko ja palaute säilyvät kuvan latausvirheessä. Vaiheohjeet näkyvät ruudulla |
+| `sets/cookie/`, `bakery_cat_cookies.zip` | Valmis annos `baked_cookie_1`. Taikina, kaulin, levy, muotti, muotoiltu pala sekä omat strösseli- ja tähtitulokset |
+| `sets/cupcake/`, `bakery_cupcakes.zip` | Valmis annos `plain_cupcake_pink`. Vuokapelti, tyhjä ja täytetty vuoka, pursotuspussi, kuorrute sekä setin mustikka ja mansikka |
+| `sets/bun/`, `bakery_cinnamon_buns.zip` | Oma taikina ja kaulin, levy, täyte, rulla, viipale ja kohotus. Kuorrutekulho on siirrettävä väline. Paistopelti ja kuorrutettu pulla ovat eri tulokset |
+| `sets/tart/`, `bakery_berry_tarts.zip` | Taikina, vuoka, raaka ja kypsä kuori, oma pursotuspussi, täyte, marjat ja tarjoilukuvat. Kahden marjan tilaus näyttää yleiskuvan ja valitun parin |
+| `sets/wash/`, `bakery_handwash_station.zip` | Laatat, työtaso, allas, hana, vipu, pumppu, vesi, käsien tilat ja kuiva sekä märkä pyyhe. Pyyhkäisy käsien yli riittää kuivaukseen |
+| V4:n uunikokonaisuus | `oven_body`, `oven_door_frame`, `oven_glass`, `oven_handle`, `oven_rack` ja `temperature_knob` ladataan alkuperäisiltä erilliskuvapoluilta. Uunin lastin määrä ja valo renderöidään CSS:llä. Näytön lämpötila tulee tilasta |
+| Yhteinen pelikehys | Nukketalon huonekuva, Seikkailun kartta, Hileen potretti, juhla ja äänet ovat sovelluksen yhteisiä käyttöliittymäelementtejä |
 
-V5:n työvaihekuvat ovat erillisiä WebP-kuvia hakemistossa `assets/gabby/bakery/steps/`. Ne on rajattu vastaavista `bakery_handwash_station`-, `bakery_cat_cookies`-, `bakery_cupcakes`-, `bakery_cinnamon_buns`- ja `bakery_berry_tarts`-toimituksista. Toimintojen nimet, ohjeet ja määrät säilyvät, vaikka kuva ei lataudu.
+`flour`, `egg`, `milk`, `bowl` ja `whisk` ovat kunkin reseptisetin omia kuvia. Piparit ja korvapuustit käyttävät myös oman settinsä `tray`- ja `paper`-kuvia. Phaser käyttää niitä samoilla osoitteilla kuin DOM. Kosketusalueet ja nimet ovat DOMissa. Aiempi yleinen leipomoatlas säilyy arkistossa.
 
-Raaka-ainekuvien lähde on `nabby-v4-02-bakery-tools.zip`, ryhmä `bakery_ingredients`.
-
-Pesuaseman osat ovat `bakery_handwash_station.zip`-toimituksen V5-arkista. Pursotuspussi on eristetty `bakery_cupcakes.zip`-arkin omaksi kuvakseen ja sitä käytetään kakkujen kuorrutukseen sekä tortun täyttöön.
-
-Uunin osien lähde on `nabby-v4-01-oven.zip`, ryhmä `oven`. Rungon mitat (582 × 614) sekä luukun, nupin, näytön ja ritilän ankkurit tulevat paketin `oven/assembly.json`-tiedostosta. Rungon vasemmasta yläkulmasta mitattuna luukku alkaa kohdasta (34, 267), nupin keskipiste on (190, 210), näyttö alkaa kohdasta (296, 180) ja ritilä kohdasta (85, 401). Luukun kehyksen vasemman reunan saranat on poistettu sekä atlasframesta että erilliskuvasta. Alareunan saranat piirretään CSS:llä. Paistovalo on aiemmasta leipomoatlaksesta.
+Uunin osien lähde on `nabby-v4-01-oven.zip`, ryhmä `oven`. Rungon mitat (582 × 614) sekä luukun, nupin, näytön ja ritilän ankkurit tulevat paketin `oven/assembly.json`-tiedostosta. Rungon vasemmasta yläkulmasta mitattuna luukku alkaa kohdasta (34, 267), nupin keskipiste on (190, 210), näyttö alkaa kohdasta (296, 180) ja ritilä kohdasta (85, 401). Luukun kehyksen vasemman reunan saranat on poistettu sekä atlasframesta että erilliskuvasta. Alareunan saranat piirretään CSS:llä. Paistovalo on CSS-tehoste, joka syttyy tavoitelämpötilassa.
 
 Yhteiset [atlas-, puhe- ja palkintokäytännöt](../assets.md).
 
 ## Hyväksyntätarkistukset
 
-Pelaa kaikki neljä reseptiä ja koko kymmenen tason tilauspolku, mukaan lukien pesun järjestys, paperi ennen annoksia, luukku ennen lämpöä ja oikea tavoitelämpö. Tarkista raaka-ainekuvat ja niiden näkyvät nimet sekä uunin näyttö, valo ja alareunan saranat auki ja kiinni. Tarkista myös atlaslatauksen varakuvat. Tarkista raahaus ja näppäimistö sekä poistuminen huuhtelun, paiston tai Phaser-latauksen aikana. [Seikkailutestit](../../tests/browser/baking-adventure.spec.js), [Pelitestit](../../tests/browser/expansion.spec.js), [eletestit](../../tests/browser/gestures.spec.js), [äänitestit](../../tests/browser/narration.spec.js)
+Pelaa kaikki neljä reseptiä ja koko kymmenen tason tilauspolku, mukaan lukien pesun järjestys, paperi ennen annoksia, luukku ennen lämpöä ja oikea tavoitelämpö. Tarkista raaka-ainekuvat ja niiden näkyvät nimet sekä uunin näyttö, valo ja alareunan saranat auki ja kiinni. Tarkista, että kuvapyynnöt osoittavat valittuun reseptisettiin tai erilliseen pesuasemaan. Tarkista, että nimet ja ohjaus säilyvät kuvan latausvirheessä. Tarkista raahaus ja näppäimistö sekä poistuminen huuhtelun, paiston tai Phaser-latauksen aikana. [Seikkailutestit](../../tests/browser/baking-adventure.spec.js), [Pelitestit](../../tests/browser/expansion.spec.js), [eletestit](../../tests/browser/gestures.spec.js), [äänitestit](../../tests/browser/narration.spec.js)

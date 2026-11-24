@@ -2877,12 +2877,12 @@ body {
   pointer-events: none;
   background: var(--wash-object) center / 100% 100% no-repeat;
 }
-#gabby-fi .wash-tap { --wash-object: url("../assets/gabby/bakery/steps/wash-lever.webp"); }
+#gabby-fi .wash-tap { --wash-object: url("../assets/gabby/bakery/sets/wash/wash-lever.webp"); }
 #gabby-fi .wash-tap .wash-object-moving {
   transform-origin: 28% 72%;
   rotate: calc(var(--wash-motion, 0) * 32deg);
 }
-#gabby-fi .wash-soap { --wash-object: url("../assets/gabby/bakery/steps/wash-pump.webp"); }
+#gabby-fi .wash-soap { --wash-object: url("../assets/gabby/bakery/sets/wash/wash-pump.webp"); }
 #gabby-fi .wash-soap .wash-object-base { clip-path: inset(24% 0 0); }
 #gabby-fi .wash-soap .wash-object-moving {
   clip-path: inset(0 0 75%);
@@ -2921,7 +2921,7 @@ body {
   z-index: 3;
   opacity: 0;
   pointer-events: none;
-  background: url("../assets/gabby/bakery/steps/wash-water.webp") center / 100% 100% no-repeat;
+  background: url("../assets/gabby/bakery/sets/wash/wash-water.webp") center / 100% 100% no-repeat;
 }
 #gabby-fi .wash-water-on .wash-stream { opacity: .82; }
 #gabby-fi .wash-drying .wash-hands { filter: drop-shadow(0 0 4px #fff8bb); }
@@ -2994,9 +2994,7 @@ body {
   gap: 14px;
   padding: clamp(10px, 3vw, 24px);
   border-radius: 24px;
-  background:
-    linear-gradient(#fff8, #fff5),
-    url("../assets/rooms/kitchen.webp") center / cover;
+  background: linear-gradient(155deg, #fff7ec, #f7e6f2);
 }
 #gabby-fi .bakery-recipe {
   display: grid;
@@ -3045,15 +3043,23 @@ body {
   border-radius: 12px;
   background: #fff8f2;
 }
-#gabby-fi .bakery-ingredients > div::before {
-  content: "";
+#gabby-fi .bakery-ingredients img {
   width: 100%;
-  height: 45px;
-  background: var(--ingredient-art, none) center / contain no-repeat;
+  height: clamp(38px, 10vw, 65px);
+  object-fit: contain;
+  pointer-events: none;
 }
-#gabby-fi .bakery-flour { --ingredient-art: var(--gabby-bakery-flour_sack); }
-#gabby-fi .bakery-egg { --ingredient-art: var(--gabby-bakery-egg_whole); }
-#gabby-fi .bakery-milk { --ingredient-art: var(--gabby-bakery-milk_bottle); }
+#gabby-fi .bakery-bowl .bakery-ingredient-added {
+  position: absolute;
+  bottom: 41%;
+  left: 30%;
+  width: 16%;
+  height: 16%;
+  object-fit: contain;
+  pointer-events: none;
+}
+#gabby-fi .bakery-bowl .bakery-ingredient-added:nth-child(2) { left: 44%; }
+#gabby-fi .bakery-bowl .bakery-ingredient-added:nth-child(3) { left: 58%; }
 #gabby-fi .bakery-bowl {
   width: min(100%, 286px);
   aspect-ratio: 1;
@@ -3157,9 +3163,9 @@ body {
 #gabby-fi .bakery-oven {
   position: relative;
   container-type: inline-size;
-  width: min(100%, 320px);
+  width: min(100%, clamp(220px, 50vw, 370px));
   aspect-ratio: 582 / 614;
-  background: var(--gabby-bakery-oven_body, none) center / contain no-repeat;
+  background: url("../assets/gabby/bakery/oven_body.webp") center / contain no-repeat;
 }
 #gabby-fi .bakery-oven .bakery-knob {
   position: absolute;
@@ -3169,7 +3175,7 @@ body {
   translate: -50% -50%;
   width: max(44px, 19.24%);
   aspect-ratio: 1;
-  background: var(--gabby-bakery-temperature_knob, none) center / 19.24cqw auto no-repeat;
+  background: url("../assets/gabby/bakery/temperature_knob.webp") center / 19.24cqw auto no-repeat;
   rotate: var(--dial, -135deg);
 }
 #gabby-fi .bakery-temp {
@@ -3193,11 +3199,11 @@ body {
   width: 86.94%;
   height: 46.25%;
   /* Rack position and size relative to the door opening. */
-  --oven-rack: var(--gabby-bakery-oven_rack, none) 50.5% 74.44% / 80.04% 36.62% no-repeat;
+  --oven-rack: url("../assets/gabby/bakery/oven_rack.webp") 50.5% 74.44% / 80.04% 36.62% no-repeat;
   background: var(--oven-rack);
 }
 #gabby-fi .bakery-cavity.oven-cooking {
-  background: var(--gabby-bakery-oven_light, none) center 15% / 78% auto no-repeat, var(--oven-rack);
+  background: radial-gradient(ellipse at 50% 16%, #ffe9a8b8, transparent 62%), var(--oven-rack);
 }
 #gabby-fi .bakery-cavity::after {
   content: "";
@@ -3216,9 +3222,9 @@ body {
   width: 100%;
   height: 100%;
   background:
-    var(--gabby-bakery-oven_handle, none) center / 100% 100% no-repeat,
-    var(--gabby-bakery-oven_door_frame, none) center / 100% 100% no-repeat,
-    var(--gabby-bakery-oven_glass, none) center / 100% 100% no-repeat;
+    url("../assets/gabby/bakery/oven_handle.webp") center / 100% 100% no-repeat,
+    url("../assets/gabby/bakery/oven_door_frame.webp") center / 100% 100% no-repeat,
+    url("../assets/gabby/bakery/oven_glass.webp") center / 100% 100% no-repeat;
   transform-origin: bottom;
   transform: scaleY(var(--door-scale, 1));
   transition: transform 250ms ease;
@@ -4756,35 +4762,21 @@ body {
 #gabby-fi .bakery-bowl.mixing {
   border: 0;
   box-shadow: none;
-  background: var(--bowl-art, var(--gabby-bakery-bowl_empty, none)) center / contain no-repeat;
+  background: var(--bowl-art, none) center / contain no-repeat;
 }
-#gabby-fi .bakery-bowl[data-ingredient="flour"] { --bowl-art: var(--gabby-bakery-bowl_flour, none); }
-#gabby-fi .bakery-bowl[data-ingredient="egg"] { --bowl-art: var(--gabby-bakery-bowl_egg, none); }
-#gabby-fi .bakery-bowl[data-ingredient="milk"],
-#gabby-fi .bakery-bowl.mixing { --bowl-art: var(--gabby-bakery-bowl_batter, none); }
 #gabby-fi .bakery-spoon {
-  width: 38px;
-  border-radius: 0;
-  box-shadow: none;
-  background: var(--gabby-bakery-spoon, none) center / contain no-repeat;
+  clip-path: none;
+  border: 0;
+  background: center / contain no-repeat;
 }
 #gabby-fi .bakery-paper,
 #gabby-fi .bakery-tray,
 #gabby-fi .bakery-tray.lined {
   border: 0;
   box-shadow: none;
-  background: var(--bakery-art) center / 100% 100% no-repeat;
+  background: var(--bakery-art, none) center / 100% 100% no-repeat;
 }
-#gabby-fi .bakery-paper { --bakery-art: var(--gabby-bakery-parchment, none); }
-#gabby-fi .bakery-tray { --bakery-art: var(--gabby-bakery-tray, none); }
-#gabby-fi .bakery-piece.cookie,
-#gabby-fi .bakery-piece.cupcake {
-  border: 0;
-  border-radius: 0;
-  clip-path: none;
-  background: var(--gabby-bakery-batter_dollop_large, none) center / contain no-repeat;
-}
-#gabby-fi .bakery-piece.cupcake { background-image: var(--gabby-bakery-raw_pink, none); }
+
 /* DOM fallback art and the Phaser sprites share the same card artwork. */
 #gabby-fi .memory-back,
 #gabby-fi .memory-front {
@@ -4926,15 +4918,7 @@ body {
   object-fit: contain;
   pointer-events: none;
 }
-#gabby-fi .bakery-tray.bakery-shaped-pan {
-  background: var(--shaped-pan) center / contain no-repeat;
-}
-#gabby-fi .bakery-shaped-pan.cupcake {
-  --shaped-pan: url("../assets/gabby/bakery/steps/cupcake-tray.webp");
-}
-#gabby-fi .bakery-shaped-pan.tart {
-  --shaped-pan: url("../assets/gabby/bakery/steps/tart-pan.webp");
-}
+
 
 #gabby-fi #gf-garden-grow {
   min-height: 44px;
@@ -5207,4 +5191,54 @@ body {
   border: 6px double #a967a6;
   border-radius: 10px;
   background: #fae9f4;
+}
+
+/* The oven uses its own V4 artwork; the loaded count is represented by UI markers. */
+#gabby-fi .oven-transfer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(10px, 28px));
+  place-content: center;
+  width: min(100%, 220px);
+  min-height: 48px;
+  gap: 4px;
+  padding: 5px;
+  border: 2px solid #a06b88;
+  border-radius: 9px;
+  background: #774965;
+  touch-action: none;
+}
+#gabby-fi .oven-transfer > span {
+  display: block;
+  aspect-ratio: 2;
+  border-radius: 50%;
+  background: #ffc988;
+}
+#gabby-fi .bakery-loaded.oven-transfer {
+  width: 88%;
+  min-height: 0;
+  height: 30%;
+  margin: auto;
+  padding: 1px;
+  grid-template-columns: repeat(3, minmax(6px, 13%));
+}
+#gabby-fi .bakery-recipes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 640px);
+  gap: clamp(6px, 2vw, 16px);
+}
+#gabby-fi .bakery-recipes .bakery-recipe {
+  width: 100%;
+  min-width: 0;
+  padding: clamp(6px, 2vw, 14px);
+}
+#gabby-fi .bakery-recipes .bakery-recipe img { width: min(100%, 95px); height: clamp(48px, 12vw, 100px); }
+#gabby-fi .bakery-work-target { width: min(100%, clamp(200px, 38vw, 330px)); min-height: 100px; }
+#gabby-fi .bakery-work-target img { width: min(100%, 210px); height: clamp(95px, 23vw, 145px); }
+@media (min-width: 820px) {
+  #gabby-fi .bakery-recipes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #gabby-fi .bakery-scene:has(.bakery-ingredients),
+  #gabby-fi .bakery-scene:has(.bakery-decorations) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

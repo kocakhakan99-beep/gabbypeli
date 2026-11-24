@@ -16,8 +16,6 @@ for (const width of [320, 768, 1100]) {
       path: testInfo.outputPath("playroom.png"),
       fullPage: true,
     });
-    if (width === 320)
-      await page.route("**/assets/gabby/atlases/bakery.webp.json", (route) => route.abort(), { times: 1 });
     await page.locator("#gf-open-baking").click();
     const piparit = width === 320;
     await page
@@ -29,16 +27,16 @@ for (const width of [320, 768, 1100]) {
     await page.getByRole("button", { name: "Huuhtele kädet" }).press("Enter");
     await page.getByRole("button", { name: "Kuivaa kädet" }).press("Enter");
     const ingredients = [
-      ["Lisää jauhot", "flour_sack"],
-      ["Lisää muna", "egg_whole"],
-      ["Lisää maito", "milk_bottle"],
+      ["Lisää jauhot", "flour"],
+      ["Lisää muna", "egg"],
+      ["Lisää maito", "milk"],
     ];
     for (const [name, frame] of ingredients) {
       const ingredient = page.getByRole("button", { name });
       await expect(ingredient).toBeVisible();
-      await expect.poll(() => ingredient.evaluate((element) =>
-        getComputedStyle(element, "::before").backgroundImage,
-      )).toMatch(piparit ? new RegExp(`/bakery/${frame}\\.webp`) : /blob:/);
+      const sprite = ingredient.locator("img");
+      await expect(sprite).toHaveAttribute("src", `./assets/gabby/bakery/sets/${piparit ? "cookie" : "cupcake"}/${frame}.webp`);
+      await expect.poll(() => sprite.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0);
     }
     await page.locator(".bakery-ingredients").screenshot({
       path: testInfo.outputPath("bakery-ingredients.png"),
@@ -62,7 +60,7 @@ for (const width of [320, 768, 1100]) {
         await portion.press("Enter");
     }
     const oven = page.locator(".bakery-oven");
-    await expect(oven).toHaveCSS("background-image", piparit ? /gabby\/bakery\/oven_body\.webp/ : /blob:/);
+    await expect(oven).toHaveCSS("background-image", /gabby\/bakery\/oven_body\.webp/);
     await expect(oven.locator(".bakery-temp")).toHaveText("0 °C");
     await page
       .getByRole("button", { name: "Avaa uunin luukku" })
@@ -80,7 +78,7 @@ for (const width of [320, 768, 1100]) {
       piparit ? "175" : "200",
     );
     await expect(oven.locator(".bakery-temp")).toHaveText(piparit ? "175 °C" : "200 °C");
-    await expect(oven.locator(".oven-cooking")).toHaveCSS("background-image", /^url\(.+\), url\(/);
+    await expect(oven.locator(".oven-cooking")).toHaveCSS("background-image", /^radial-gradient\(/);
     await oven.screenshot({ path: testInfo.outputPath("oven-cooking.png") });
     if (!piparit) {
       for (let index = 0; index < 6; index++)

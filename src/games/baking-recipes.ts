@@ -12,7 +12,7 @@ type Decoration = { name: string; image: string; tool?: string };
 export const recipes = {
   cookie: {
     name: "Piparit", piece: "pipari", heat: 175, raw: "cat-cutout",
-    ready: "results/baked_cookie_1.webp",
+    ready: "baked_cookie_1",
     prepare: [
       { action: "Kauli taikina", instruction: "Vie kaulin taikinan yli.", image: "dough", tool: "rolling-pin", result: "cookie-sheet" },
       { action: "Paina kissamuottia", instruction: "Paina kissamuotilla yksi pipari kerrallaan.", image: "cookie-sheet", tool: "cat-cutter", result: "cat-cutout", repeat: true },
@@ -25,22 +25,22 @@ export const recipes = {
   },
   cupcake: {
     name: "Kuppikakut", piece: "kuppikakku", heat: 200, raw: "filled-liner",
-    ready: "results/plain_cupcake_pink.webp",
+    ready: "plain_cupcake_pink",
     prepare: [
       { action: "Aseta vuoka", instruction: "Aseta vuoat pellille yksi kerrallaan.", image: "cupcake-tray", tool: "liner", result: "liner", repeat: true },
       { action: "Täytä vuoka", instruction: "Annostele taikinaa jokaiseen vuokaan.", image: "liner", result: "filled-liner", repeat: true },
     ],
     after: [
-      { action: "Lisää kuorrute", instruction: "Kuorruta kuppikakut yksi kerrallaan.", image: "results/plain_cupcake_pink.webp", tool: "piping-bag", result: "frosting", repeat: true },
+      { action: "Lisää kuorrute", instruction: "Kuorruta kuppikakut yksi kerrallaan.", image: "plain_cupcake_pink", tool: "piping-bag", result: "frosting", repeat: true },
     ],
     decorations: [
-      { name: "Mustikka", image: "cupcake-blueberry", tool: "tart-blueberry" },
-      { name: "Mansikka", image: "cupcake-strawberry", tool: "tart-strawberry" },
+      { name: "Mustikka", image: "cupcake-blueberry", tool: "blueberry" },
+      { name: "Mansikka", image: "cupcake-strawberry", tool: "strawberry" },
     ],
   },
   bun: {
     name: "Korvapuustit", piece: "korvapuusti", heat: 200, raw: "bun-raw",
-    ready: "steps/bun-baked.webp",
+    ready: "bun-baked",
     prepare: [
       { action: "Kauli levy", instruction: "Kauli taikina suorakaiteeksi.", image: "dough", tool: "rolling-pin", result: "bun-sheet" },
       { action: "Levitä täyte", instruction: "Levitä kanelitäyte levylle.", image: "bun-sheet", result: "bun-filling" },
@@ -48,11 +48,11 @@ export const recipes = {
       { action: "Leikkaa viipale", instruction: "Leikkaa taikinarullasta kierrepaloja.", image: "bun-log", result: "bun-raw", repeat: true },
     ],
     after: [],
-    decorations: [{ name: "Kuorrute", image: "bun-glazed" }],
+    decorations: [{ name: "Kuorrute", image: "bun-glazed", tool: "glaze" }],
   },
   tart: {
     name: "Marjatortut", piece: "torttupohja", heat: 175, raw: "tart-raw",
-    ready: "steps/tart-shell.webp",
+    ready: "tart-shell",
     prepare: [
       { action: "Painele taikina", instruction: "Painele taikina torttuvuokaan.", image: "tart-pan", tool: "tart-dough", result: "tart-raw" },
     ],
@@ -88,5 +88,5 @@ export const orders: ReadonlyArray<{
   { count: 3, mix: true, finish: true },
 ];
 
-export const stepAsset = (image: string): string =>
-  "./assets/gabby/bakery/" + (image.includes("/") ? image : `steps/${image}.webp`);
+export const bakeryAsset = (set: RecipeId | "wash", image: string): string =>
+  `./assets/gabby/bakery/sets/${set}/${image}.webp`;

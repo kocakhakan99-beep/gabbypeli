@@ -110,8 +110,6 @@ export function open(which, level) {
     if (campaignLevel() === undefined && (which === "memory" || which === "puzzle")) {
         void loadDOMAtlas("controls");
     }
-    if (which === "baking")
-        void loadDOMAtlas("bakery");
     if (which === "garden")
         void loadDOMAtlas("garden");
     starters[which]();

@@ -43328,20 +43328,20 @@ function Z(e, t, n, r) {
 		}
 	};
 }
-function Q(e) {
-	let t, n, r, i = {
+function Q(e, t) {
+	let n, r, i, a = {
 		x: .5,
 		y: .5,
 		progress: 0
-	}, a = !0;
-	function o(e, a, o) {
-		i = {
+	}, o = !0;
+	function s(e, t, o) {
+		a = {
 			x: X.Math.Clamp(e, .15, .85),
-			y: X.Math.Clamp(a, .15, .85),
+			y: X.Math.Clamp(t, .15, .85),
 			progress: X.Math.Clamp(o, 0, 1)
-		}, t && n && r && (n.setPosition(i.x * 300, i.y * 300), n.setRotation(Math.atan2(i.y - .5, i.x - .5) - Math.PI / 2), r.clear(), r.lineStyle(7, 16774089, .7), r.beginPath(), r.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + i.progress * Math.PI * 2), r.strokePath());
+		}, n && r && i && (r.setPosition(a.x * 300, a.y * 300), r.setRotation(Math.atan2(a.y - .5, a.x - .5) - Math.PI / 2), i.clear(), i.lineStyle(7, 16774089, .7), i.beginPath(), i.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + a.progress * Math.PI * 2), i.strokePath());
 	}
-	let s = new X.Game({
+	let c = new X.Game({
 		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43353,27 +43353,27 @@ function Q(e) {
 		},
 		scene: {
 			preload() {
-				ne(this, "bakery");
+				this.load.image("baking-whisk", t);
 			},
 			create() {
-				a && this.textures.exists("bakery") && (t = this, r = this.add.graphics(), n = this.add.image(150, 150, "bakery", "spoon").setOrigin(.5, .25), n.setScale(108 / n.height), e.classList.add("phaser-mixing-ready"), o(i.x, i.y, i.progress));
+				o && this.textures.exists("baking-whisk") && (n = this, i = this.add.graphics(), r = this.add.image(150, 150, "baking-whisk").setOrigin(.5, .25), r.setScale(108 / r.height), e.classList.add("phaser-mixing-ready"), s(a.x, a.y, a.progress));
 			}
 		}
 	});
 	return {
-		move: o,
+		move: s,
 		destroy() {
-			a = !1, e.classList.remove("phaser-mixing-ready"), s.destroy(!0);
+			o = !1, e.classList.remove("phaser-mixing-ready"), c.destroy(!0);
 		}
 	};
 }
-function $(e, t) {
-	let n, r, i = !0, a = !1, o = /* @__PURE__ */ new Set(), s = /* @__PURE__ */ new Set(), c = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	function l() {
-		if (a = !0, n && r && (r.setVisible(!0), !c)) {
-			let e = r.scaleX, t = r.scaleY;
-			r.setScale(e * .92, t * .92), n.tweens.add({
-				targets: r,
+function $(e, t, n) {
+	let r, i, a = !0, o = !1, s = /* @__PURE__ */ new Set(), c = /* @__PURE__ */ new Set(), l = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	function u() {
+		if (o = !0, r && i && (i.setVisible(!0), !l)) {
+			let e = i.scaleX, t = i.scaleY;
+			i.setScale(e * .92, t * .92), r.tweens.add({
+				targets: i,
 				scaleX: e,
 				scaleY: t,
 				duration: 250,
@@ -43381,18 +43381,18 @@ function $(e, t) {
 			});
 		}
 	}
-	function u(e) {
-		if (o.add(e), !n || s.has(e)) return;
-		s.add(e);
-		let t = 50 + e % 3 * 100, r = 27 + Math.floor(e / 3) * 54, i = n.add.image(t, r, "baking-portion"), a = Math.min(43 / i.width, 39 / i.height);
-		i.setScale(a), c || (i.setScale(a * .5), n.tweens.add({
+	function d(e) {
+		if (s.add(e), !r || c.has(e)) return;
+		c.add(e);
+		let t = 50 + e % 3 * 100, n = 27 + Math.floor(e / 3) * 54, i = r.add.image(t, n, "baking-portion"), a = Math.min(43 / i.width, 39 / i.height);
+		i.setScale(a), l || (i.setScale(a * .5), r.tweens.add({
 			targets: i,
 			scale: a,
 			duration: 300,
 			ease: "Back.easeOut"
 		}));
 	}
-	let d = new X.Game({
+	let f = new X.Game({
 		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43404,18 +43404,18 @@ function $(e, t) {
 		},
 		scene: {
 			preload() {
-				ne(this, "bakery"), this.load.image("baking-portion", t);
+				this.load.image("baking-paper", n), this.load.image("baking-portion", t);
 			},
 			create() {
-				i && this.textures.exists("bakery") && this.textures.exists("baking-portion") && (n = this, r = this.add.image(150, 54, "bakery", "parchment").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), a && l(), o.forEach(u));
+				a && this.textures.exists("baking-paper") && this.textures.exists("baking-portion") && (r = this, i = this.add.image(150, 54, "baking-paper").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), o && u(), s.forEach(d));
 			}
 		}
 	});
 	return {
-		line: l,
-		place: u,
+		line: u,
+		place: d,
 		destroy() {
-			i = !1, e.classList.remove("phaser-tray-ready"), d.destroy(!0);
+			a = !1, e.classList.remove("phaser-tray-ready"), f.destroy(!0);
 		}
 	};
 }

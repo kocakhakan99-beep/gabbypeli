@@ -38,6 +38,8 @@ Tasot 1, 3, 5 ja 7 opettavat uuden työkalun vähillä kohteilla, ja seuraava ta
 
 ## V5-erän katselmus
 
+Katselmuksen alkuperäiset ehdotukset ovat alla. Nykyinen käyttö perustuu reseptikohtaisiin lähdesetteihin [leipomospeksin](baking.md#assetit-ja-käyttötilanteet) mukaisesti.
+
 Kaikki viisi ZIP-pakettia ja manifestin 219 framea tarkistettiin. ZIP-tiedostot avautuvat ja framejen koordinaatit pysyvät atlasrajoissa. Tämä tarkistus ei vielä varmista kuvien semanttista rajausta.
 
 | Päätös | Nykyinen ja ehdotettu käyttö | Suositus |

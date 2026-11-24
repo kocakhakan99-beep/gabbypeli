@@ -114,7 +114,6 @@ export function open(which: GameMode, level?: number): void {
   if (campaignLevel() === undefined && (which === "memory" || which === "puzzle")) {
     void loadDOMAtlas("controls");
   }
-  if (which === "baking") void loadDOMAtlas("bakery");
   if (which === "garden") void loadDOMAtlas("garden");
   starters[which]();
   if (campaignLevel() === undefined) {

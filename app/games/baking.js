@@ -3,7 +3,7 @@ import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
 import { feedback, finish, heading, progress, } from "../ui.js";
 import { bindStroke, stopStroke } from "./stroke.js";
-import { orders, recipes, stepAsset } from "./baking-recipes.js";
+import { orders, recipes, bakeryAsset } from "./baking-recipes.js";
 let washed = false;
 export function resetBakingVisit() {
     washed = false;
@@ -112,7 +112,9 @@ export function startBaking() {
             accept();
         });
     }
-    const image = (asset) => `<img src="${stepAsset(asset)}" alt="" draggable="false">`;
+    const recipeAsset = (asset) => new URL(bakeryAsset(selectedRecipe, asset), document.baseURI).href;
+    const image = (asset, set = selectedRecipe) => `<img src="${bakeryAsset(set, asset)}" alt="" draggable="false">`;
+    const washAsset = (asset) => bakeryAsset("wash", asset);
     const piece = (recipe) => `<span class="bakery-piece">${image(recipe.raw)}</span>`;
     const decorate = () => order ? selectedRecipe === "tart" || order.finish : decorationsEnabled;
     const usesParchment = () => selectedRecipe === "cookie" || selectedRecipe === "bun";
@@ -174,7 +176,7 @@ export function startBaking() {
       <label><input type="checkbox" id="gf-baking-mix" checked> Tee taikina itse</label>
       <label><input type="checkbox" id="gf-baking-decorate" checked> Koristelu</label>
     </fieldset>`}
-    <div class="bakery-recipes">${Object.entries(recipes).map(([id, recipe]) => `<button type="button" class="bakery-recipe" data-recipe="${id}">${image(recipe.ready)}${recipe.name}</button>`).join("")}</div>`;
+    <div class="bakery-recipes">${Object.keys(recipes).map((id) => `<button type="button" class="bakery-recipe" data-recipe="${id}">${image(recipes[id].ready, id)}${recipes[id].name}</button>`).join("")}</div>`;
     scene.querySelectorAll(".bakery-recipe")
         .forEach((choice) => {
         choice.onclick = () => {
@@ -248,9 +250,9 @@ export function startBaking() {
     function wash(recipe) {
         show("Käännä hanan vipua sivulle avataksesi veden.", `
       <div class="baking-wash">
-        <img class="wash-tiles" src="${stepAsset("wash-tiles")}" alt="">
-        <img class="wash-counter" src="${stepAsset("wash-counter")}" alt="">
-        <img class="wash-spout" src="${stepAsset("wash-spout")}" alt="">
+        <img class="wash-tiles" src="${washAsset("wash-tiles")}" alt="">
+        <img class="wash-counter" src="${washAsset("wash-counter")}" alt="">
+        <img class="wash-spout" src="${washAsset("wash-spout")}" alt="">
         <span class="wash-stream" aria-hidden="true"></span>
         <button type="button" class="wash-soap wash-object" aria-label="Ota saippuaa" disabled>
           <span class="wash-object-base"></span><span class="wash-object-moving"></span>
@@ -258,12 +260,12 @@ export function startBaking() {
         <button type="button" class="wash-tap wash-object" aria-label="Avaa hana">
           <span class="wash-object-moving"></span>
         </button>
-        <div class="wash-hands">${image("sink")}
+        <div class="wash-hands">${image("sink", "wash")}
           <button type="button" class="wash-scrub" aria-label="Pese kädet" disabled>
-            <img class="wash-state" src="${stepAsset("hands-clean")}" alt="" draggable="false">
+            <img class="wash-state" src="${washAsset("hands-clean")}" alt="" draggable="false">
           </button>
         </div>
-        <button type="button" class="wash-dry wash-object" aria-label="Kuivaa kädet" hidden>${image("towel")}</button>
+        <button type="button" class="wash-dry wash-object" aria-label="Kuivaa kädet" hidden>${image("towel", "wash")}</button>
       </div>`);
         say("Hei pieni ystävä! Leikitään yhdessä.");
         const soap = scene.querySelector(".wash-soap");
@@ -295,7 +297,7 @@ export function startBaking() {
             };
         }
         handle(soap, (start, point) => (point.y - start.y) / 14, () => {
-            hands.src = stepAsset("hands-soapy");
+            hands.src = washAsset("hands-soapy");
             sound();
             sink.classList.add("soapy");
             soap.disabled = true;
@@ -324,7 +326,7 @@ export function startBaking() {
             sink.classList.add("rinsing");
             timer = setTimeout(() => {
                 sink.classList.remove("rinsing", "soapy", "wash-water-on");
-                hands.src = stepAsset("hands-wet");
+                hands.src = washAsset("hands-wet");
                 dry.hidden = false;
                 el("instruction").textContent = "Vedä pyyhe käsien päälle.";
                 dry.focus({ preventScroll: true });
@@ -345,8 +347,8 @@ export function startBaking() {
             dry.disabled = true;
             dry.style.removeProperty("translate");
             sink.classList.remove("wash-drying");
-            towel.src = stepAsset("wash-towel-wet");
-            hands.src = stepAsset("hands-dry");
+            towel.src = washAsset("wash-towel-wet");
+            hands.src = washAsset("hands-dry");
             el("instruction").textContent = "Kädet ovat kuivat. Nyt leivotaan!";
             timer = setTimeout(() => {
                 washed = true;
@@ -382,25 +384,29 @@ export function startBaking() {
     function ingredients(recipe) {
         show("Vedä jauhot, muna ja maito kulhoon.", `
       <div class="bakery-ingredients">
-        <div class="bakery-flour" role="button" tabindex="0" aria-label="Lisää jauhot">Jauhot</div>
-        <div class="bakery-egg" role="button" tabindex="0" aria-label="Lisää muna">Muna</div>
-        <div class="bakery-milk" role="button" tabindex="0" aria-label="Lisää maito">Maito</div>
+        <div class="bakery-flour" role="button" tabindex="0" aria-label="Lisää jauhot">${image("flour")}Jauhot</div>
+        <div class="bakery-egg" role="button" tabindex="0" aria-label="Lisää muna">${image("egg")}Muna</div>
+        <div class="bakery-milk" role="button" tabindex="0" aria-label="Lisää maito">${image("milk")}Maito</div>
       </div>
       <div class="bakery-bowl" aria-label="Sekoituskulho"></div>`);
         const bowl = scene.querySelector(".bakery-bowl");
+        bowl.style.setProperty("--bowl-art", `url("${recipeAsset("bowl")}")`);
         const items = [
             ...scene.querySelectorAll(".bakery-ingredients > div"),
         ];
         let added = 0;
-        let ingredientMask = 0;
         for (const item of items)
             transfer(item, bowl, () => {
                 if (item.hidden)
                     return;
                 item.hidden = true;
                 bowl.dataset.added = String(++added);
-                ingredientMask |= item.classList.contains("bakery-flour") ? 1 : item.classList.contains("bakery-egg") ? 2 : 4;
-                bowl.dataset.ingredient = ingredientMask & 1 ? "flour" : ingredientMask & 2 ? "egg" : "milk";
+                const ingredient = item.querySelector("img");
+                if (ingredient) {
+                    const marker = ingredient.cloneNode();
+                    marker.className = "bakery-ingredient-added";
+                    bowl.append(marker);
+                }
                 sound();
                 if (added === items.length)
                     mix(recipe);
@@ -411,7 +417,9 @@ export function startBaking() {
       <div class="bakery-bowl mixing" role="button" tabindex="0" aria-label="Sekoita taikina"><span class="bakery-spoon" aria-hidden="true"></span></div>
       <progress class="bakery-progress" value="0" max="100" aria-label="Taikina sekoitettu"></progress>`);
         const bowl = scene.querySelector(".bakery-bowl");
+        bowl.style.setProperty("--bowl-art", `url("${recipeAsset("bowl")}")`);
         const spoon = scene.querySelector(".bakery-spoon");
+        spoon.style.backgroundImage = `url("${recipeAsset("whisk")}")`;
         const meter = scene.querySelector("progress");
         let mixedAngle = 0;
         let spoonPosition = { x: 0.5, y: 0.5 };
@@ -419,7 +427,7 @@ export function startBaking() {
         void import("../phaser-room.js").then(({ createMixingView }) => {
             if (generation !== mixingGeneration || !bowl.isConnected)
                 return;
-            mixingView = createMixingView(bowl);
+            mixingView = createMixingView(bowl, recipeAsset("whisk"));
             mixingView.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
         }).catch(() => {
             // The existing spoon remains available if the graphics cannot load.
@@ -475,11 +483,13 @@ export function startBaking() {
         const paper = scene.querySelector(".bakery-paper");
         const slots = scene.querySelector(".bakery-slots");
         const dough = scene.querySelector(".bakery-dough");
+        pan.style.setProperty("--bakery-art", `url("${recipeAsset("tray")}")`);
+        paper.style.setProperty("--bakery-art", `url("${recipeAsset("paper")}")`);
         const generation = mixingGeneration;
         void import("../phaser-room.js").then(({ createBakingTrayView }) => {
             if (generation !== mixingGeneration || !pan.isConnected)
                 return;
-            trayView = createBakingTrayView(pan, stepAsset(recipe.raw));
+            trayView = createBakingTrayView(pan, recipeAsset(recipe.raw), recipeAsset("paper"));
             if (pan.classList.contains("lined"))
                 trayView.line();
             [...slots.children].forEach((slot, index) => {
@@ -548,12 +558,12 @@ export function startBaking() {
                 : last?.image ?? recipe.ready;
         const text = toppings.length ? `Valitsit: ${toppings.join(", ").toLowerCase()}. Hile kiittää avusta.` : "Hile kiittää avusta.";
         finish("Pelti on valmis!", text, "cakey", {
-            src: stepAsset(result),
+            src: recipeAsset(result),
             alt: recipe.name,
             details: toppings.flatMap((name) => {
                 const choice = recipe.decorations.find((decoration) => decoration.name === name);
                 return choice ? [{
-                        src: stepAsset(selectedRecipe === "tart" && "tool" in choice && typeof choice.tool === "string" ? choice.tool : choice.image),
+                        src: recipeAsset(selectedRecipe === "tart" && "tool" in choice && typeof choice.tool === "string" ? choice.tool : choice.image),
                         alt: name,
                     }] : [];
             }),
@@ -592,11 +602,11 @@ export function startBaking() {
                     toppings.push(decoration.name);
                     if (selectedRecipe !== "tart")
                         results.insertAdjacentHTML("beforeend", image(decoration.image));
-                    artwork.src = stepAsset(selectedRecipe === "tart" && toppings.length > 1 ? "tart-mixed" : decoration.image);
+                    artwork.src = recipeAsset(selectedRecipe === "tart" && toppings.length > 1 ? "tart-mixed" : decoration.image);
                     status.textContent = `${toppings.length} / ${count}`;
                     if (toppings.length === count) {
                         if (selectedRecipe === "tart" && toppings.every((name) => name === "Mansikka"))
-                            artwork.src = stepAsset("tart-slice");
+                            artwork.src = recipeAsset("tart-slice");
                         options.querySelectorAll("button").forEach((choice) => { choice.disabled = true; });
                         timer = setTimeout(() => complete(recipe), 650);
                     }
@@ -619,14 +629,12 @@ export function startBaking() {
           <div class="bakery-door" role="button" tabindex="0" aria-label="Avaa uunin luukku"></div>
         </div>
       </div>
-      <div class="bakery-tray oven-tray lined" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${piece(recipe).repeat(portionCount)}</div>`);
+      <div class="oven-tray oven-transfer" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${"<span></span>".repeat(portionCount)}</div>`);
         const cavity = scene.querySelector(".bakery-cavity");
         const door = scene.querySelector(".bakery-door");
         const knob = scene.querySelector(".bakery-knob");
         const temperature = scene.querySelector(".bakery-temp");
         const pan = scene.querySelector(".oven-tray");
-        if (selectedRecipe === "cupcake" || selectedRecipe === "tart")
-            pan.classList.add("bakery-shaped-pan", selectedRecipe);
         let step = 0;
         let start;
         let heat = 0;
@@ -682,20 +690,9 @@ export function startBaking() {
             const loaded = document.createElement("div");
             loaded.className = "bakery-loaded";
             loaded.setAttribute("aria-hidden", "true");
-            loaded.innerHTML = piece(recipe).repeat(portionCount);
+            loaded.classList.add("oven-transfer");
+            loaded.innerHTML = "<span></span>".repeat(portionCount);
             cavity.prepend(loaded);
-            const generation = mixingGeneration;
-            if (usesParchment())
-                void import("../phaser-room.js").then(({ createBakingTrayView }) => {
-                    if (generation !== mixingGeneration || !loaded.isConnected)
-                        return;
-                    trayView = createBakingTrayView(loaded, stepAsset(recipe.raw));
-                    trayView.line();
-                    for (let index = 0; index < portionCount; index++)
-                        trayView.place(index);
-                }).catch(() => {
-                    // Keep the existing oven portions available if graphics cannot load.
-                });
             door.setAttribute("aria-label", "Sulje uunin luukku");
             el("instruction").textContent = "Vedä luukku ylös kiinni.";
             sound();
