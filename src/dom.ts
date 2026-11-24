@@ -63,6 +63,7 @@ interface GameElements {
   action: HTMLButtonElement;
   win: HTMLElement;
   "win-art": HTMLElement;
+  "win-banner": HTMLElement;
   "win-title": HTMLElement;
   "win-text": HTMLElement;
   again: HTMLButtonElement;

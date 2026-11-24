@@ -197,6 +197,7 @@ export function finish(title: string, text: string, art: string) {
   setAction("", null);
   el("content").hidden = true;
   el("win").hidden = false;
+  el("win-banner").textContent = level === undefined ? "Hienosti tehty!" : "Taso suoritettu!";
   el("win-title").textContent = title;
   el("win-text").textContent = text;
   const winArt = el("win-art");

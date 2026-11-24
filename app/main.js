@@ -13,7 +13,6 @@ initStickerAlbum();
 iconButton(el("home-button"), "home", "Takaisin nukketaloon");
 iconButton(el("hint"), "hint", "Näytä vihje");
 iconButton(el("repeat"), "voice", "Kuuntele Gabbyn ohje uudelleen");
-el("again").textContent = "Pelaa uudelleen";
 iconButton(el("other"), "home", "Takaisin nukketaloon");
 iconButton(el("sound"), "voice", "Äänet päällä");
 iconButton(el("drawing-brush"), "brush", "Paksu kynä");

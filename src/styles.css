@@ -3672,51 +3672,141 @@ body {
   background: #f7e8fb;
 }
 #gabby-fi #gf-win {
-  position: relative;
-  overflow: hidden;
-  padding: clamp(20px, 5vw, 38px);
-  border: 5px solid white;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: clamp(12px, 4vw, 36px);
+  border: 4px solid #fff1fc;
   border-radius: 32px;
-  background: linear-gradient(#fff1f7ed, #efddffed), url("../assets/rooms/kitchen.webp") center / cover;
-  box-shadow: 0 8px #a86dc0, 0 14px 24px #7a4a8655;
+  background: #d888bc url("../assets/rooms/celebration.webp") center / cover;
+  box-shadow: 0 6px #a86dc0, 0 14px 24px #7a4a8655;
 }
 #gabby-fi #gf-win .celebration-banner {
-  margin: -4px auto 12px;
-  padding: 10px 20px;
-  border: 3px solid white;
-  border-radius: 24px;
-  background: linear-gradient(#ff8cc7, #df278e);
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  padding: .35em .5em;
+  border: 3px solid #ffedab;
+  border-radius: 48% 48% 15% 15% / 32% 32% 15% 15%;
+  background: linear-gradient(#ff88c6, #f82b92);
   color: white;
-  font-size: clamp(1.25rem, 5vw, 2rem);
-  font-weight: 900;
-  text-shadow: 0 2px #8b2878;
+  font: 900 clamp(1.45rem, 5.5vw, 3.3rem)/1.1 ui-rounded, "Trebuchet MS", sans-serif;
+  text-transform: uppercase;
+  paint-order: stroke fill;
+  -webkit-text-stroke: .11em #78209e;
+  text-shadow: 0 .1em #671588;
+  box-shadow: 0 5px 14px #66287555;
 }
-#gabby-fi #gf-win-art { width: clamp(120px, 35vw, 210px); height: clamp(120px, 35vw, 210px); margin: 0 auto; }
-#gabby-fi #gf-win-title { color: #62208a; }
+#gabby-fi .celebration-characters {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  height: clamp(110px, 29vw, 280px);
+}
+#gabby-fi .celebration-characters img {
+  width: 48%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 0 10px #fff5cdaa);
+}
+#gabby-fi .celebration-characters img + img {
+  width: 35%;
+  height: 79%;
+  margin-inline-start: -8%;
+}
+#gabby-fi .celebration-rewards {
+  position: relative;
+  padding: clamp(25px, 5vw, 54px) clamp(10px, 3vw, 28px) 12px;
+  border: 4px solid white;
+  border-radius: clamp(22px, 5vw, 48px);
+  background: linear-gradient(#fff4fc, #fce2f4);
+  color: #651b85;
+  box-shadow: 0 0 0 3px #d99bf3, 0 7px 12px #64248077;
+}
+#gabby-fi .celebration-stars {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-58%);
+  color: #ffcf00;
+  font-size: clamp(2.4rem, 9vw, 6rem);
+  line-height: 1;
+  text-shadow: 0 .055em #a44b02;
+  paint-order: stroke fill;
+  -webkit-text-stroke: .13em white;
+  filter: drop-shadow(0 3px 3px #b6670477);
+}
+#gabby-fi .celebration-stars span:nth-child(2) { font-size: 1.17em; }
 #gabby-fi #gf-coin-reward {
-  display: inline-block;
+  width: fit-content;
+  margin: 0 auto 12px;
+  padding: .45em 1em;
   border: 3px solid white;
-  font-size: 1.2rem;
+  border-radius: 999px;
+  background: linear-gradient(#fff4bf, #ffe08c);
+  font-size: clamp(1.05rem, 3vw, 2rem);
   font-weight: 900;
-  box-shadow: 0 4px #d3a650;
+  box-shadow: 0 3px #deb35e;
 }
-#gabby-fi #gf-coin-reward[hidden] { display: none; }
-#gabby-fi #gf-next-level {
-  min-height: 55px;
-  margin: 8px;
-  padding: 12px 22px;
-  border: 3px solid white;
-  border-radius: 22px;
-  background: linear-gradient(#ff78be, #e31f83);
+#gabby-fi #gf-win .sticker-reward:not([hidden]) {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 auto 12px;
+  padding: 5px 12px;
+  border: 2px solid white;
+  border-radius: 999px;
+  background: linear-gradient(#f9deff, #ecb5f6);
+}
+#gabby-fi #gf-win .sticker-reward .picture { width: clamp(38px, 9vw, 72px); margin: 0 auto; }
+#gabby-fi .celebration-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f5d9ed;
+}
+#gabby-fi #gf-win-art {
+  flex: 0 0 clamp(32px, 8vw, 56px);
+  aspect-ratio: 1;
+  margin: 0;
+  box-shadow: none;
+}
+#gabby-fi #gf-win-title,
+#gabby-fi #gf-win-text { margin: 0; }
+#gabby-fi #gf-win .celebration-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+#gabby-fi .celebration-actions button { min-height: 48px; }
+#gabby-fi .celebration-actions button.primary {
+  flex: 1 1 7rem;
+  margin: 0;
+  padding: .55em .6em;
+  border: 3px solid #fff1f8;
+  border-radius: 30px;
+  background: linear-gradient(#d380fa, #a029d2 65%, #8018bd);
   color: white;
+  font-size: clamp(.88rem, 2.6vw, 1.55rem);
   font-weight: 900;
-  box-shadow: 0 4px #a52372;
+  text-transform: uppercase;
+  text-shadow: 0 2px #721288;
+  box-shadow: inset 0 3px #ffffff69, 0 4px #7e218d;
 }
-#gabby-fi #gf-win .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-#gabby-fi #gf-win .actions button { min-width: 56px; min-height: 52px; }
-@media (max-width: 480px) {
-  #gabby-fi .free-play-heading .picture { flex-basis: 54px; height: 54px; }
-  #gabby-fi #gf-win { padding: 18px; }
+#gabby-fi .celebration-actions #gf-next-level.primary {
+  text-shadow: 0 2px #a52476;
+  background: linear-gradient(#ff8ac6, #fa268b 65%, #d4076d);
+  box-shadow: inset 0 3px #ffffff69, 0 4px #a52476;
 }
 
 #gabby-fi .campaign-progress {
@@ -3808,19 +3898,6 @@ body {
   #gabby-fi #gf-levels button:nth-child(8) { --node-x: 53%; --node-y: 82%; }
   #gabby-fi #gf-levels button:nth-child(9) { --node-x: 69%; --node-y: 76%; }
   #gabby-fi #gf-levels button:nth-child(10) { --node-x: 86%; --node-y: 61%; }
-}
-
-#gabby-fi #gf-win {
-  background: linear-gradient(#fff3f944, #fff0fa99), url("../assets/rooms/celebration.webp") center / cover;
-}
-#gabby-fi #gf-win-title,
-#gabby-fi #gf-win-text {
-  max-width: 34rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 6px 14px;
-  border-radius: 16px;
-  background: #fff6f4dc;
 }
 
 #gabby-fi .dollhouse-nav {
