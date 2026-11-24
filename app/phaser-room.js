@@ -43663,4 +43663,45 @@ function oe(e, t) {
 		} }
 	}), a;
 }
-export { $ as createBakingTrayView, ie as createGardenView, Q as createMixingView, re as createPreparationView, Z as createRoomView, ae as createTileView, oe as startRoomInput };
+function se(e, t, n) {
+	let r = "garden-v6-crop", i = new URL(`./assets/nabby-garden-v6/${t}/`, document.baseURI), a = !0, o = n, s, c, l = window.matchMedia("(prefers-reduced-motion: reduce)").matches, u = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: 320,
+		height: 230,
+		scale: {
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
+		},
+		scene: {
+			preload() {
+				this.load.atlas(r, new URL(t + ".webp", i).href, new URL(t + ".json", i).href);
+			},
+			create() {
+				a && this.textures.exists(r) && (c = this, s = this.add.image(160, 225, r).setOrigin(.5, 1), e.classList.add("garden-crop-rendered"), d(!1));
+			}
+		}
+	});
+	function d(e) {
+		if (!s || !c) return;
+		c.tweens.killTweensOf(s);
+		let t = !!o && c.textures.get(r).has(o);
+		if (s.setVisible(t), !t) return;
+		let n = o.endsWith("_seed") ? .25 : .72;
+		s.setFrame(o).setScale(n), e && !l && (s.setScale(n * .9), c.tweens.add({
+			targets: s,
+			scale: n,
+			duration: 180
+		}));
+	}
+	return {
+		setFrame(e) {
+			o = e, d(!0);
+		},
+		destroy() {
+			a = !1, e.classList.remove("garden-crop-rendered"), u.destroy(!0);
+		}
+	};
+}
+export { $ as createBakingTrayView, se as createCropView, ie as createGardenView, Q as createMixingView, re as createPreparationView, Z as createRoomView, ae as createTileView, oe as startRoomInput };

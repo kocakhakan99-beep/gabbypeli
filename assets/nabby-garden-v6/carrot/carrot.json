@@ -1,0 +1,157 @@
+{
+  "frames": {
+    "carrot_seed": {
+      "frame": {
+        "x": 91,
+        "y": 193,
+        "w": 74,
+        "h": 55
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 55
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 55
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "carrot_sprout": {
+      "frame": {
+        "x": 314,
+        "y": 164,
+        "w": 139,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 139,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 139,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "carrot_young": {
+      "frame": {
+        "x": 558,
+        "y": 103,
+        "w": 163,
+        "h": 145
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 163,
+        "h": 145
+      },
+      "sourceSize": {
+        "w": 163,
+        "h": 145
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "carrot_growing": {
+      "frame": {
+        "x": 25,
+        "y": 334,
+        "w": 206,
+        "h": 170
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 206,
+        "h": 170
+      },
+      "sourceSize": {
+        "w": 206,
+        "h": 170
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "carrot_ripe": {
+      "frame": {
+        "x": 268,
+        "y": 312,
+        "w": 231,
+        "h": 192
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 231,
+        "h": 192
+      },
+      "sourceSize": {
+        "w": 231,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "carrot_harvested": {
+      "frame": {
+        "x": 546,
+        "y": 307,
+        "w": 187,
+        "h": 197
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 187,
+        "h": 197
+      },
+      "sourceSize": {
+        "w": 187,
+        "h": 197
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    }
+  },
+  "meta": {
+    "image": "carrot.webp",
+    "size": {
+      "w": 768,
+      "h": 512
+    },
+    "format": "RGBA8888",
+    "scale": "1"
+  }
+}

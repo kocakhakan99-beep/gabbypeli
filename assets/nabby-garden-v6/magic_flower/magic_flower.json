@@ -1,0 +1,157 @@
+{
+  "frames": {
+    "magic_flower_seed": {
+      "frame": {
+        "x": 80,
+        "y": 159,
+        "w": 96,
+        "h": 89
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 89
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 89
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "magic_flower_sprout": {
+      "frame": {
+        "x": 308,
+        "y": 166,
+        "w": 152,
+        "h": 82
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 152,
+        "h": 82
+      },
+      "sourceSize": {
+        "w": 152,
+        "h": 82
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "magic_flower_young": {
+      "frame": {
+        "x": 537,
+        "y": 102,
+        "w": 206,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 206,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 206,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "magic_flower_bud": {
+      "frame": {
+        "x": 33,
+        "y": 328,
+        "w": 189,
+        "h": 176
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 189,
+        "h": 176
+      },
+      "sourceSize": {
+        "w": 189,
+        "h": 176
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "magic_flower_bloom": {
+      "frame": {
+        "x": 272,
+        "y": 305,
+        "w": 224,
+        "h": 199
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 224,
+        "h": 199
+      },
+      "sourceSize": {
+        "w": 224,
+        "h": 199
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "magic_flower_post_harvest": {
+      "frame": {
+        "x": 534,
+        "y": 369,
+        "w": 211,
+        "h": 135
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 211,
+        "h": 135
+      },
+      "sourceSize": {
+        "w": 211,
+        "h": 135
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    }
+  },
+  "meta": {
+    "image": "magic_flower.webp",
+    "size": {
+      "w": 768,
+      "h": 512
+    },
+    "format": "RGBA8888",
+    "scale": "1"
+  }
+}

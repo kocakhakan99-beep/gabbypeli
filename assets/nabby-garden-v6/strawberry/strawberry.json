@@ -1,0 +1,157 @@
+{
+  "frames": {
+    "strawberry_seed": {
+      "frame": {
+        "x": 93,
+        "y": 178,
+        "w": 69,
+        "h": 70
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 69,
+        "h": 70
+      },
+      "sourceSize": {
+        "w": 69,
+        "h": 70
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "strawberry_sprout": {
+      "frame": {
+        "x": 312,
+        "y": 155,
+        "w": 143,
+        "h": 93
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 143,
+        "h": 93
+      },
+      "sourceSize": {
+        "w": 143,
+        "h": 93
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "strawberry_young": {
+      "frame": {
+        "x": 552,
+        "y": 115,
+        "w": 175,
+        "h": 133
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 175,
+        "h": 133
+      },
+      "sourceSize": {
+        "w": 175,
+        "h": 133
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "strawberry_flower": {
+      "frame": {
+        "x": 27,
+        "y": 324,
+        "w": 201,
+        "h": 180
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 201,
+        "h": 180
+      },
+      "sourceSize": {
+        "w": 201,
+        "h": 180
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "strawberry_ripe": {
+      "frame": {
+        "x": 269,
+        "y": 316,
+        "w": 230,
+        "h": 188
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 230,
+        "h": 188
+      },
+      "sourceSize": {
+        "w": 230,
+        "h": 188
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "strawberry_post_harvest": {
+      "frame": {
+        "x": 545,
+        "y": 350,
+        "w": 190,
+        "h": 154
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 190,
+        "h": 154
+      },
+      "sourceSize": {
+        "w": 190,
+        "h": 154
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    }
+  },
+  "meta": {
+    "image": "strawberry.webp",
+    "size": {
+      "w": 768,
+      "h": 512
+    },
+    "format": "RGBA8888",
+    "scale": "1"
+  }
+}

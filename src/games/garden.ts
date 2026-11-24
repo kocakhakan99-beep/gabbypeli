@@ -1,3 +1,4 @@
+import { cropLevels, openCropGarden } from "./garden-crops.js";
 import { campaignLevel } from "../campaign.js";
 import {
   advanceAfterSuccess,
@@ -10,7 +11,7 @@ import {
 } from "../ui.js";
 import { el } from "../dom.js";
 import { ding, unlock } from "../audio.js";
-import { bindStroke, distanceToStroke, type Point } from "./stroke.js";
+import { bindStroke, distanceToStroke, stopStroke, type Point } from "./stroke.js";
 
 const beds = [
   [24, 49, 76],
@@ -21,26 +22,44 @@ type Stage = "soil" | "water" | "tidy";
 
 let gardenView: { destroy(): void } | undefined;
 let gardenGeneration = 0;
+let stopCropGarden: (() => void) | undefined;
 
 export function stopGarden(): void {
   gardenGeneration++;
+  stopCropGarden?.();
+  stopCropGarden = undefined;
   gardenView?.destroy();
   gardenView = undefined;
 }
 
 export function startGarden(): void {
+  const level = campaignLevel();
+  const order = level === undefined ? undefined : cropLevels[level - 1];
+  const launcher = document.querySelector<HTMLButtonElement>("#gf-garden-grow")!;
+  launcher.hidden = !!order;
+  if (order) {
+    stopGarden();
+    stopStroke(el("garden-field"));
+    stopCropGarden = openCropGarden(el("garden-field"), order);
+    return;
+  }
   plantBed(0);
+  launcher.onclick = () => {
+    const field = el("garden-field");
+    launcher.hidden = true;
+    stopStroke(field);
+    stopGarden();
+    stopCropGarden = openCropGarden(field);
+  };
 }
 
 function plantBed(level: number): void {
   stopGarden();
   const generation = gardenGeneration;
   const field = el("garden-field");
-  const adventure = campaignLevel();
-  const bedCount = adventure === undefined || adventure >= 6 ? 2 : 1;
-  const flowerCount = adventure === undefined ? 4 : adventure <= 2 ? 2 : adventure <= 7 ? 3 : 4;
-  const effort = adventure === undefined ? 25 : [50, 40, 34, 30, 28, 25, 23, 20, 18, 17][adventure - 1];
-  const row = beds[level].slice(0, flowerCount);
+  const bedCount = beds.length;
+  const effort = 25;
+  const row = beds[level];
   let amounts: number[] = row.map(() => 0);
   const flowers: HTMLButtonElement[] = [];
   let stage: Stage = "soil";

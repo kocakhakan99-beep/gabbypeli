@@ -4826,3 +4826,119 @@ body {
 #gabby-fi .bakery-shaped-pan.tart {
   --shaped-pan: url("../assets/gabby/bakery/steps/tart-pan.webp");
 }
+
+#gabby-fi #gf-garden-grow {
+  min-height: 44px;
+  margin: 0 auto 10px;
+  padding: 8px 16px;
+}
+#gabby-fi #gf-garden-field.garden-crop-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(205px, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 295px;
+  padding: 12px;
+}
+#gabby-fi .garden-crop-choices {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+#gabby-fi .garden-crop-choices button,
+#gabby-fi .garden-crop-tool {
+  min-height: 48px;
+  padding: 6px 10px;
+  color: #4b2d55;
+  background: #fff8ed;
+  border: 2px solid #e3c3eb;
+  border-radius: 14px;
+}
+#gabby-fi .garden-crop-tool {
+  grid-area: 2 / 1;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  touch-action: none;
+}
+#gabby-fi .garden-crop-tool > span:first-child:not([class=""]) {
+  display: block;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+}
+#gabby-fi .garden-crop-tool > :is(.garden-shovel, .garden-brush) {
+  background: var(--garden-tool-art, none) center / contain no-repeat;
+}
+#gabby-fi .garden-crop-tool > .watering-icon {
+  background: var(--gabby-garden-watering_can, none) center / contain no-repeat;
+}
+#gabby-fi .garden-crop-art,
+#gabby-fi .garden-crop-plot {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  width: min(100%, 340px);
+}
+#gabby-fi .garden-crop-art {
+  position: relative;
+  pointer-events: none;
+  z-index: 2;
+  margin-bottom: 36px;
+}
+#gabby-fi .garden-crop-plot {
+  touch-action: none;
+  display: grid;
+  align-content: end;
+  justify-items: center;
+  padding: 0 8px 5px;
+  border: 0;
+  border-radius: 18px;
+  color: #42233c;
+  font-weight: 800;
+  background:
+    radial-gradient(ellipse closest-side, var(--crop-soil, #ab6d56) 45%, #83533c 86%, transparent 100%) center bottom 25px / 78% 34px no-repeat,
+    linear-gradient(transparent 60%, #fff9e8 85%);
+}
+#gabby-fi .garden-crop-plot[data-soil="dug"] { --crop-soil: #593326; }
+#gabby-fi .garden-crop-plot[data-soil="sown"] { --crop-soil: #ba8764; }
+#gabby-fi .garden-crop-plot[data-soil="wet"] { --crop-soil: #67442d; }
+#gabby-fi .garden-crop-plot.garden-crop-hint { outline: 3px dashed #833598; }
+#gabby-fi .garden-crop-watering .garden-crop-art::after {
+  content: "";
+  position: absolute;
+  inset: auto 30% 0;
+  height: 56px;
+  background: var(--gabby-garden-water_splash, none) center / contain no-repeat;
+}
+@media (min-width: 768px) {
+  #gabby-fi #gf-garden-field.garden-crop-field {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: minmax(250px, 1fr);
+  }
+  #gabby-fi .garden-crop-tool { grid-area: 1 / 2; }
+  #gabby-fi .garden-crop-choices { grid-column: 1 / -1; }
+}
+
+#gabby-fi #gf-garden-order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 0 auto 8px;
+  padding: 0;
+  list-style: none;
+}
+#gabby-fi #gf-garden-order li {
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: #fff6ec;
+  color: #4b2d55;
+}
+#gabby-fi #gf-garden-order [aria-current="step"] { border-color: #864ca4; }
+#gabby-fi #gf-garden-order [data-harvested="true"]::before { content: "✓ "; }

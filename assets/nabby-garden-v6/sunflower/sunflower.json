@@ -1,0 +1,157 @@
+{
+  "frames": {
+    "sunflower_seed": {
+      "frame": {
+        "x": 77,
+        "y": 136,
+        "w": 101,
+        "h": 112
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 101,
+        "h": 112
+      },
+      "sourceSize": {
+        "w": 101,
+        "h": 112
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "sunflower_sprout": {
+      "frame": {
+        "x": 301,
+        "y": 148,
+        "w": 165,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 165,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 165,
+        "h": 100
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "sunflower_young": {
+      "frame": {
+        "x": 543,
+        "y": 80,
+        "w": 193,
+        "h": 168
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 193,
+        "h": 168
+      },
+      "sourceSize": {
+        "w": 193,
+        "h": 168
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "sunflower_bud": {
+      "frame": {
+        "x": 32,
+        "y": 318,
+        "w": 192,
+        "h": 186
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 192,
+        "h": 186
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 186
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "sunflower_bloom": {
+      "frame": {
+        "x": 284,
+        "y": 280,
+        "w": 199,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 199,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 199,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "sunflower_seed_head": {
+      "frame": {
+        "x": 546,
+        "y": 305,
+        "w": 188,
+        "h": 199
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 188,
+        "h": 199
+      },
+      "sourceSize": {
+        "w": 188,
+        "h": 199
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1
+      }
+    }
+  },
+  "meta": {
+    "image": "sunflower.webp",
+    "size": {
+      "w": 768,
+      "h": 512
+    },
+    "format": "RGBA8888",
+    "scale": "1"
+  }
+}

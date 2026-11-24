@@ -579,3 +579,53 @@ export function startRoomInput(target: HTMLElement, bridge: {
   });
   return cancel;
 }
+
+export interface CropView {
+  setFrame(frame: string): void;
+  destroy(): void;
+}
+
+export function createCropView(parent: HTMLElement, crop: string, initialFrame: string): CropView {
+  const texture = "garden-v6-crop";
+  const root = new URL(`./assets/nabby-garden-v6/${crop}/`, document.baseURI);
+  let alive = true;
+  let frame = initialFrame;
+  let plant: Phaser.GameObjects.Image | undefined;
+  let scene: Phaser.Scene | undefined;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent, transparent: true, width: 320, height: 230,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: {
+      preload() {
+        this.load.atlas(texture, new URL(crop + ".webp", root).href, new URL(crop + ".json", root).href);
+      },
+      create() {
+        if (!alive || !this.textures.exists(texture)) return;
+        scene = this;
+        plant = this.add.image(160, 225, texture).setOrigin(0.5, 1);
+        parent.classList.add("garden-crop-rendered");
+        update(false);
+      },
+    },
+  });
+
+  function update(animate: boolean): void {
+    if (!plant || !scene) return;
+    scene.tweens.killTweensOf(plant);
+    const visible = !!frame && scene.textures.get(texture).has(frame);
+    plant.setVisible(visible);
+    if (!visible) return;
+    const scale = frame.endsWith("_seed") ? 0.25 : 0.72;
+    plant.setFrame(frame).setScale(scale);
+    if (animate && !reduced) {
+      plant.setScale(scale * 0.9);
+      scene.tweens.add({ targets: plant, scale, duration: 180 });
+    }
+  }
+
+  return {
+    setFrame(next) { frame = next; update(true); },
+    destroy() { alive = false; parent.classList.remove("garden-crop-rendered"); game.destroy(true); },
+  };
+}
