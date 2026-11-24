@@ -4,7 +4,7 @@
 
 ## Pelisäännöt
 
-Katso korttien kuvia enintään 5,2 sekuntia tai piilota kortit heti. Käännä kaksi korttia. Pari jää näkyviin ja väärä pari sulkeutuu viiveellä. Vihje näyttää jäljellä olevien korttien kuvat hetkeksi. Kaikki parit avaavat voittoruudun.
+Katso korttien kuvia enintään 5,2 sekuntia tai piilota kortit heti. Käännä kaksi korttia pyyhkäisemällä kortin reunasta sivulle. Kortti taittuu pyyhkäisyn mukana. Korttia voi käyttää myös napauttamalla ja näppäimistöllä. Pari jää näkyviin ja väärä pari sulkeutuu viiveellä. Vihje näyttää jäljellä olevien korttien kuvat hetkeksi. Kaikki parit avaavat voittoruudun.
 
 Hiekkalaatikossa valitaan kaverit (2–6 paria), esineet (2–9) tai molemmat (2–9). Seikkailussa tasot 1–5 käyttävät kavereita ja 6–10 sekapakkaa. Parimäärät ovat järjestyksessä 2, 3, 3, 4, 5, 5, 6, 7, 8 ja 9.
 

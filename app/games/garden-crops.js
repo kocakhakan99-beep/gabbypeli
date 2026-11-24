@@ -1,6 +1,6 @@
 import { el } from "../dom.js";
 import { ding, unlock } from "../audio.js";
-import { feedback, finish, heading, progress, setAction } from "../ui.js";
+import { feedback, finish, heading, progress } from "../ui.js";
 import { bindStroke, stopStroke } from "./stroke.js";
 const crops = {
     strawberry: { name: "Mansikka", phases: ["flower", "ripe", "post_harvest"], harvest: "Poimi mansikat" },
@@ -20,11 +20,13 @@ export const cropLevels = [
     ["strawberry", "carrot", "sunflower"],
     ["sunflower", "carrot", "magic_flower"],
 ];
-export function openCropGarden(field, order) {
+export function openCropGarden(field, adventureOrder) {
+    let order = adventureOrder;
     let alive = true;
     let view;
     let plot;
     let tool;
+    let basket;
     let bedIndex = 0;
     const orderList = document.querySelector("#gf-garden-order");
     function releaseBed() {
@@ -32,6 +34,9 @@ export function openCropGarden(field, order) {
             stopStroke(plot);
         if (tool)
             stopStroke(tool);
+        if (basket)
+            basket.remove();
+        basket = undefined;
         plot = tool = undefined;
         view?.destroy();
         view = undefined;
@@ -63,17 +68,46 @@ export function openCropGarden(field, order) {
     if (order)
         showOrder(false);
     else {
-        const choices = document.createElement("div");
-        choices.className = "garden-crop-choices";
-        field.append(choices);
-        for (const id of Object.keys(crops)) {
+        const settings = document.createElement("fieldset");
+        settings.className = "sandbox-game-options garden-crop-choices";
+        settings.innerHTML = `<legend>Kasvatuksen asetukset</legend>
+      <label>Kasvupaikkoja <select><option>1</option><option>2</option><option>3</option></select></label>
+      <div class="garden-extra-crops"></div>
+      <p>Valitse ensimmäinen kasvi ja aloita.</p>`;
+        field.append(settings);
+        const quantity = settings.querySelector("select");
+        const extra = settings.querySelector(".garden-extra-crops");
+        const ids = Object.keys(crops);
+        const additional = [2, 3].map((position) => {
+            const label = document.createElement("label");
+            label.hidden = true;
+            label.textContent = `Kasvi ${position}`;
+            const select = document.createElement("select");
+            for (const id of ids)
+                select.add(new Option(crops[id].name, id));
+            select.value = ids[position - 1];
+            label.append(select);
+            extra.append(label);
+            return select;
+        });
+        quantity.onchange = () => {
+            additional.forEach((select, index) => { select.parentElement.hidden = Number(quantity.value) < index + 2; });
+        };
+        for (const id of ids) {
             const choice = document.createElement("button");
             choice.type = "button";
             choice.textContent = crops[id].name;
-            choice.onclick = () => start(id);
-            choices.append(choice);
+            choice.onclick = () => {
+                const count = Number(quantity.value);
+                if (count > 1) {
+                    order = [id, ...additional.slice(0, count - 1).map((select) => select.value)];
+                    orderList.hidden = false;
+                    showOrder(false);
+                }
+                start(id);
+            };
+            settings.append(choice);
         }
-        choices.querySelector("button").focus({ preventScroll: true });
     }
     function start(id) {
         const crop = crops[id];
@@ -93,7 +127,6 @@ export function openCropGarden(field, order) {
         let phase = 0;
         const watering = () => phase === 2 || phase === 3 || phase === 5;
         let dragStart;
-        let dragged = false;
         let misses = 0;
         const art = document.createElement("div");
         art.className = "garden-crop-art";
@@ -126,9 +159,21 @@ export function openCropGarden(field, order) {
             else
                 progress(phase, instructions.length);
             if (instruction) {
-                el("instruction").textContent = instruction + ". Napauta työkalua tai kasvupaikkaa.";
-                icon.className = toolArt[phase];
+                el("instruction").textContent = phase === 4 ? "Vedä rikkaruoho sivuun."
+                    : phase === 6 ? instruction + " vetämällä kasvista."
+                        : watering() ? "Vedä kannu kasvin päälle ja kallista kastellaksesi."
+                            : instruction + " vetämällä esine kasvupaikalle.";
+                icon.className = phase === 1 ? "garden-seed" : toolArt[phase];
+                icon.style.backgroundImage = phase === 1
+                    ? `url("./assets/nabby-garden-v6/${id}/seed.webp")` : "";
+                action.setAttribute("aria-label", instruction);
                 label.textContent = instruction;
+                target.dataset.work = phase === 4 ? "weed" : phase === 6 ? "harvest" : "";
+                action.hidden = phase === 4 || phase === 6;
+                if (action.hidden)
+                    target.focus({ preventScroll: true });
+                else if (document.activeElement === target)
+                    action.focus({ preventScroll: true });
             }
         }
         function advance() {
@@ -148,44 +193,68 @@ export function openCropGarden(field, order) {
             el("instruction").textContent = crop.name + " on korjattu.";
             showOrder(true);
             const next = order?.[bedIndex + 1];
-            setAction(next ? "Seuraava kasvupaikka" : "Juhlitaan!", () => {
+            basket = document.createElement("div");
+            basket.className = "garden-harvest-basket";
+            basket.textContent = "Satokori";
+            field.append(basket);
+            target.setAttribute("aria-label", "Siirrä sato koriin");
+            target.removeAttribute("aria-disabled");
+            target.dataset.work = "basket";
+            el("instruction").textContent = "Vedä valmis sato satokoriin.";
+            target.focus({ preventScroll: true });
+            function deliver() {
                 releaseBed();
                 if (next) {
                     bedIndex++;
                     showOrder(false);
-                    setAction("", null);
                     start(next);
                 }
                 else {
                     finish("Sato on valmis!", bedIndex ? "Korjasit kaikki tason sadot!" : crop.name + " kasvoi hienosti.", "fairy");
                 }
+            }
+            target.onclick = (event) => { if (event.detail === 0)
+                deliver(); };
+            bindStroke(target, {
+                start(point) { dragStart = point; },
+                move(_previous, point) {
+                    art.style.translate = `${point.x - dragStart.x}px ${point.y - dragStart.y}px`;
+                },
+                end(point) {
+                    art.style.removeProperty("translate");
+                    if (!point || Math.hypot(point.x - dragStart.x, point.y - dragStart.y) < 16 || !basket)
+                        return;
+                    const bounds = basket.getBoundingClientRect();
+                    if (point.x >= bounds.left && point.x <= bounds.right &&
+                        point.y >= bounds.top && point.y <= bounds.bottom)
+                        deliver();
+                    else
+                        feedback("Vie sato satokoriin.");
+                },
             });
-            el("action").focus({ preventScroll: true });
         }
-        action.onclick = (event) => {
-            if (!dragged || event.detail === 0)
-                advance();
-        };
-        target.onclick = (event) => {
-            if (!dragged || event.detail === 0)
-                advance();
-        };
+        action.onclick = (event) => { if (!action.hidden && event.detail === 0)
+            advance(); };
+        target.onclick = (event) => { if (action.hidden && event.detail === 0)
+            advance(); };
         bindStroke(action, {
             start(point) {
                 dragStart = point;
-                dragged = false;
             },
             move(_previous, point) {
-                if (watering() && Math.hypot(point.x - dragStart.x, point.y - dragStart.y) > 12)
-                    field.classList.add("garden-crop-watering");
+                const rect = target.getBoundingClientRect();
+                const overPlot = point.x >= rect.left && point.x <= rect.right &&
+                    point.y >= rect.top && point.y <= rect.bottom;
+                field.classList.toggle("garden-crop-watering", watering() && overPlot);
+                action.style.rotate = watering() && overPlot ? "-30deg" : "";
                 action.style.translate = `${point.x - dragStart.x}px ${point.y - dragStart.y}px`;
             },
             end(point) {
                 field.classList.remove("garden-crop-watering");
                 action.style.removeProperty("translate");
+                action.style.removeProperty("rotate");
                 if (!point || Math.hypot(point.x - dragStart.x, point.y - dragStart.y) < 12)
                     return;
-                dragged = true;
                 const rect = art.getBoundingClientRect();
                 if (point.x >= rect.left && point.x <= rect.right &&
                     point.y >= rect.top && point.y <= target.getBoundingClientRect().bottom)
@@ -198,13 +267,21 @@ export function openCropGarden(field, order) {
             },
         });
         bindStroke(target, {
-            start(point) { dragStart = point; dragged = false; },
-            move() { },
+            start(point) { dragStart = point; },
+            move(_previous, point) {
+                if (phase === 4)
+                    target.style.setProperty("--weed-offset", `${point.x - dragStart.x}px`);
+                if (phase === 6)
+                    art.style.translate = `0 ${Math.min(0, point.y - dragStart.y)}px`;
+            },
             end(point) {
-                if (point && id === "carrot" && phase === 6 && dragStart.y - point.y > 24) {
-                    dragged = true;
+                art.style.removeProperty("translate");
+                target.style.removeProperty("--weed-offset");
+                if (!point)
+                    return;
+                if ((phase === 4 && Math.abs(point.x - dragStart.x) > 24) ||
+                    (phase === 6 && dragStart.y - point.y > 24))
                     advance();
-                }
             },
         });
         render();
@@ -215,8 +292,8 @@ export function openCropGarden(field, order) {
             view = createCropView(art, id, field.dataset.cropFrame ?? "");
         }).catch(() => { });
     }
-    if (order)
-        start(order[0]);
+    if (adventureOrder)
+        start(adventureOrder[0]);
     return () => {
         alive = false;
         releaseBed();

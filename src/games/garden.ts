@@ -36,24 +36,30 @@ export function startGarden(): void {
   const level = campaignLevel();
   const order = level === undefined ? undefined : cropLevels[level - 1];
   const launcher = document.querySelector<HTMLButtonElement>("#gf-garden-grow")!;
-  launcher.hidden = !!order;
-  if (order) {
-    stopGarden();
-    stopStroke(el("garden-field"));
-    stopCropGarden = openCropGarden(el("garden-field"), order);
-    return;
-  }
-  plantBed(0);
-  launcher.onclick = () => {
+  const classic = document.querySelector<HTMLButtonElement>("#gf-garden-classic")!;
+  launcher.parentElement!.hidden = !!order;
+
+  function grow(): void {
     const field = el("garden-field");
-    launcher.hidden = true;
     stopStroke(field);
     stopGarden();
-    stopCropGarden = openCropGarden(field);
+    setAction("", null);
+    launcher.setAttribute("aria-pressed", "true");
+    classic.setAttribute("aria-pressed", "false");
+    stopCropGarden = openCropGarden(field, order);
+  }
+
+  launcher.onclick = grow;
+  classic.onclick = () => {
+    launcher.setAttribute("aria-pressed", "false");
+    classic.setAttribute("aria-pressed", "true");
+    plantBed(0);
   };
+  grow();
 }
 
 function plantBed(level: number): void {
+  stopStroke(el("garden-field"));
   stopGarden();
   const generation = gardenGeneration;
   const field = el("garden-field");

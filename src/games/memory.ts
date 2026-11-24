@@ -15,6 +15,7 @@ import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
+import { bindStroke, stopStroke, type Point } from "./stroke.js";
 import type { TileView } from "../phaser-room.js";
 
 let memoryView: TileView | undefined;
@@ -46,6 +47,7 @@ const memoryFrames: Readonly<Record<string, string>> = {
 };
 
 export function stopMemoryTimers(): void {
+  el("cards").querySelectorAll<HTMLButtonElement>(".memory-card").forEach(stopStroke);
   memoryGeneration++;
   memoryView?.destroy();
   memoryView = undefined;
@@ -197,6 +199,19 @@ export function drawCards() {
     b.disabled = m.found || state.preview;
     b.dataset.index = String(i);
     if (!b.isConnected) el("cards").append(b);
+    let origin: Point;
+    const turn = () => { if (!memoryView?.activate("flip", i)) flip(i); };
+    bindStroke(b, {
+      start(point) { origin = point; },
+      move(_previous, point) {
+        const amount = Math.min(1, Math.abs(point.x - origin.x) / 42);
+        b.style.setProperty("--card-drag", String(amount));
+      },
+      end(point) {
+        b.style.removeProperty("--card-drag");
+        if (point && !b.disabled && Math.abs(point.x - origin.x) >= 28) turn();
+      },
+    });
   });
 }
 

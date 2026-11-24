@@ -6,6 +6,7 @@ import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
+import { bindStroke, stopStroke } from "./stroke.js";
 let memoryView;
 let memoryGeneration = 0;
 let memoryViewLoading = false;
@@ -31,6 +32,7 @@ const memoryFrames = {
     star: "face_star",
 };
 export function stopMemoryTimers() {
+    el("cards").querySelectorAll(".memory-card").forEach(stopStroke);
     memoryGeneration++;
     memoryView?.destroy();
     memoryView = undefined;
@@ -172,6 +174,21 @@ export function drawCards() {
         b.dataset.index = String(i);
         if (!b.isConnected)
             el("cards").append(b);
+        let origin;
+        const turn = () => { if (!memoryView?.activate("flip", i))
+            flip(i); };
+        bindStroke(b, {
+            start(point) { origin = point; },
+            move(_previous, point) {
+                const amount = Math.min(1, Math.abs(point.x - origin.x) / 42);
+                b.style.setProperty("--card-drag", String(amount));
+            },
+            end(point) {
+                b.style.removeProperty("--card-drag");
+                if (point && !b.disabled && Math.abs(point.x - origin.x) >= 28)
+                    turn();
+            },
+        });
     });
 }
 export function flip(i) {

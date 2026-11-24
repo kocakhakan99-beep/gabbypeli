@@ -23,11 +23,11 @@ for (const width of [320, 768, 1100]) {
     await page
       .getByRole("button", { name: piparit ? "Piparit" : "Kuppikakut" })
       .click();
-    await page.getByRole("button", { name: "Avaa hana" }).click();
-    await page.getByRole("button", { name: "Ota saippuaa" }).click();
-    await page.getByRole("button", { name: "Pese kädet" }).click();
-    await page.getByRole("button", { name: "Huuhtele kädet" }).click();
-    await page.getByRole("button", { name: "Kuivaa kädet" }).click();
+    await page.getByRole("button", { name: "Avaa hana" }).press("Enter");
+    await page.getByRole("button", { name: "Ota saippuaa" }).press("Enter");
+    await page.getByRole("button", { name: "Pese kädet" }).press("Enter");
+    await page.getByRole("button", { name: "Huuhtele kädet" }).press("Enter");
+    await page.getByRole("button", { name: "Kuivaa kädet" }).press("Enter");
     const ingredients = [
       ["Lisää jauhot", "flour_sack"],
       ["Lisää muna", "egg_whole"],
@@ -84,10 +84,10 @@ for (const width of [320, 768, 1100]) {
     await oven.screenshot({ path: testInfo.outputPath("oven-cooking.png") });
     if (!piparit) {
       for (let index = 0; index < 6; index++)
-        await page.getByRole("button", { name: "Lisää kuorrute" }).click();
+        await page.getByRole("button", { name: "Lisää kuorrute" }).press("Enter");
     }
     const topping = page.getByRole("button", { name: piparit ? "Strösseli" : "Mustikka", exact: true });
-    for (let index = 0; index < 6; index++) await topping.click();
+    for (let index = 0; index < 6; index++) await topping.press("Enter");
     await expect(page.locator("#gf-win")).toBeVisible();
     const result = page.getByRole("img", { name: piparit ? "Piparit" : "Kuppikakut" });
     await expect(result).toBeVisible();
@@ -234,4 +234,26 @@ test("object memory and puzzle use the new art without device speech", async ({
   await page.locator("#gf-repeat").click();
   await expect(page.locator("#gf-feedback")).toBeVisible();
   expect(await page.evaluate(() => window.deviceSpeechCalls)).toBe(0);
+});
+
+test("Sandbox exposes all bakery recipes and applies independent play settings", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#gf-free-toggle").click();
+  await page.locator("#gf-open-baking").click();
+  await expect(page.locator(".bakery-recipe")).toHaveText(["Piparit", "Kuppikakut", "Korvapuustit", "Marjatortut"]);
+  await page.getByLabel("Annoksia").selectOption("2");
+  await page.getByLabel("Käsienpesu", { exact: true }).uncheck();
+  await page.getByLabel("Tee taikina itse").uncheck();
+  await page.getByLabel("Koristelu", { exact: true }).uncheck();
+  await page.getByRole("button", { name: "Kuppikakut", exact: true }).click();
+  await expect(page.locator(".baking-wash, .bakery-ingredients")).toHaveCount(0);
+  await page.getByRole("button", { name: "Aseta vuoka" }).press("Enter");
+  await expect(page.locator(".bakery-step-count")).toHaveText("1 / 2");
+  await page.getByRole("button", { name: "Aseta vuoka" }).press("Enter");
+  for (let index = 0; index < 2; index++) await page.getByRole("button", { name: "Täytä vuoka" }).press("Enter");
+  for (const name of ["Avaa uunin luukku", "Siirrä pelti uuniin", "Sulje uunin luukku"])
+    await page.getByRole("button", { name }).press("Enter");
+  for (let index = 0; index < 8; index++) await page.getByRole("slider", { name: "Uunin lämpötila" }).press("ArrowUp");
+  await expect(page.getByRole("img", { name: "Kuppikakut" })).toBeVisible();
+  await expect(page.locator(".bakery-decorations")).toHaveCount(0);
 });

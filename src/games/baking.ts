@@ -52,6 +52,10 @@ export function startBaking(): void {
   const order = adventure === undefined ? undefined : orders[adventure - 1];
   let portionCount = order?.count ?? 6;
   let selectedRecipe: RecipeId;
+  let washEnabled = true;
+  let mixEnabled = true;
+  let decorationsEnabled = true;
+  const mixDough = () => order?.mix ?? mixEnabled;
   let stage = 0;
   let total = 1;
   const toppings: string[] = [];
@@ -130,7 +134,10 @@ export function startBaking(): void {
         }
       },
     });
-    if (item instanceof HTMLButtonElement) return;
+    if (item instanceof HTMLButtonElement) {
+      item.onclick = (event) => { if (event.detail === 0) accept(); };
+      return;
+    }
     item.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
@@ -140,7 +147,7 @@ export function startBaking(): void {
 
   const image = (asset: string) => `<img src="${stepAsset(asset)}" alt="" draggable="false">`;
   const piece = (recipe: Recipe) => `<span class="bakery-piece">${image(recipe.raw)}</span>`;
-  const decorate = () => selectedRecipe === "tart" || (order?.finish ?? true);
+  const decorate = () => order ? selectedRecipe === "tart" || order.finish : decorationsEnabled;
 
   const usesParchment = () => selectedRecipe === "cookie" || selectedRecipe === "bun";
 
@@ -155,24 +162,31 @@ export function startBaking(): void {
     selectedRecipe = id;
     const recipe = recipes[id];
     if (id === "tart") portionCount = 1;
-    else if (!order && id === "bun") portionCount = 4;
-    const shouldWash = !washed || adventure === 1;
+    else if (!order) {
+      const quantity = scene.querySelector<HTMLSelectElement>("#gf-baking-quantity")!.value;
+      portionCount = quantity === "recipe" ? (id === "bun" ? 4 : 6) : Number(quantity);
+    }
+    const shouldWash = order ? !washed || adventure === 1 : washEnabled;
     total = 1 + Number(usesParchment()) + recipe.prepare.length + (shouldWash ? 1 : 0) +
-      ((order?.mix ?? true) ? 2 : 0) +
+      (mixDough() ? 2 : 0) +
       (id === "bun" && decorate() ? 1 : 0) +
       (id === "tart" || decorate() ? recipe.after.length : 0) + (decorate() ? 1 : 0) +
       (order ? 1 : 0);
     const cook = () => {
       if (shouldWash) wash(recipe);
-      else if (order?.mix ?? true) ingredients(recipe);
+      else if (mixDough()) ingredients(recipe);
       else prepare(recipe);
     };
     if (order) {
       show(
         `Hileen tilaus · ${recipe.name} · ${portionCount} kpl`,
-        `${image(recipe.ready)}${order.requested ? `<p>Hileen toive: ${order.requested.toLowerCase()}.</p>` : ""}<button type="button">Aloita tilaus</button>`,
+        `<div class="bakery-order-stand" aria-label="Tilausteline">Tilausteline</div>
+          <button type="button" class="bakery-order-card" aria-label="Aloita tilaus">${image(recipe.ready)}${recipe.name}</button>
+          ${order.requested ? `<p>Hileen toive: ${order.requested.toLowerCase()}.</p>` : ""}`,
       );
-      scene.querySelector("button")!.onclick = cook;
+      el("instruction").textContent += ". Vedä reseptikortti telineeseen.";
+      transfer(scene.querySelector<HTMLButtonElement>(".bakery-order-card")!,
+        scene.querySelector<HTMLElement>(".bakery-order-stand")!, cook);
     } else cook();
   }
 
@@ -181,12 +195,30 @@ export function startBaking(): void {
     return;
   }
   if (order) el("instruction").textContent = "Hileen juhlatilaus: valitse yksi resepti.";
-  scene.innerHTML = `<div class="bakery-recipes">${Object.entries(recipes).map(([id, recipe]) =>
+  scene.innerHTML = `${order ? "" : `
+    <fieldset class="sandbox-game-options">
+      <legend>Leipomon asetukset</legend>
+      <label>Annoksia <select id="gf-baking-quantity">
+        <option value="recipe">Reseptin oletus</option>
+        ${[1, 2, 3, 4, 5, 6].map((count) => `<option>${count}</option>`).join("")}
+      </select></label>
+      <label><input type="checkbox" id="gf-baking-wash" checked> Käsienpesu</label>
+      <label><input type="checkbox" id="gf-baking-mix" checked> Tee taikina itse</label>
+      <label><input type="checkbox" id="gf-baking-decorate" checked> Koristelu</label>
+    </fieldset>`}
+    <div class="bakery-recipes">${Object.entries(recipes).map(([id, recipe]) =>
     `<button type="button" class="bakery-recipe" data-recipe="${id}">${image(recipe.ready)}${recipe.name}</button>`,
   ).join("")}</div>`;
   scene.querySelectorAll<HTMLButtonElement>(".bakery-recipe")
     .forEach((choice) => {
-      choice.onclick = () => begin(choice.dataset.recipe as RecipeId);
+      choice.onclick = () => {
+        if (!order) {
+          washEnabled = scene.querySelector<HTMLInputElement>("#gf-baking-wash")!.checked;
+          mixEnabled = scene.querySelector<HTMLInputElement>("#gf-baking-mix")!.checked;
+          decorationsEnabled = scene.querySelector<HTMLInputElement>("#gf-baking-decorate")!.checked;
+        }
+        begin(choice.dataset.recipe as RecipeId);
+      };
     });
 
   function runSteps(steps: readonly BakingStep[], done: () => void): void {
@@ -198,7 +230,7 @@ export function startBaking(): void {
     const count = step.repeat ? portionCount : 1;
     show(step.instruction, `
       <div class="bakery-work-target" aria-label="Työpinta">${image(step.image)}</div>
-      <button type="button" class="bakery-step-action">${step.tool ? image(step.tool) : ""}${step.action}</button>
+      <button type="button" class="bakery-step-action" aria-label="${step.action}">${step.tool ? image(step.tool) : image(step.image)}</button>
       <p class="bakery-step-count" aria-live="polite"></p>
       <div class="bakery-step-results" aria-hidden="true"></div>`);
     const target = scene.querySelector<HTMLElement>(".bakery-work-target")!;
@@ -219,30 +251,53 @@ export function startBaking(): void {
       }
     }
     if (step.tool) transfer(action, target, work);
-    else gesture(target, {
-      start() {},
-      move() {},
-      end(point) { if (point) work(); },
-    });
-    action.onclick = work;
+    else {
+      action.hidden = true;
+      target.tabIndex = 0;
+      target.setAttribute("role", "button");
+      target.setAttribute("aria-label", step.action);
+      target.onkeydown = (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        work();
+      };
+      target.focus({ preventScroll: true });
+      let start: Point;
+      gesture(target, {
+        start(point) { start = point; },
+        move(_previous, point) { target.style.setProperty("--work-offset", `${(point.x - start.x) / 4}px`); },
+        end(point) {
+          target.style.removeProperty("--work-offset");
+          if (point && Math.hypot(point.x - start.x, point.y - start.y) >= 16) work();
+        },
+      });
+    }
+    action.onclick = (event) => { if (event.detail === 0) work(); };
   }
 
   function wash(recipe: Recipe): void {
     show(
-      "Avaa hana, ota saippuaa, pese, huuhtele ja kuivaa kädet.",
+      "Käännä hanan vipua sivulle avataksesi veden.",
       `
       <div class="baking-wash">
-        <button type="button" class="wash-soap" aria-label="Ota saippuaa" disabled><img src="./assets/furniture/soap.webp" alt="" draggable="false"></button>
-        <button type="button" class="wash-tap" aria-label="Avaa hana"><img src="./assets/furniture/tap.webp" alt="" draggable="false"><span class="wash-stream" aria-hidden="true"></span></button>
-        <div class="wash-hands" aria-hidden="true">${image("sink")}<img class="wash-state" src="${stepAsset("hands-clean")}" alt="" draggable="false"></div>
-        <button type="button" class="wash-scrub" hidden>Pese kädet</button>
-        <button type="button" class="wash-dry" hidden>${image("towel")}Kuivaa kädet</button>
+        <button type="button" class="wash-soap wash-object" aria-label="Ota saippuaa" disabled>
+          <span class="wash-object-base"></span><span class="wash-object-moving"></span>
+        </button>
+        <button type="button" class="wash-tap wash-object" aria-label="Avaa hana">
+          <span class="wash-object-base"></span><span class="wash-object-moving"></span><span class="wash-stream" aria-hidden="true"></span>
+        </button>
+        <div class="wash-hands">${image("sink")}
+          <button type="button" class="wash-scrub" aria-label="Pese kädet" disabled>
+            <img class="wash-state" src="${stepAsset("hands-clean")}" alt="" draggable="false">
+          </button>
+        </div>
+        <button type="button" class="wash-dry wash-object" aria-label="Kuivaa kädet" hidden>${image("towel")}</button>
       </div>`,
     );
     say("Hei pieni ystävä! Leikitään yhdessä.");
     const soap = scene.querySelector<HTMLButtonElement>(".wash-soap")!;
     const tap = scene.querySelector<HTMLButtonElement>(".wash-tap")!;
-    const sink = scene.querySelector(".baking-wash")!;
+    const sink = scene.querySelector<HTMLElement>(".baking-wash")!;
     const hands = scene.querySelector<HTMLImageElement>(".wash-state")!;
     const scrub = scene.querySelector<HTMLButtonElement>(".wash-scrub")!;
     const dry = scene.querySelector<HTMLButtonElement>(".wash-dry")!;
@@ -251,26 +306,53 @@ export function startBaking(): void {
     const washGeneration = mixingGeneration;
     void import("../phaser-room.js").then(({ createPreparationView }) => {
       if (washGeneration !== mixingGeneration || !sink.isConnected) return;
-      preparationView = createPreparationView(sink as HTMLElement);
+      preparationView = createPreparationView(sink);
       preparationView.setStage(washStage);
     }).catch(() => {});
-    soap.onclick = () => {
+
+    function handle(
+      object: HTMLButtonElement,
+      measure: (start: Point, point: Point, distance: number) => number,
+      act: () => void,
+    ): void {
+      let origin: Point;
+      let distance = 0;
+      gesture(object, {
+        start(point) { origin = point; distance = 0; },
+        move(from, point) {
+          distance += Math.abs(point.x - from.x);
+          const movement = Math.max(0, Math.min(1, measure(origin, point, distance)));
+          object.style.setProperty("--wash-motion", String(movement));
+        },
+        end(point) {
+          object.style.removeProperty("--wash-motion");
+          if (point && !object.disabled && measure(origin, point, distance) >= 1) act();
+        },
+      });
+      object.onclick = (event) => {
+        if (event.detail === 0 && !object.disabled) act();
+      };
+    }
+
+    handle(soap, (start, point) => (point.y - start.y) / 14, () => {
       washStage = 1;
       hands.src = stepAsset("hands-soapy");
       preparationView?.setStage(washStage);
       sound();
       sink.classList.add("soapy");
       soap.disabled = true;
-      scrub.hidden = false;
+      scrub.disabled = false;
       scrub.focus({ preventScroll: true });
-    };
-    scrub.onclick = () => {
-      scrub.hidden = true;
+      el("instruction").textContent = "Hankaa käsiä edestakaisin.";
+    });
+    handle(scrub, (start, point, distance) => Math.max(distance, Math.abs(point.x - start.x)) / 24, () => {
+      scrub.disabled = true;
       tap.setAttribute("aria-label", "Huuhtele kädet");
       tap.disabled = false;
       tap.focus({ preventScroll: true });
-    };
-    tap.onclick = () => {
+      el("instruction").textContent = "Käännä hanaa huuhdellaksesi kädet.";
+    });
+    handle(tap, (start, point) => Math.abs(point.x - start.x) / 18, () => {
       if (!waterOn) {
         waterOn = true;
         washStage = 3;
@@ -279,7 +361,7 @@ export function startBaking(): void {
         tap.disabled = true;
         soap.disabled = false;
         soap.focus({ preventScroll: true });
-        el("instruction").textContent = "Ota saippuaa ja pese kädet.";
+        el("instruction").textContent = "Paina saippuapumppua alaspäin.";
         return;
       }
       washStage = 2;
@@ -292,19 +374,21 @@ export function startBaking(): void {
         preparationView?.setStage(washStage);
         hands.src = stepAsset("hands-wet");
         dry.hidden = false;
-        el("instruction").textContent = "Kuivaa kädet pyyhkeellä.";
+        el("instruction").textContent = "Vedä pyyhe käsien päälle.";
         dry.focus({ preventScroll: true });
       }, 650);
-    };
-    dry.onclick = () => {
+    });
+    transfer(dry, scrub, () => {
+      if (dry.disabled) return;
       dry.disabled = true;
       hands.src = stepAsset("hands-dry");
       timer = setTimeout(() => {
         washed = true;
-        if (order?.mix ?? true) ingredients(recipe);
+        if (mixDough()) ingredients(recipe);
         else prepare(recipe);
       }, 450);
-    };
+    });
+
   }
 
   function ingredients(recipe: Recipe): void {
@@ -505,18 +589,19 @@ export function startBaking(): void {
   }
 
   function finishRecipe(recipe: Recipe): void {
-    runSteps(decorate() ? recipe.after : [], () => {
+    runSteps(selectedRecipe === "tart" || decorate() ? recipe.after : [], () => {
       if (!decorate()) {
         complete(recipe);
         return;
       }
       const count = order?.toppings ?? (selectedRecipe === "tart" ? 1 : portionCount);
-      show("Valitse koriste ja lisää se leivonnaiseen.", `
-        ${image(recipe.ready)}
+      show("Vedä koriste leivonnaisen päälle.", `
+        <div class="bakery-work-target" aria-label="Leivonnainen">${image(recipe.ready)}</div>
         <div class="bakery-decorations"></div>
         <p class="bakery-decoration-status" aria-live="polite">0 / ${count}</p>
         <div class="bakery-step-results" aria-hidden="true"></div>`);
-      const artwork = scene.querySelector("img")!;
+      const destination = scene.querySelector<HTMLElement>(".bakery-work-target")!;
+      const artwork = destination.querySelector("img")!;
       const status = scene.querySelector<HTMLElement>(".bakery-decoration-status")!;
       const options = scene.querySelector<HTMLElement>(".bakery-decorations")!;
       const requested = order?.requested;
@@ -524,8 +609,10 @@ export function startBaking(): void {
       for (const decoration of recipe.decorations) {
         const button = document.createElement("button");
         button.type = "button";
-        button.innerHTML = `${image("tool" in decoration ? decoration.tool : decoration.image)}${decoration.name}`;
-        button.onclick = () => {
+        button.setAttribute("aria-label", decoration.name);
+        button.innerHTML = image("tool" in decoration ? decoration.tool : decoration.image);
+        transfer(button, destination, () => {
+          if (button.disabled) return;
           if (requested && toppings.length === 0 && decoration.name !== requested) {
             feedback(`Hile toivoo ensimmäiseen kakkuun: ${requested.toLowerCase()}.`);
             return;
@@ -539,7 +626,7 @@ export function startBaking(): void {
             options.querySelectorAll("button").forEach((choice) => { choice.disabled = true; });
             timer = setTimeout(() => complete(recipe), 650);
           } else if (selectedRecipe === "tart") button.disabled = true;
-        };
+        });
         options.append(button);
       }
       if (requested) feedback(`Hileen ensimmäinen toive: ${requested.toLowerCase()}.`);

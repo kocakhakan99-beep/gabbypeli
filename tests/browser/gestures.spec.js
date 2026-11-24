@@ -31,6 +31,7 @@ test("one swipe opens multiple flowers and the next bed also works by keyboard",
   await page.goto("/");
   await page.locator("#gf-sound").click();
   await page.locator("#gf-open-garden").click();
+  await page.getByRole("button", { name: "Kukkapenkit", exact: true }).click();
   await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   const field = page.locator("#gf-garden-field");
   for (const count of [3, 4]) {
@@ -77,11 +78,23 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   await page.getByRole("button", { name: "Piparit" }).click();
   await expect(page.locator(".baking-wash")).toHaveClass(/phaser-preparation-ready/);
-  await page.getByRole("button", { name: "Avaa hana" }).click();
-  await page.getByRole("button", { name: "Ota saippuaa" }).click();
-  await page.getByRole("button", { name: "Pese kädet" }).click();
-  await page.getByRole("button", { name: "Huuhtele kädet" }).click();
-  await page.getByRole("button", { name: "Kuivaa kädet" }).click();
+  async function moveWash(name, offsets) {
+    const object = page.getByRole("button", { name, exact: true });
+    await object.scrollIntoViewIfNeeded();
+    const box = await object.boundingBox();
+    const start = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    expect(await object.evaluate((element, point) => element.contains(document.elementFromPoint(point.x, point.y)), start)).toBe(true);
+    await swipe(page, [start, ...offsets.map(([x, y]) => ({ x: start.x + x, y: start.y + y }))]);
+  }
+  await page.getByRole("button", { name: "Avaa hana", exact: true }).tap();
+  await expect(page.getByRole("button", { name: "Ota saippuaa" })).toBeDisabled();
+  await moveWash("Avaa hana", [[24, 0]]);
+  await moveWash("Ota saippuaa", [[0, 20]]);
+  await moveWash("Pese kädet", [[30, 0], [-30, 0], [30, 0]]);
+  await moveWash("Huuhtele kädet", [[24, 0]]);
+  const towel = page.getByRole("button", { name: "Kuivaa kädet" });
+  await towel.scrollIntoViewIfNeeded();
+  await swipe(page, [await center(towel), await center(page.locator(".wash-scrub"))]);
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
     await page.getByRole("button", { name }).press("Enter");
   const bowl = page.locator(".bakery-bowl.mixing");
@@ -132,3 +145,16 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   ).toBeVisible();
 });
 
+
+test("a side swipe turns an individual memory card", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#gf-open-memory").click();
+  await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
+  await page.locator("#gf-action").press("Enter");
+  const card = page.locator("#gf-cards .memory-card").first();
+  await card.scrollIntoViewIfNeeded();
+  const box = await card.boundingBox();
+  const start = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  await swipe(page, [start, { x: start.x + 34, y: start.y }]);
+  await expect(card).toHaveAttribute("aria-pressed", "true");
+});

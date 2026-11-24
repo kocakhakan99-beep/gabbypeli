@@ -426,11 +426,13 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
             tiles.set(button, tile);
           }
           const image = tile.image;
-          const visible = mode === "memory" ? tile.openness > 0.5 : !button.classList.contains("piece") || !button.disabled;
+          const drag = Number(button.style.getPropertyValue("--card-drag"));
+          const openness = !up && drag > 0 ? Math.max(tile.openness, drag * 0.48) : tile.openness;
+          const visible = mode === "memory" ? openness > 0.5 : !button.classList.contains("piece") || !button.disabled;
           image.setVisible(visible);
           image.setPosition(rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2);
           if (mode === "memory") {
-            const turn = Math.abs(Math.cos(tile.openness * Math.PI));
+            const turn = Math.abs(Math.cos(openness * Math.PI));
             const backing = tile.backing!;
             backing.setFrame(visible ? "card_front" : "card_back_purple");
             backing.setPosition(image.x, image.y);

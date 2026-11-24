@@ -30,19 +30,23 @@ for (const [name, id, harvest, ending] of crops) {
     const tool = field.locator(".garden-crop-tool");
     for (const step of ["Kuohkeuta multa", "Kylvä siemen", "Kastele siemen", "Kastele itu", "Siisti kasvupaikka", "Kastele kasvi", harvest]) {
       await expect(tool).toHaveText(step);
-      if (step === "Kastele siemen") await tool.tap();
-      else await tool.press("Enter");
+      if (step === "Kastele siemen") {
+        await tool.tap();
+        await expect(tool).toHaveText(step);
+      }
+      await field.locator(".garden-crop-tool:visible, .garden-crop-plot[data-work]:not([data-work=''])").press("Enter");
     }
     await expect(field).toHaveAttribute("data-crop-frame", `${id}_${ending}`);
     await field.screenshot({ path: testInfo.outputPath("garden-harvest.png"), animations: "disabled" });
-    await page.locator("#gf-action").tap();
+    await page.getByRole("button", { name: "Siirrä sato koriin" }).press("Enter");
     await expect(page.locator("#gf-win")).toBeVisible();
     await expect(page.locator("#gf-coin-reward")).toBeHidden();
     await expect(field.locator("canvas")).toHaveCount(0);
     expect(paths.sort()).toEqual([
       `/assets/nabby-garden-v6/${id}/${id}.json`,
       `/assets/nabby-garden-v6/${id}/${id}.webp`,
-    ]);
+      `/assets/nabby-garden-v6/${id}/seed.webp`,
+    ].sort());
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
@@ -76,15 +80,15 @@ test("garden controls remain playable when the crop texture fails", async ({ pag
   await openCrop(page, "Mansikka");
   const field = page.locator("#gf-garden-field");
   const tool = field.locator(".garden-crop-tool");
-  for (let phase = 0; phase < 7; phase++) await tool.press("Enter");
+  await harvestCrop(page);
   await expect(field).toHaveAttribute("data-crop-frame", "strawberry_post_harvest");
-  await page.locator("#gf-action").tap();
+  await page.getByRole("button", { name: "Siirrä sato koriin" }).press("Enter");
   await expect(page.locator("#gf-win")).toBeVisible();
 });
 
 async function harvestCrop(page) {
-  const tool = page.locator(".garden-crop-tool");
-  for (let phase = 0; phase < 7; phase++) await tool.press("Enter");
+  const object = page.locator(".garden-crop-tool:visible, .garden-crop-plot[data-work]:not([data-work=''])");
+  for (let phase = 0; phase < 7; phase++) await object.press("Enter");
 }
 
 test("garden Adventure unlocks ten levels and pays only once per level", async ({ page }) => {
@@ -109,7 +113,7 @@ test("garden Adventure unlocks ten levels and pays only once per level", async (
       await harvestCrop(page);
       await expect(list.locator("[data-harvested=true]")).toHaveCount(index + 1);
       if (index < order.length - 1) await expect(page.locator("#gf-win")).toBeHidden();
-      await page.locator("#gf-action").tap();
+      await page.getByRole("button", { name: "Siirrä sato koriin" }).press("Enter");
     }
     await expect(page.locator("#gf-win")).toBeVisible();
     await expect(page.locator("#gf-coin-reward")).toHaveText("+25 kisukolikkoa");
@@ -122,7 +126,7 @@ test("garden Adventure unlocks ten levels and pays only once per level", async (
   await expect(page.locator('#gf-levels button[data-completed="true"]')).toHaveCount(10);
   await page.locator("#gf-levels button").first().tap();
   await harvestCrop(page);
-  await page.locator("#gf-action").tap();
+  await page.getByRole("button", { name: "Siirrä sato koriin" }).press("Enter");
   await expect(page.locator("#gf-coin-reward")).toHaveText("Taso suoritettu uudelleen!");
   await page.locator("#gf-other").tap();
   await expect(page.locator("#gf-coins")).toHaveText("250");
@@ -137,7 +141,7 @@ test("garden Adventure preserves old progress and restarts an interrupted bed", 
   await expect(page.locator("#gf-coins")).toHaveText("175");
   await page.locator("#gf-campaign-resume").tap();
   await harvestCrop(page);
-  await page.locator("#gf-action").tap();
+  await page.getByRole("button", { name: "Siirrä sato koriin" }).press("Enter");
   await expect(page.locator("#gf-garden-order [aria-current=step]")).toHaveText("Mansikka");
   await page.locator("#gf-home-button").tap();
   await expect(page.locator("#gf-garden-field canvas")).toHaveCount(0);
@@ -145,4 +149,23 @@ test("garden Adventure preserves old progress and restarts an interrupted bed", 
   await page.locator("#gf-campaign-resume").tap();
   await expect(page.locator("#gf-garden-order [aria-current=step]")).toHaveText("Taikakukka");
   await expect(page.locator("#gf-garden-field")).toHaveAttribute("data-crop-phase", "0");
+});
+
+test("Sandbox lets the player choose a mode and three crops independently", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#gf-free-toggle").tap();
+  await page.locator("#gf-open-garden").tap();
+  await expect(page.getByRole("group", { name: "Kasvatuksen asetukset" })).toBeVisible();
+  await page.getByLabel("Kasvupaikkoja").selectOption("3");
+  await page.getByLabel("Kasvi 2").selectOption("magic_flower");
+  await page.getByLabel("Kasvi 3").selectOption("strawberry");
+  await page.getByRole("button", { name: "Porkkana", exact: true }).tap();
+  await expect(page.locator("#gf-garden-order li")).toHaveText(["Porkkana", "Taikakukka", "Mansikka"]);
+  for (const name of ["Porkkana", "Taikakukka", "Mansikka"]) {
+    await expect(page.locator("#gf-garden-order [aria-current=step]")).toHaveText(name);
+    await harvestCrop(page);
+    await page.getByRole("button", { name: "Siirrä sato koriin" }).press("Enter");
+  }
+  await expect(page.locator("#gf-win")).toBeVisible();
+  await expect(page.locator("#gf-coin-reward")).toBeHidden();
 });

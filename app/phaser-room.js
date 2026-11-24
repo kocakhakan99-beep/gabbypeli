@@ -43549,10 +43549,10 @@ function ae(e, t, n, r = 1, i) {
 							openness: +!!l
 						}, u.set(e, d);
 					}
-					let f = d.image, p = t === "memory" ? d.openness > .5 : !e.classList.contains("piece") || !e.disabled;
-					if (f.setVisible(p), f.setPosition(s.left - r.left + s.width / 2, s.top - r.top + s.height / 2), t === "memory") {
-						let e = Math.abs(Math.cos(d.openness * Math.PI)), t = d.backing;
-						t.setFrame(p ? "card_front" : "card_back_purple"), t.setPosition(f.x, f.y);
+					let f = d.image, p = Number(e.style.getPropertyValue("--card-drag")), m = !l && p > 0 ? Math.max(d.openness, p * .48) : d.openness, h = t === "memory" ? m > .5 : !e.classList.contains("piece") || !e.disabled;
+					if (f.setVisible(h), f.setPosition(s.left - r.left + s.width / 2, s.top - r.top + s.height / 2), t === "memory") {
+						let e = Math.abs(Math.cos(m * Math.PI)), t = d.backing;
+						t.setFrame(h ? "card_front" : "card_back_purple"), t.setPosition(f.x, f.y);
 						let n = Math.min(s.width / t.frame.realWidth, s.height / t.frame.realHeight);
 						t.setScale(n * e, n);
 						let r = Math.min(s.width * .8 / f.frame.realWidth, s.height * .8 / f.frame.realHeight);

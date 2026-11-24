@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gabbypeli</title>
-    <link rel="stylesheet" href="./app/styles.css?v=gabby-home-garden-v6" />
+    <link rel="stylesheet" href="./app/styles.css?v=gabby-object-gestures" />
   </head>
   <body>
     <div id="gabby-fi" lang="fi">
@@ -544,7 +544,10 @@
                 ></canvas>
               </div>
               <div id="gf-garden" hidden>
-                <button type="button" id="gf-garden-grow" hidden>Kasvata oma kasvi</button>
+                <div class="garden-mode-picker" role="group" aria-label="Puutarhan pelimuoto" hidden>
+                  <button type="button" id="gf-garden-grow" aria-pressed="true">Kasvata oma kasvi</button>
+                  <button type="button" id="gf-garden-classic" aria-pressed="false">Kukkapenkit</button>
+                </div>
                 <ol id="gf-garden-order" aria-label="Tason kasvupaikat" hidden></ol>
                 <div
                   id="gf-garden-field"
