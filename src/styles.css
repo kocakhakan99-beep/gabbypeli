@@ -3782,15 +3782,21 @@ body {
 #gabby-fi #gf-win-title,
 #gabby-fi #gf-win-text { margin: 0; }
 #gabby-fi #gf-win .celebration-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
   margin-top: 18px;
+}
+#gabby-fi #gf-win .celebration-actions:has(#gf-next-level:not([hidden])) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+#gabby-fi .celebration-actions:has(#gf-next-level:not([hidden])) #gf-other {
+  grid-column: 1 / -1;
+  justify-self: center;
 }
 #gabby-fi .celebration-actions button { min-height: 48px; }
 #gabby-fi .celebration-actions button.primary {
-  flex: 1 1 7rem;
+  min-width: 0;
   margin: 0;
   padding: .55em .6em;
   border: 3px solid #fff1f8;
