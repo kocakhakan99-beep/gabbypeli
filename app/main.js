@@ -1,3 +1,4 @@
+import { resetBakingVisit } from "./games/baking.js";
 import { loadDOMAtlas } from "./dom-atlases.js";
 import { campaignGames, campaignLevel, renderCampaign } from "./campaign.js";
 import { cancelAdvance, iconButton } from "./ui.js";
@@ -58,6 +59,8 @@ const mapPanel = document.querySelector("#gf-campaign-map");
 const roomPanel = document.querySelector("#gf-free-games");
 const stickerPanel = document.querySelector("#gf-sticker-book");
 function showDestination(destination) {
+    if (destination !== "campaign" || mapGame !== "baking")
+        resetBakingVisit();
     if (destination === "campaign")
         void loadDOMAtlas("adventure");
     if (destination === "free")

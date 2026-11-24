@@ -20,6 +20,7 @@ Valitse pelin tunnisteella oikea speksi. Jokainen speksi kattaa julkaisutilan, p
 | Dokumentaation ylläpito koodimuutoksissa | [AGENTS.md](../AGENTS.md) |
 | Nukketalo, tasokartta, ajastin, palkinnot tai tallennus | [Yhteinen pelialusta](platform.md) |
 | Jaettu kuvitus, atlas, puhe, tehoste tai uusi assettitarve | [Assetit](assets.md) |
+| Uusi assettipaketti tai mahdollinen duplikaatti | [Assettierän vastaanotto](assets.md#uuden-assettierän-vastaanotto) |
 | Aiempi visuaalinen suunnittelu | [Huonekohtaisen seikkailun suunnitelma](../UI-SUUNNITELMA.md) |
 
 Uuden pelin speksissä käytä kolmea osiota **Pelisäännöt**, **Assetit ja käyttötilanteet** sekä **Hyväksyntätarkistukset**. Ilmoita alussa pelin tunniste, julkaisutila ja koodin aloituspiste. Linkitä speksi tähän hakemistoon ja kuvaa pelikohtaisten päätösten vaikutus yhteiseen pelialustaan tarvittaessa siellä.

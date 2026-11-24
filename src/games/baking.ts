@@ -12,11 +12,14 @@ import {
 import { bindStroke, stopStroke, type Point } from "./stroke.js";
 import type { BakingTrayView, MixingView, PreparationView } from "../phaser-room.js";
 
-type Recipe = { name: string; piece: string; art: string; heat: number };
-const recipes: Recipe[] = [
-  { name: "Piparit", piece: "pipari", art: "cookie", heat: 175 },
-  { name: "Kuppikakut", piece: "kuppikakku", art: "cupcake", heat: 200 },
-];
+import { orders, recipes, stepAsset, type BakingStep, type Recipe, type RecipeId } from "./baking-recipes.js";
+
+let washed = false;
+
+export function resetBakingVisit(): void {
+  washed = false;
+}
+
 let timer: ReturnType<typeof setTimeout> | undefined;
 let mixingView: MixingView | undefined;
 let trayView: BakingTrayView | undefined;
@@ -46,7 +49,12 @@ export function startBaking(): void {
   stopBakingGestures();
   const game = el("baking");
   const adventure = campaignLevel();
-  const portionCount = adventure === undefined ? 6 : 2 + Math.floor((adventure - 1) / 2);
+  const order = adventure === undefined ? undefined : orders[adventure - 1];
+  let portionCount = order?.count ?? 6;
+  let selectedRecipe: RecipeId;
+  let stage = 0;
+  let total = 1;
+  const toppings: string[] = [];
   const mixingGoal = adventure === undefined ? 4 : 2 + (adventure - 1) / 3;
   heading(
     "cakey",
@@ -57,15 +65,17 @@ export function startBaking(): void {
   const scene = document.createElement("div");
   scene.className = "bakery-scene";
   game.append(scene);
-  progress(0, 6);
+  progress(0, total);
 
-  function show(step: number, instruction: string, html: string): void {
+  function show(instruction: string, html: string): void {
     stopMixingView();
     scene.querySelectorAll<HTMLElement>("[data-gesture]").forEach(stopStroke);
     scene.innerHTML = html;
     feedback("");
     el("instruction").textContent = instruction;
-    progress(step, 6);
+    progress(stage++, total);
+    const first = scene.querySelector<HTMLElement>("button:not(:disabled), [tabindex='0']");
+    first?.focus({ preventScroll: true });
   }
 
   function sound(): void {
@@ -87,9 +97,15 @@ export function startBaking(): void {
     accept: (point?: Point) => void,
   ): void {
     let start: Point;
+    let misses = 0;
+    let dragged = false;
+    item.addEventListener("click", (event) => {
+      if (dragged && event.detail > 0) event.stopImmediatePropagation();
+    }, { capture: true });
     gesture(item, {
       start(point) {
         start = point;
+        dragged = false;
       },
       move(_from, point) {
         item.style.translate =
@@ -99,6 +115,7 @@ export function startBaking(): void {
         item.style.removeProperty("translate");
         if (!point || Math.hypot(point.x - start.x, point.y - start.y) < 8)
           return;
+        dragged = true;
         const box = destination.getBoundingClientRect();
         if (
           point.x >= box.left - 12 &&
@@ -107,8 +124,13 @@ export function startBaking(): void {
           point.y <= box.bottom + 12
         )
           accept(point);
+        else {
+          feedback(misses ? "Kokeile korostettua kohdetta." : "Vie väline työpinnalle tai ohjeessa näkyvään kohteeseen.");
+          if (++misses >= 2) destination.classList.add("bakery-drop-hint");
+        }
       },
     });
+    if (item instanceof HTMLButtonElement) return;
     item.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
@@ -116,45 +138,116 @@ export function startBaking(): void {
     });
   }
 
-  const piece = (recipe: Recipe) =>
-    '<span class="bakery-piece ' + recipe.art + '" aria-hidden="true"></span>';
-  if (adventure !== undefined) {
-    wash(recipes[(adventure - 1) % recipes.length]);
+  const image = (asset: string) => `<img src="${stepAsset(asset)}" alt="" draggable="false">`;
+  const piece = (recipe: Recipe) => `<span class="bakery-piece">${image(recipe.raw)}</span>`;
+  const decorate = () => selectedRecipe === "tart" || (order?.finish ?? true);
+
+  const usesParchment = () => selectedRecipe === "cookie" || selectedRecipe === "bun";
+
+  function prepare(recipe: Recipe): void {
+    runSteps(recipe.prepare, () => {
+      if (usesParchment()) tray(recipe);
+      else oven(recipe);
+    });
+  }
+
+  function begin(id: RecipeId): void {
+    selectedRecipe = id;
+    const recipe = recipes[id];
+    if (id === "tart") portionCount = 1;
+    else if (!order && id === "bun") portionCount = 4;
+    const shouldWash = !washed || adventure === 1;
+    total = 1 + Number(usesParchment()) + recipe.prepare.length + (shouldWash ? 1 : 0) +
+      ((order?.mix ?? true) ? 2 : 0) +
+      (id === "bun" && decorate() ? 1 : 0) +
+      (id === "tart" || decorate() ? recipe.after.length : 0) + (decorate() ? 1 : 0) +
+      (order ? 1 : 0);
+    const cook = () => {
+      if (shouldWash) wash(recipe);
+      else if (order?.mix ?? true) ingredients(recipe);
+      else prepare(recipe);
+    };
+    if (order) {
+      show(
+        `Hileen tilaus · ${recipe.name} · ${portionCount} kpl`,
+        `${image(recipe.ready)}${order.requested ? `<p>Hileen toive: ${order.requested.toLowerCase()}.</p>` : ""}<button type="button">Aloita tilaus</button>`,
+      );
+      scene.querySelector("button")!.onclick = cook;
+    } else cook();
+  }
+
+  if (order?.recipe) {
+    begin(order.recipe);
     return;
   }
-  scene.innerHTML = recipes
-    .map(
-      (recipe, i) =>
-        '<button type="button" class="bakery-recipe" data-recipe="' +
-        i +
-        '">' +
-        piece(recipe) +
-        recipe.name +
-        "</button>",
-    )
-    .join("");
-  scene
-    .querySelectorAll<HTMLButtonElement>(".bakery-recipe")
-    .forEach((choice, i) => {
-      choice.onclick = () => wash(recipes[i]);
+  if (order) el("instruction").textContent = "Hileen juhlatilaus: valitse yksi resepti.";
+  scene.innerHTML = `<div class="bakery-recipes">${Object.entries(recipes).map(([id, recipe]) =>
+    `<button type="button" class="bakery-recipe" data-recipe="${id}">${image(recipe.ready)}${recipe.name}</button>`,
+  ).join("")}</div>`;
+  scene.querySelectorAll<HTMLButtonElement>(".bakery-recipe")
+    .forEach((choice) => {
+      choice.onclick = () => begin(choice.dataset.recipe as RecipeId);
     });
+
+  function runSteps(steps: readonly BakingStep[], done: () => void): void {
+    const [step, ...remaining] = steps;
+    if (!step) {
+      done();
+      return;
+    }
+    const count = step.repeat ? portionCount : 1;
+    show(step.instruction, `
+      <div class="bakery-work-target" aria-label="Työpinta">${image(step.image)}</div>
+      <button type="button" class="bakery-step-action">${step.tool ? image(step.tool) : ""}${step.action}</button>
+      <p class="bakery-step-count" aria-live="polite"></p>
+      <div class="bakery-step-results" aria-hidden="true"></div>`);
+    const target = scene.querySelector<HTMLElement>(".bakery-work-target")!;
+    const action = scene.querySelector<HTMLButtonElement>(".bakery-step-action")!;
+    const meter = scene.querySelector<HTMLElement>(".bakery-step-count")!;
+    const results = scene.querySelector<HTMLElement>(".bakery-step-results")!;
+    let completed = 0;
+    meter.textContent = `0 / ${count}`;
+    function work(): void {
+      if (completed === count) return;
+      completed++;
+      sound();
+      meter.textContent = `${completed} / ${count}`;
+      if (step.result) results.insertAdjacentHTML("beforeend", image(step.result));
+      if (completed === count) {
+        action.disabled = true;
+        timer = setTimeout(() => runSteps(remaining, done), 450);
+      }
+    }
+    if (step.tool) transfer(action, target, work);
+    else gesture(target, {
+      start() {},
+      move() {},
+      end(point) { if (point) work(); },
+    });
+    action.onclick = work;
+  }
 
   function wash(recipe: Recipe): void {
     show(
-      1,
-      "Ota saippuaa ja huuhtele kädet.",
+      "Avaa hana, ota saippuaa, pese, huuhtele ja kuivaa kädet.",
       `
       <div class="baking-wash">
-        <button type="button" class="wash-soap" aria-label="Ota saippuaa"><img src="./assets/furniture/soap.webp" alt="" draggable="false"></button>
-        <button type="button" class="wash-tap" aria-label="Huuhtele kädet" disabled><img src="./assets/furniture/tap.webp" alt="" draggable="false"><span class="wash-stream" aria-hidden="true"></span></button>
-        <div class="wash-hands" aria-hidden="true"></div>
+        <button type="button" class="wash-soap" aria-label="Ota saippuaa" disabled><img src="./assets/furniture/soap.webp" alt="" draggable="false"></button>
+        <button type="button" class="wash-tap" aria-label="Avaa hana"><img src="./assets/furniture/tap.webp" alt="" draggable="false"><span class="wash-stream" aria-hidden="true"></span></button>
+        <div class="wash-hands" aria-hidden="true">${image("sink")}<img class="wash-state" src="${stepAsset("hands-clean")}" alt="" draggable="false"></div>
+        <button type="button" class="wash-scrub" hidden>Pese kädet</button>
+        <button type="button" class="wash-dry" hidden>${image("towel")}Kuivaa kädet</button>
       </div>`,
     );
     say("Hei pieni ystävä! Leikitään yhdessä.");
     const soap = scene.querySelector<HTMLButtonElement>(".wash-soap")!;
     const tap = scene.querySelector<HTMLButtonElement>(".wash-tap")!;
     const sink = scene.querySelector(".baking-wash")!;
+    const hands = scene.querySelector<HTMLImageElement>(".wash-state")!;
+    const scrub = scene.querySelector<HTMLButtonElement>(".wash-scrub")!;
+    const dry = scene.querySelector<HTMLButtonElement>(".wash-dry")!;
     let washStage = 0;
+    let waterOn = false;
     const washGeneration = mixingGeneration;
     void import("../phaser-room.js").then(({ createPreparationView }) => {
       if (washGeneration !== mixingGeneration || !sink.isConnected) return;
@@ -163,24 +256,59 @@ export function startBaking(): void {
     }).catch(() => {});
     soap.onclick = () => {
       washStage = 1;
+      hands.src = stepAsset("hands-soapy");
       preparationView?.setStage(washStage);
       sound();
       sink.classList.add("soapy");
       soap.disabled = true;
+      scrub.hidden = false;
+      scrub.focus({ preventScroll: true });
+    };
+    scrub.onclick = () => {
+      scrub.hidden = true;
+      tap.setAttribute("aria-label", "Huuhtele kädet");
       tap.disabled = false;
+      tap.focus({ preventScroll: true });
     };
     tap.onclick = () => {
+      if (!waterOn) {
+        waterOn = true;
+        washStage = 3;
+        preparationView?.setStage(washStage);
+        sink.classList.add("rinsing");
+        tap.disabled = true;
+        soap.disabled = false;
+        soap.focus({ preventScroll: true });
+        el("instruction").textContent = "Ota saippuaa ja pese kädet.";
+        return;
+      }
       washStage = 2;
       preparationView?.setStage(washStage);
       tap.disabled = true;
       sink.classList.add("rinsing");
-      timer = setTimeout(() => ingredients(recipe), 850);
+      timer = setTimeout(() => {
+        sink.classList.remove("rinsing", "soapy");
+        washStage = 0;
+        preparationView?.setStage(washStage);
+        hands.src = stepAsset("hands-wet");
+        dry.hidden = false;
+        el("instruction").textContent = "Kuivaa kädet pyyhkeellä.";
+        dry.focus({ preventScroll: true });
+      }, 650);
+    };
+    dry.onclick = () => {
+      dry.disabled = true;
+      hands.src = stepAsset("hands-dry");
+      timer = setTimeout(() => {
+        washed = true;
+        if (order?.mix ?? true) ingredients(recipe);
+        else prepare(recipe);
+      }, 450);
     };
   }
 
   function ingredients(recipe: Recipe): void {
     show(
-      2,
       "Vedä jauhot, muna ja maito kulhoon.",
       `
       <div class="bakery-ingredients">
@@ -210,7 +338,6 @@ export function startBaking(): void {
 
   function mix(recipe: Recipe): void {
     show(
-      3,
       "Sekoita taikina pyörittämällä sormea kulhossa.",
       `
       <div class="bakery-bowl mixing" tabindex="0" aria-label="Sekoita taikina"><span class="bakery-spoon" aria-hidden="true"></span></div>
@@ -233,7 +360,7 @@ export function startBaking(): void {
       turns += amount;
       meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * mixingGoal)) * 100);
       mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
-      if (meter.value === 100) tray(recipe);
+      if (meter.value === 100) prepare(recipe);
     }
     gesture(bowl, {
       start() {},
@@ -278,7 +405,6 @@ export function startBaking(): void {
 
   function tray(recipe: Recipe): void {
     show(
-      4,
       "Vedä leivinpaperi pellille.",
       `
       <div class="bakery-tray" aria-label="Uunipelti"><div class="bakery-slots"></div></div>
@@ -292,7 +418,7 @@ export function startBaking(): void {
     const generation = mixingGeneration;
     void import("../phaser-room.js").then(({ createBakingTrayView }) => {
       if (generation !== mixingGeneration || !pan.isConnected) return;
-      trayView = createBakingTrayView(pan, recipe.art);
+      trayView = createBakingTrayView(pan, stepAsset(recipe.raw));
       if (pan.classList.contains("lined")) trayView.line();
       [...slots.children].forEach((slot, index) => {
         if (slot.hasChildNodes()) trayView?.place(index);
@@ -344,14 +470,85 @@ export function startBaking(): void {
           trayView?.place(places.indexOf(chosen));
           item.hidden = true;
           sound();
-          if (++filled === places.length) oven(recipe);
+          if (++filled === places.length) {
+            if (selectedRecipe === "bun" && decorate()) proof(recipe);
+            else oven(recipe);
+          }
         });
+    });
+  }
+
+  function proof(recipe: Recipe): void {
+    show("Korvapuustit kohoavat.", image("bun-proofed"));
+    timer = setTimeout(() => oven(recipe), 1000);
+  }
+
+  function complete(recipe: Recipe): void {
+    stopMixingView();
+    progress(total, total);
+    const last = recipe.decorations.find(({ name }) => name === toppings.at(-1));
+    const result = selectedRecipe === "tart" && toppings.length > 1 ? "tart-mixed"
+      : selectedRecipe === "tart" && toppings[0] === "Mansikka" ? "tart-slice"
+        : last?.image ?? recipe.ready;
+    const text = toppings.length ? `Valitsit: ${toppings.join(", ").toLowerCase()}. Hile kiittää avusta.` : "Hile kiittää avusta.";
+    finish("Pelti on valmis!", text, "cakey", {
+      src: stepAsset(result),
+      alt: recipe.name,
+      details: toppings.flatMap((name) => {
+        const choice = recipe.decorations.find((decoration) => decoration.name === name);
+        return choice ? [{
+          src: stepAsset(selectedRecipe === "tart" && "tool" in choice && typeof choice.tool === "string" ? choice.tool : choice.image),
+          alt: name,
+        }] : [];
+      }),
+    });
+  }
+
+  function finishRecipe(recipe: Recipe): void {
+    runSteps(decorate() ? recipe.after : [], () => {
+      if (!decorate()) {
+        complete(recipe);
+        return;
+      }
+      const count = order?.toppings ?? (selectedRecipe === "tart" ? 1 : portionCount);
+      show("Valitse koriste ja lisää se leivonnaiseen.", `
+        ${image(recipe.ready)}
+        <div class="bakery-decorations"></div>
+        <p class="bakery-decoration-status" aria-live="polite">0 / ${count}</p>
+        <div class="bakery-step-results" aria-hidden="true"></div>`);
+      const artwork = scene.querySelector("img")!;
+      const status = scene.querySelector<HTMLElement>(".bakery-decoration-status")!;
+      const options = scene.querySelector<HTMLElement>(".bakery-decorations")!;
+      const requested = order?.requested;
+      const results = scene.querySelector<HTMLElement>(".bakery-step-results")!;
+      for (const decoration of recipe.decorations) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.innerHTML = `${image("tool" in decoration ? decoration.tool : decoration.image)}${decoration.name}`;
+        button.onclick = () => {
+          if (requested && toppings.length === 0 && decoration.name !== requested) {
+            feedback(`Hile toivoo ensimmäiseen kakkuun: ${requested.toLowerCase()}.`);
+            return;
+          }
+          toppings.push(decoration.name);
+          if (selectedRecipe !== "tart") results.insertAdjacentHTML("beforeend", image(decoration.image));
+          artwork.src = stepAsset(selectedRecipe === "tart" && toppings.length > 1 ? "tart-mixed" : decoration.image);
+          status.textContent = `${toppings.length} / ${count}`;
+          if (toppings.length === count) {
+            if (selectedRecipe === "tart" && toppings.every((name) => name === "Mansikka")) artwork.src = stepAsset("tart-slice");
+            options.querySelectorAll("button").forEach((choice) => { choice.disabled = true; });
+            timer = setTimeout(() => complete(recipe), 650);
+          } else if (selectedRecipe === "tart") button.disabled = true;
+        };
+        options.append(button);
+      }
+      if (requested) feedback(`Hileen ensimmäinen toive: ${requested.toLowerCase()}.`);
+      options.querySelector("button")?.focus({ preventScroll: true });
     });
   }
 
   function oven(recipe: Recipe): void {
     show(
-      5,
       "Vedä uunin luukkua alaspäin.",
       `
       <div class="bakery-oven">
@@ -368,6 +565,7 @@ export function startBaking(): void {
     const knob = scene.querySelector<HTMLElement>(".bakery-knob")!;
     const temperature = scene.querySelector<HTMLOutputElement>(".bakery-temp")!;
     const pan = scene.querySelector<HTMLElement>(".oven-tray")!;
+    if (selectedRecipe === "cupcake" || selectedRecipe === "tart") pan.classList.add("bakery-shaped-pan", selectedRecipe);
     let step = 0;
     let start: Point;
     let heat = 0;
@@ -394,12 +592,12 @@ export function startBaking(): void {
       },
       move(_from, point) {
         if (step !== 0 && step !== 2) return;
-        const base = step === 2 ? 53 : 0;
-        const angle = Math.max(0, Math.min(65, base + (point.y - start.y)));
-        door.style.setProperty("--door-angle", -angle + "deg");
+        const base = step === 2 ? 1 : 0;
+        const opening = Math.max(0, Math.min(1, base + (point.y - start.y) / 53));
+        door.style.setProperty("--door-scale", String(1 - 0.78 * opening));
       },
       end(point) {
-        door.style.removeProperty("--door-angle");
+        door.style.removeProperty("--door-scale");
         if (
           point &&
           ((step === 0 && point.y - start.y > 25) ||
@@ -425,9 +623,9 @@ export function startBaking(): void {
       loaded.innerHTML = piece(recipe).repeat(portionCount);
       cavity.prepend(loaded);
       const generation = mixingGeneration;
-      void import("../phaser-room.js").then(({ createBakingTrayView }) => {
+      if (usesParchment()) void import("../phaser-room.js").then(({ createBakingTrayView }) => {
         if (generation !== mixingGeneration || !loaded.isConnected) return;
-        trayView = createBakingTrayView(loaded, recipe.art);
+        trayView = createBakingTrayView(loaded, stepAsset(recipe.raw));
         trayView.line();
         for (let index = 0; index < portionCount; index++) trayView.place(index);
       }).catch(() => {
@@ -440,7 +638,7 @@ export function startBaking(): void {
     function setHeat(value: number): void {
       if (step !== 3) return;
       heat = Math.max(0, Math.min(recipe.heat, value));
-      knob.style.setProperty("--dial", heat + "deg");
+      knob.style.setProperty("--dial", (-135 + (heat / 225) * 270) + "deg");
       knob.setAttribute("aria-valuenow", String(Math.round(heat)));
       temperature.value = Math.round(heat) + " °C";
       if (heat < recipe.heat) return;
@@ -449,9 +647,7 @@ export function startBaking(): void {
       cavity.classList.add("oven-cooking");
       feedback("Leivonnaiset paistuvat.");
       timer = setTimeout(() => {
-        stopMixingView();
-        progress(6, 6);
-        finish("Pelti on valmis!", "Hile kiittää avusta.", "cakey");
+        finishRecipe(recipe);
       }, 1700);
     }
     gesture(knob, {

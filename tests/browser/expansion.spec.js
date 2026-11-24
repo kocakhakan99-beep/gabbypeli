@@ -16,22 +16,54 @@ for (const width of [320, 768, 1100]) {
       path: testInfo.outputPath("playroom.png"),
       fullPage: true,
     });
+    if (width === 320)
+      await page.route("**/assets/gabby/atlases/bakery.webp.json", (route) => route.abort(), { times: 1 });
     await page.locator("#gf-open-baking").click();
     const piparit = width === 320;
     await page
       .getByRole("button", { name: piparit ? "Piparit" : "Kuppikakut" })
       .click();
+    await page.getByRole("button", { name: "Avaa hana" }).click();
     await page.getByRole("button", { name: "Ota saippuaa" }).click();
+    await page.getByRole("button", { name: "Pese kädet" }).click();
     await page.getByRole("button", { name: "Huuhtele kädet" }).click();
-    for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
-      await page.getByRole("button", { name }).press("Enter");
+    await page.getByRole("button", { name: "Kuivaa kädet" }).click();
+    const ingredients = [
+      ["Lisää jauhot", "flour_sack"],
+      ["Lisää muna", "egg_whole"],
+      ["Lisää maito", "milk_bottle"],
+    ];
+    for (const [name, frame] of ingredients) {
+      const ingredient = page.getByRole("button", { name });
+      await expect(ingredient).toBeVisible();
+      await expect.poll(() => ingredient.evaluate((element) =>
+        getComputedStyle(element, "::before").backgroundImage,
+      )).toMatch(piparit ? new RegExp(`/bakery/${frame}\\.webp`) : /blob:/);
+    }
+    await page.locator(".bakery-ingredients").screenshot({
+      path: testInfo.outputPath("bakery-ingredients.png"),
+    });
+    for (const [name] of ingredients) {
+      const ingredient = page.getByRole("button", { name });
+      await ingredient.press("Enter");
+      await expect(ingredient).toBeHidden();
+    }
     for (let i = 0; i < 4; i++)
       await page.locator(".bakery-bowl.mixing").press("Enter");
-    await page
-      .getByRole("button", { name: "Aseta leivinpaperi pellille" })
-      .press("Enter");
-    for (const portion of await page.locator(".bakery-dough > div").all())
-      await portion.press("Enter");
+    for (const [step, count] of piparit
+      ? [["Kauli taikina", 1], ["Paina kissamuottia", 6]]
+      : [["Aseta vuoka", 6], ["Täytä vuoka", 6]]) {
+      for (let index = 0; index < count; index++)
+        await page.getByRole("button", { name: step }).press("Enter");
+    }
+    if (piparit) {
+      await page.getByRole("button", { name: "Aseta leivinpaperi pellille" }).press("Enter");
+      for (const portion of await page.locator(".bakery-dough > div").all())
+        await portion.press("Enter");
+    }
+    const oven = page.locator(".bakery-oven");
+    await expect(oven).toHaveCSS("background-image", piparit ? /gabby\/bakery\/oven_body\.webp/ : /blob:/);
+    await expect(oven.locator(".bakery-temp")).toHaveText("0 °C");
     await page
       .getByRole("button", { name: "Avaa uunin luukku" })
       .press("Enter");
@@ -47,7 +79,19 @@ for (const width of [320, 768, 1100]) {
       "aria-valuenow",
       piparit ? "175" : "200",
     );
+    await expect(oven.locator(".bakery-temp")).toHaveText(piparit ? "175 °C" : "200 °C");
+    await expect(oven.locator(".oven-cooking")).toHaveCSS("background-image", /^url\(.+\), url\(/);
+    await oven.screenshot({ path: testInfo.outputPath("oven-cooking.png") });
+    if (!piparit) {
+      for (let index = 0; index < 6; index++)
+        await page.getByRole("button", { name: "Lisää kuorrute" }).click();
+    }
+    const topping = page.getByRole("button", { name: piparit ? "Strösseli" : "Mustikka", exact: true });
+    for (let index = 0; index < 6; index++) await topping.click();
     await expect(page.locator("#gf-win")).toBeVisible();
+    const result = page.getByRole("img", { name: piparit ? "Piparit" : "Kuppikakut" });
+    await expect(result).toBeVisible();
+    await expect.poll(() => result.evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
     await page.locator("#gf-other").click();
     await expect(page.locator("#gf-stickers .earned")).toHaveCount(0);
     await page.reload();

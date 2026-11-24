@@ -163,7 +163,7 @@ export interface BakingTrayView {
 }
 
 /** Draws the parchment and individual portions on the baking tray. */
-export function createBakingTrayView(parent: HTMLElement, recipe: string): BakingTrayView {
+export function createBakingTrayView(parent: HTMLElement, portionImage: string): BakingTrayView {
   let scene: Phaser.Scene | undefined;
   let paper: Phaser.GameObjects.Image | undefined;
   let alive = true;
@@ -190,7 +190,7 @@ export function createBakingTrayView(parent: HTMLElement, recipe: string): Bakin
     drawn.add(index);
     const x = 50 + (index % 3) * 100;
     const y = 27 + Math.floor(index / 3) * 54;
-    const portion = scene.add.image(x, y, "bakery", recipe === "cupcake" ? "raw_pink" : "batter_dollop_large");
+    const portion = scene.add.image(x, y, "baking-portion");
     const scale = Math.min(43 / portion.width, 39 / portion.height);
     portion.setScale(scale);
     if (!reducedMotion) {
@@ -207,9 +207,12 @@ export function createBakingTrayView(parent: HTMLElement, recipe: string): Bakin
     height: 108,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: {
-      preload() { loadGabbyAtlas(this, "bakery"); },
+      preload() {
+        loadGabbyAtlas(this, "bakery");
+        this.load.image("baking-portion", portionImage);
+      },
       create() {
-        if (!alive || !this.textures.exists("bakery")) return;
+        if (!alive || !this.textures.exists("bakery") || !this.textures.exists("baking-portion")) return;
         scene = this;
         paper = this.add.image(150, 54, "bakery", "parchment").setDisplaySize(290, 102).setVisible(false);
         parent.classList.add("phaser-tray-ready");
@@ -244,7 +247,7 @@ export function createPreparationView(parent: HTMLElement): PreparationView {
     if (!graphics) return;
     graphics.clear();
     if (stage === 0) return;
-    if (stage === 2) {
+    if (stage >= 2) {
       graphics.lineStyle(12, 0x9fe8ff, 0.8);
       graphics.lineBetween(140, 94, 140, 166);
       for (let i = 0; i < 8; i++) {
@@ -253,6 +256,7 @@ export function createPreparationView(parent: HTMLElement): PreparationView {
         graphics.fillEllipse(140, y, 9, 5);
       }
     }
+    if (stage === 3) return;
     for (let i = 0; i < 12; i++) {
       const x = 125 + (i % 4) * 18;
       const y = 170 + Math.floor(i / 4) * 10 + (reducedMotion ? 0 : Math.sin(time / 240 + i) * 3);

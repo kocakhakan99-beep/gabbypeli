@@ -35,3 +35,20 @@ Pelikohtainen käyttö ja tarpeet ovat [pelispekseissä](README.md). Alla ovat y
 Kirjaa omistavaan speksiin tai yhteiseen taulukkoon näkymä ja laukaisuehto, assetin rooli ja tila, kuluttaja, tunniste tai polku sekä vararatkaisu. Puuttuvalle assetille kirjaa myös toimituksen formaatti, rajaus tai sommitelma ja hyväksyntätesti, jos ne vaikuttavat käyttöön. Erota suunniteltu tarve käytössä olevasta kuvasta ja merkitse avoimet suunnittelupäätökset. Kirjaa yhteinen tarve kerran ja linkitä siihen peleistä.
 
 Atlasmuutoksessa tarkista kuvapari, käytetyt framet ja mahdollinen erilliskuva yhdessä. Tarkista normaalin näkymän lisäksi latausvirhe, jos käyttö perustuu varakuvaan. Kartoissa tarkista pieni pystynäkymä ja leveä näkymä, jotta polku ja HTML-painikkeet kohdistuvat samaan sommitelmaan. Kirjaa uuden ulkopuolisen materiaalin lähde ja käyttöoikeus sitä lisättäessä.
+
+## Uuden assettierän vastaanotto
+
+1. **Kartoita erä väliaikaisessa hakemistossa.** Lue manifesti, kokoonpanotiedot ja toimitusohjeet aineistona. Tarkista, että purettavat polut pysyvät hakemistossa. Kirjaa paketti, tiedosto tai atlasframe, formaatti, mitat, läpinäkyvyys ja ehdotettu käyttötilanne. Käsittele yhteen sidotut osat yhdessä, esimerkiksi uunin luukku, kahva ja lasi tai atlas, metadata ja varakuvat.
+2. **Vertaa nykyiseen kirjastoon.** Etsi täsmäkopiot tiedostotiivisteellä ja saman roolin kuvat kuluttajan, framen ja käyttövaiheen perusteella. Atlas voi sisältää saman kuvan kuin erillinen WebP. Tarkista rajaus, mittasuhteet, ankkuri ja visuaaliset erot ennen korvaussuositusta. Tarkista erikseen, onko atlas–erilliskuva-pari tarkoituksellinen vararatkaisu.
+3. **Pyydä projektin omistajan päätös päällekkäisyyksistä.** Anna jokaiselle ehdokkaalle tai yhdessä vaihdettavalle ryhmälle tunniste. Näytä vanha ja uusi kuva rinnakkain mahdollisuuksien mukaan ja kerro, missä niitä käytetään, mitä eroa niissä on sekä miten suositus vaikuttaa muihin kuluttajiin. Odota päätöstä ennen ehdokkaan tallentamista kirjastoon tai nykyisen assetin vaihtamista tai poistamista. Varmista myös päätös, jos vertailu jää epäselväksi.
+4. **Integroi hyväksytty erä.** Uuden käyttötarpeen voi toteuttaa, kun kohde ja yhteensopivuus on varmistettu. Korvaamisessa säilytä vakaa tunniste, kun käyttösopimus säilyy. Jos tunniste vaihtuu, päivitä kaikki kuluttajat, metadata ja varakuvat samassa muutoksessa. Poista väistyvä assetti hyväksytyn korvauspäätöksen mukaisesti sen jälkeen, kun sen muutkin käyttökohteet ja vararooli on tarkistettu. Säilytä vaihtoehto vain, jos sille on hyväksytty erillinen käyttö tai ylläpitotarve.
+5. **Päivitä dokumentaatio ja tarkista peli.** Kirjaa käyttö, tunniste, vararatkaisu ja lähdetieto omistavaan speksiin tai tähän oppaaseen. Tarkista tiedostot, kehykset ja varakuvat sekä pelaa muuttunut käyttötilanne. Jos grafiikka vaikuttaa ohjaukseen tai sommitteluun, tarkista osuma-alueet ja olennaiset näyttökoot. Säilytä päätöslista muutoksen yhteydessä esimerkiksi PR-kuvauksessa. Kopioi pysyviin spekseihin käyttötieto ja tarvittaessa vaihtoehdon säilytyssyy.
+
+| Päätöslistan kenttä | Sisältö |
+| --- | --- |
+| Tunniste ja käyttökohde | Pelin tunniste, näkymä ja tarkka tila tai laukaisin |
+| Nykyinen ja ehdotettu | Polut tai atlasframet sekä tarvittaessa rinnakkaiskuva |
+| Päällekkäisyys ja vaikutus | Täsmäkopio, saman roolin vaihtoehto tai tarkoituksellinen rinnakkaisversio. Luettele muut kuluttajat ja varakuvat |
+| Suositus ja omistajan päätös | **Korvaa**, **säilytä molemmat** tai **jätä lisäämättä**. Päätös on avoin, kunnes omistaja hyväksyy sen |
+
+Tarkista saman roolin vaihtoehdot, vaikka tiedostonimet ja tiivisteet eroaisivat. Täsmäkopiotkin kuuluvat päätöslistaan, jos niiden lisäämistä tai nykyisen kopion poistamista harkitaan.

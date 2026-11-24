@@ -43384,10 +43384,10 @@ function $(e, t) {
 	function u(e) {
 		if (o.add(e), !n || s.has(e)) return;
 		s.add(e);
-		let r = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, a = n.add.image(r, i, "bakery", t === "cupcake" ? "raw_pink" : "batter_dollop_large"), l = Math.min(43 / a.width, 39 / a.height);
-		a.setScale(l), c || (a.setScale(l * .5), n.tweens.add({
-			targets: a,
-			scale: l,
+		let t = 50 + e % 3 * 100, r = 27 + Math.floor(e / 3) * 54, i = n.add.image(t, r, "baking-portion"), a = Math.min(43 / i.width, 39 / i.height);
+		i.setScale(a), c || (i.setScale(a * .5), n.tweens.add({
+			targets: i,
+			scale: a,
 			duration: 300,
 			ease: "Back.easeOut"
 		}));
@@ -43404,10 +43404,10 @@ function $(e, t) {
 		},
 		scene: {
 			preload() {
-				ne(this, "bakery");
+				ne(this, "bakery"), this.load.image("baking-portion", t);
 			},
 			create() {
-				i && this.textures.exists("bakery") && (n = this, r = this.add.image(150, 54, "bakery", "parchment").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), a && l(), o.forEach(u));
+				i && this.textures.exists("bakery") && this.textures.exists("baking-portion") && (n = this, r = this.add.image(150, 54, "bakery", "parchment").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), a && l(), o.forEach(u));
 			}
 		}
 	});
@@ -43423,14 +43423,14 @@ function re(e) {
 	let t = 0, n = !0, r, i = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	function a(e) {
 		if (r && (r.clear(), t !== 0)) {
-			if (t === 2) {
+			if (t >= 2) {
 				r.lineStyle(12, 10479871, .8), r.lineBetween(140, 94, 140, 166);
 				for (let t = 0; t < 8; t++) {
 					let n = 100 + (t * 11 + (i ? 0 : e / 18)) % 65;
 					r.fillStyle(15072255, .9), r.fillEllipse(140, n, 9, 5);
 				}
 			}
-			for (let n = 0; n < 12; n++) {
+			if (t !== 3) for (let n = 0; n < 12; n++) {
 				let a = 125 + n % 4 * 18, o = 170 + Math.floor(n / 4) * 10 + (i ? 0 : Math.sin(e / 240 + n) * 3);
 				r.fillStyle(16777215, t === 2 ? .45 : .85), r.fillCircle(a, o, 5 + n % 3);
 			}

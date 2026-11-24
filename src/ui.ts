@@ -186,7 +186,12 @@ export function setAction(label: string, fn: (() => void) | null) {
   state.action = fn;
 }
 
-export function finish(title: string, text: string, art: string) {
+export function finish(
+  title: string,
+  text: string,
+  art: string,
+  resultImage?: { src: string; alt: string; details?: { src: string; alt: string }[] },
+) {
   void loadDOMAtlas("rewards");
   stopFreePlayClock();
   const level = campaignLevel();
@@ -216,6 +221,19 @@ export function finish(title: string, text: string, art: string) {
   el("win").hidden = false;
   el("win-title").textContent = title;
   el("win-text").textContent = text;
+  const result = document.querySelector<HTMLImageElement>("#gf-result-image")!;
+  result.hidden = !resultImage;
+  result.alt = resultImage?.alt ?? "";
+  if (resultImage) result.src = resultImage.src;
+  else result.removeAttribute("src");
+  const details = document.querySelector<HTMLElement>("#gf-result-details")!;
+  details.replaceChildren(...(resultImage?.details ?? []).map(({ src, alt }) => {
+    const image = document.createElement("img");
+    image.src = src;
+    image.alt = alt;
+    return image;
+  }));
+  details.hidden = !details.childElementCount;
   const winArt = el("win-art");
   winArt.dataset.art = art;
   if (friends.some((friend) => friend.id === art)) winArt.dataset.cast = art;

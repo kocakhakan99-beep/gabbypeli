@@ -77,8 +77,11 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await expect(page.locator("#gf-play")).toHaveAttribute("data-input", "phaser");
   await page.getByRole("button", { name: "Piparit" }).click();
   await expect(page.locator(".baking-wash")).toHaveClass(/phaser-preparation-ready/);
+  await page.getByRole("button", { name: "Avaa hana" }).click();
   await page.getByRole("button", { name: "Ota saippuaa" }).click();
+  await page.getByRole("button", { name: "Pese kädet" }).click();
   await page.getByRole("button", { name: "Huuhtele kädet" }).click();
+  await page.getByRole("button", { name: "Kuivaa kädet" }).click();
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
     await page.getByRole("button", { name }).press("Enter");
   const bowl = page.locator(".bakery-bowl.mixing");
@@ -95,6 +98,14 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
     Number(await page.locator(".bakery-progress").getAttribute("value")),
   ).toBeGreaterThan(0);
   await swipe(page, circle);
+  const roller = page.getByRole("button", { name: "Kauli taikina" });
+  await roller.scrollIntoViewIfNeeded();
+  await swipe(page, [
+    await center(roller),
+    await center(page.locator(".bakery-work-target")),
+  ]);
+  for (let index = 0; index < 6; index++)
+    await page.getByRole("button", { name: "Paina kissamuottia" }).press("Enter");
   const paper = page.getByRole("button", {
     name: "Aseta leivinpaperi pellille",
   });
