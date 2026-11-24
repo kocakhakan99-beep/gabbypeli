@@ -1,5 +1,7 @@
 # Huonekohtainen Seikkailu ja käyttöliittymän uudistus
 
+Tämä on aiempi suunnitelma. Nykyinen toteutus on kuvattu [pelialustan kuvauksessa](docs/platform.md) ja [pelispekseissä](docs/README.md).
+
 ## Pelipolku
 
 Seikkailun valinta jättää nukketalon näkyviin. Huoneen valinta avaa kyseisen leikin oman tasokartan. Hiekkalaatikossa sama huone avaa vapaan leikin. Kartalta palataan nukketaloon Seikkailu valittuna ja kohdistus palautetaan huoneeseen. Tason jälkeen voi jatkaa seuraavalle tasolle, pelata uudelleen tai palata saman huoneen kartalle.

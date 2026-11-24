@@ -1,6 +1,6 @@
 # Gabbypeli
 
-Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Yhdeksän leikkiä, suomenkieliset ohjeet, rauhalliset vihjeet ja selaimeen tallentuva tarrakirja.
+Suomenkielinen Gabbyn nukketalo -fanipeli yhteisiin leikkihetkiin. Viisi avattavaa leikkiä, suomenkieliset ohjeet ja selaimeen tallentuva tarrakirja.
 
 ## Kehittäminen
 
@@ -22,17 +22,11 @@ npm run test:browser
 
 GitHub Actions ajaa tyyppitarkistuksen, tallennuksen regressiotestit sekä oikeat Chromium-selaintestit. Selaintestit kattavat pelien päätoiminnot, 320–1100 pikselin näkymiä, vihjeet, äänten mykistyksen, asetukset ja tarrakirjan säilymisen. Testiajon kuvat löytyvät browser-results-artefaktista.
 
-## Pelit
+## Pelit ja dokumentaatio
 
-- Muistipeli 2–4 parilla, kahdella kuvapakalla, animoidulla käännöllä ja automaattisesti sulkeutuvilla väärillä pareilla
-- Palapelit 15 kuvalla, 2–6 palalla, raahauksella ja paikkavihjeellä
-- Pikku puuhat, värit, muodot ja laskeminen
-- Kuvanetsintä kuuden hahmon yksityiskohdista
-- Suurten ja pienten pallojen vertailu
-- Hileen leipomo, jossa kakut tehdään ja lasketaan itse
-- Merikatin kuplataika, jossa tunnistetaan värejä ja muotoja kuplia napauttamalla tai niiden yli pyyhkäisemällä
-- Taidepöytä sormipiirroksiin, tassuleimoihin ja kuuden hahmon tarrapolkuihin
-- Puutarha, jossa kukat avataan pyyhkäisemällä
+Nukketalosta avautuvat Muistipeli, Palapeli, Kuka piilottelee?, Kisukeijun puutarha ja Hileen leipomo. Jokainen niistä toimii Seikkailussa ja Hiekkalaatikossa.
+
+[Dokumentaatiohakemistosta](docs/README.md) löytyvät kaikkien yhdeksän toteutetun leikin speksit, julkaisutilat, assettien käyttökohteet ja testit. [AGENTS.md](AGENTS.md) määrittää, milloin dokumentaatio päivitetään koodin yhteydessä.
 
 ## Äänet
 
