@@ -279,3 +279,343 @@ export function createOvenView(parent: HTMLElement): OvenView {
     game.destroy(true);
   } };
 }
+
+export interface PreparationView {
+  setStage(stage: number): void;
+  destroy(): void;
+}
+
+/** Animates washing and the ingredients accumulating in the bowl. */
+export function createPreparationView(parent: HTMLElement, mode: "wash" | "ingredients"): PreparationView {
+  let stage = 0;
+  let alive = true;
+  let graphics: Phaser.GameObjects.Graphics | undefined;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function draw(time: number): void {
+    if (!graphics) return;
+    graphics.clear();
+    if (mode === "wash") {
+      if (stage === 0) return;
+      if (stage === 2) {
+        graphics.lineStyle(12, 0x9fe8ff, 0.8);
+        graphics.lineBetween(140, 94, 140, 166);
+        for (let i = 0; i < 8; i++) {
+          const y = 100 + ((i * 11 + (reducedMotion ? 0 : time / 18)) % 65);
+          graphics.fillStyle(0xe5fbff, 0.9);
+          graphics.fillEllipse(140, y, 9, 5);
+        }
+      }
+      for (let i = 0; i < 12; i++) {
+        const x = 125 + (i % 4) * 18;
+        const y = 170 + Math.floor(i / 4) * 10 + (reducedMotion ? 0 : Math.sin(time / 240 + i) * 3);
+        graphics.fillStyle(0xffffff, stage === 2 ? 0.45 : 0.85);
+        graphics.fillCircle(x, y, 5 + (i % 3));
+      }
+      return;
+    }
+    if (stage & 1) {
+      graphics.fillStyle(0xfff3d9);
+      graphics.fillEllipse(150, 162, 145, 68);
+    }
+    if (stage & 2) {
+      graphics.fillStyle(0xffbd4d);
+      graphics.fillCircle(160, 150, 26);
+      graphics.fillStyle(0xffe8a1, 0.8);
+      graphics.fillEllipse(153, 144, 12, 9);
+    }
+    if (stage & 4) {
+      graphics.fillStyle(0xfffdf2, 0.85);
+      graphics.fillEllipse(150, 161, 170, 70);
+    }
+  }
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent, transparent: true, width: 300, height: 240,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: {
+      create() {
+        if (!alive) return;
+        graphics = this.add.graphics();
+        parent.classList.add("phaser-preparation-ready");
+        draw(0);
+      },
+      update(time: number) { draw(time); },
+    },
+  });
+  return {
+    setStage(value) { stage = value; draw(0); },
+    destroy() {
+      alive = false;
+      parent.classList.remove("phaser-preparation-ready");
+      game.destroy(true);
+    },
+  };
+}
+
+export function createGardenView(parent: HTMLElement, flowers: HTMLButtonElement[]): { destroy(): void } {
+  let alive = true;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const palette = [0xff88bc, 0xffd778, 0xba96ff, 0xffa6c9];
+  let graphics: Phaser.GameObjects.Graphics;
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent, transparent: true,
+    width: parent.clientWidth, height: parent.clientHeight,
+    scale: { mode: Phaser.Scale.RESIZE },
+    scene: {
+      create() {
+        if (!alive) return;
+        graphics = this.add.graphics();
+        parent.classList.add("phaser-garden-ready");
+      },
+      update(time: number) {
+        if (!alive || !graphics) return;
+        graphics.clear();
+        const width = parent.clientWidth;
+        const height = parent.clientHeight;
+        flowers.forEach((flower, index) => {
+          const x = parseFloat(flower.style.getPropertyValue("--flower-x")) * width / 100;
+          const y = parseFloat(flower.style.getPropertyValue("--flower-y")) * height / 100;
+          const amount = Number(flower.style.getPropertyValue("--growth")) || 0;
+          const grown = flower.classList.contains("water-done") ? 1 : parent.dataset.stage === "water" ? amount : 0;
+          const sway = reducedMotion ? 0 : Math.sin(time / 700 + index) * grown * 3;
+          graphics.fillStyle(flower.classList.contains("soil-done") ? 0x70482f : 0x936346);
+          graphics.fillEllipse(x, y + 25, 65, 22);
+          if (grown > 0) {
+            graphics.lineStyle(5, 0x39834d);
+            graphics.lineBetween(x, y + 23, x + sway, y - 30 * grown);
+            graphics.fillStyle(0x65a852);
+            graphics.fillEllipse(x + 10, y + 5, 22 * grown, 10 * grown);
+            const top = y - 30 * grown;
+            graphics.fillStyle(palette[index % palette.length]);
+            for (let petal = 0; petal < 6; petal++) {
+              const angle = petal * Math.PI / 3;
+              graphics.fillCircle(x + sway + Math.cos(angle) * 13 * grown, top + Math.sin(angle) * 13 * grown, 10 * grown);
+            }
+            graphics.fillStyle(0xffed98);
+            graphics.fillCircle(x + sway, top, 8 * grown);
+          }
+          if (parent.dataset.stage === "tidy" && !flower.classList.contains("tidy-done")) {
+            graphics.fillStyle(0x99714a, 1 - amount);
+            graphics.fillEllipse(x - 20, y + 20, 13, 6);
+            graphics.fillEllipse(x + 22, y + 28, 12, 5);
+          }
+        });
+      },
+    },
+  });
+  return { destroy() {
+    alive = false;
+    parent.classList.remove("phaser-garden-ready");
+    game.destroy(true);
+  } };
+}
+
+export interface TileArt {
+  id: string;
+  folder: "friends" | "objects";
+}
+
+export interface TileView {
+  activate(action: "flip" | "select" | "place", index: number): boolean;
+  destroy(): void;
+}
+
+/** Keeps accessible HTML hit areas while Phaser handles tile events and animation. */
+export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", art: TileArt[], rows = 1, onAction?: (action: "flip" | "select" | "place", index: number) => void): TileView {
+  const overlay = document.createElement("div");
+  overlay.className = "phaser-tile-layer";
+  overlay.setAttribute("aria-hidden", "true");
+  parent.append(overlay);
+  let alive = true;
+  let failed = false;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let activeScene: Phaser.Scene | undefined;
+  const tiles = new Map<HTMLButtonElement, { image: Phaser.GameObjects.Image; up: boolean; openness: number }>();
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS, parent: overlay, transparent: true,
+    width: parent.clientWidth, height: parent.clientHeight,
+    scale: { mode: Phaser.Scale.RESIZE },
+    scene: {
+      preload() {
+        this.load.on("loaderror", () => { failed = true; });
+        for (const item of new Map(art.map((item) => [item.id, item])).values()) {
+          if (!this.textures.exists(item.id)) this.load.image(item.id, `./assets/${item.folder}/${item.id}.webp`);
+        }
+      },
+      create() {
+        if (!alive || failed) return;
+        if (mode === "puzzle") {
+          const texture = this.textures.get(art[0].id);
+          const source = texture.getSourceImage() as HTMLImageElement;
+          for (let index = 0; index < rows * 2; index++) {
+            texture.add(String(index), 0, (index % 2) * source.width / 2, Math.floor(index / 2) * source.height / rows, source.width / 2, source.height / rows);
+          }
+        }
+        activeScene = this;
+        if (onAction) this.events.on("tile-action", onAction);
+        parent.classList.add(`phaser-${mode}-ready`);
+      },
+      update(this: Phaser.Scene) {
+        if (!alive || failed) return;
+        const bounds = parent.getBoundingClientRect();
+        const buttons = [...parent.querySelectorAll<HTMLButtonElement>(mode === "memory" ? ".memory-card" : ".slot, .piece")];
+        const current = new Set(buttons);
+        tiles.forEach((tile, element) => {
+          if (!current.has(element)) { tile.image.destroy(); tiles.delete(element); }
+        });
+        buttons.forEach((button) => {
+          const index = Number(button.dataset[mode === "memory" ? "index" : "piece"]);
+          const item = mode === "memory" ? art[index] : art[0];
+          if (!item || !this.textures.exists(item.id)) return;
+          const rect = button.getBoundingClientRect();
+          const up = mode === "memory" ? button.getAttribute("aria-pressed") === "true" && !button.classList.contains("closing") : !button.disabled || button.classList.contains("filled");
+          let tile = tiles.get(button);
+          if (!tile) {
+            const image = this.add.image(0, 0, item.id, mode === "puzzle" ? String(index) : undefined);
+            tile = { image, up, openness: up ? 1 : 0 };
+            tiles.set(button, tile);
+          }
+          const image = tile.image;
+          const visible = mode === "memory" ? tile.openness > 0.5 : !button.classList.contains("piece") || !button.disabled;
+          image.setVisible(visible);
+          image.setPosition(rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2);
+          if (mode === "memory") {
+            const scale = Math.min(Math.max(1, rect.width - 10) / image.frame.realWidth, Math.max(1, rect.height - 10) / image.frame.realHeight);
+            image.setScale(scale * Math.abs(Math.cos(tile.openness * Math.PI)), scale);
+          } else {
+            image.setDisplaySize(Math.max(1, rect.width - 10), Math.max(1, rect.height - 10));
+          }
+          if (mode === "puzzle") image.setAlpha(button.classList.contains("slot") && !button.classList.contains("filled") ? 0.23 : 1);
+          if (tile.up !== up) {
+            tile.up = up;
+            if (mode === "memory") {
+              this.tweens.killTweensOf(tile);
+              if (reducedMotion) tile.openness = up ? 1 : 0;
+              else this.tweens.add({ targets: tile, openness: up ? 1 : 0, duration: 360, ease: "Sine.easeInOut" });
+            } else if (up && !reducedMotion) {
+              image.setAlpha(0.2);
+              this.tweens.add({ targets: image, alpha: 1, duration: 240 });
+            }
+          }
+        });
+      },
+    },
+  });
+  return {
+    activate(action, index) {
+      if (!alive || !activeScene || !onAction) return false;
+      activeScene.events.emit("tile-action", action, index);
+      return true;
+    },
+    destroy() {
+    alive = false;
+    activeScene = undefined;
+    parent.classList.remove(`phaser-${mode}-ready`);
+    game.destroy(true);
+    overlay.remove();
+  } };
+}
+
+/** One input scene for the playable rooms. HTML retains focus and keyboard activation. */
+export function startRoomInput(target: HTMLElement, bridge: {
+  ready(): void;
+  find(target: EventTarget | null): HTMLElement | undefined;
+  handlers(surface: HTMLElement): import("./games/stroke.js").StrokeHandlers | undefined;
+}): () => void {
+  type Point = import("./games/stroke.js").Point;
+  let active: { pointer: Phaser.Input.Pointer; touchId?: number; surface: HTMLElement; previous: Point } | undefined;
+  const host = document.createElement("div");
+  host.hidden = true;
+  host.setAttribute("aria-hidden", "true");
+  target.append(host);
+
+  function position(pointer: Phaser.Input.Pointer): Point | undefined {
+    const event = pointer.event;
+    if (event instanceof MouseEvent) return { x: event.clientX, y: event.clientY };
+    if (event instanceof TouchEvent) {
+      const touch = Array.from(event.changedTouches).find((touch) => touch.identifier === pointer.identifier);
+      if (touch) return { x: touch.clientX, y: touch.clientY };
+    }
+  }
+
+  function cancel(): void {
+    const stroke = active;
+    active = undefined;
+    if (stroke) bridge.handlers(stroke.surface)?.end();
+  }
+
+  new Phaser.Game({
+    type: Phaser.CANVAS,
+    parent: host,
+    width: 1,
+    height: 1,
+    audio: { noAudio: true },
+    input: {
+      keyboard: false,
+      mouse: { target, preventDefaultMove: false },
+      touch: { target, capture: false },
+    },
+    scene: {
+      create() {
+        const down = (pointer: Phaser.Input.Pointer): void => {
+          if (pointer.event instanceof MouseEvent && pointer.event.button !== 0) return;
+          if (active && active.surface.isConnected && bridge.handlers(active.surface)) return;
+          const surface = bridge.find(pointer.downElement);
+          const point = position(pointer);
+          if (!surface || !point) return;
+          active = {
+            pointer,
+            touchId: pointer.event instanceof TouchEvent ? pointer.identifier : undefined,
+            surface,
+            previous: point,
+          };
+          bridge.handlers(surface)?.start(point);
+        };
+        const move = (pointer: Phaser.Input.Pointer): void => {
+          if (active?.pointer !== pointer || active.touchId !== undefined) return;
+          const point = position(pointer);
+          if (!point) return;
+          const previous = active.previous;
+          active.previous = point;
+          bridge.handlers(active.surface)?.move(previous, point);
+        };
+        const up = (pointer: Phaser.Input.Pointer): void => {
+          if (active?.pointer !== pointer) return;
+          if (pointer.wasCanceled) {
+            cancel();
+            return;
+          }
+          const stroke = active;
+          active = undefined;
+          const point = position(pointer);
+          const handlers = bridge.handlers(stroke.surface);
+          if (point) handlers?.move(stroke.previous, point);
+          if (stroke.surface.isConnected) handlers?.end(point);
+        };
+        // Phaser limits touchmove to the canvas. Accessible controls sit above it.
+        target.addEventListener("touchmove", (event) => {
+          const stroke = active;
+          if (stroke?.touchId === undefined) return;
+          const touch = Array.from(event.changedTouches).find((touch) => touch.identifier === stroke.touchId);
+          if (!touch) return;
+          const point = { x: touch.clientX, y: touch.clientY };
+          const previous = stroke.previous;
+          stroke.previous = point;
+          bridge.handlers(stroke.surface)?.move(previous, point);
+          // A completed gesture can replace its original touch target mid-stroke.
+          if (!stroke.surface.isConnected && active === stroke) {
+            active = undefined;
+            stroke.pointer.reset();
+          }
+        }, { passive: true });
+        this.input.on("pointerdown", down);
+        this.input.on("pointerdownoutside", down);
+        this.input.on("pointermove", move);
+        this.input.on("pointerup", up);
+        this.input.on("pointerupoutside", up);
+        this.game.events.on("blur", cancel);
+        bridge.ready();
+      },
+    },
+  });
+  return cancel;
+}

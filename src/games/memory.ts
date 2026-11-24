@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import {
@@ -15,6 +16,14 @@ import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
+import type { TileView } from "../phaser-room.js";
+
+let memoryView: TileView | undefined;
+let memoryGeneration = 0;
+let memoryViewLoading = false;
+
+let freePairs = 2;
+let freePack: typeof pack = "friends";
 let pack: "friends" | "objects" | "mixed" = "friends";
 let previewTimer: ReturnType<typeof setTimeout> | undefined;
 let mismatchTimer: ReturnType<typeof setTimeout> | undefined;
@@ -30,6 +39,10 @@ const memoryFriends = [
 ];
 
 export function stopMemoryTimers(): void {
+  memoryGeneration++;
+  memoryView?.destroy();
+  memoryView = undefined;
+  memoryViewLoading = false;
   clearTimeout(previewTimer);
   clearTimeout(mismatchTimer);
   clearTimeout(closeTimer);
@@ -49,6 +62,9 @@ function hidePreview(announce = true): void {
 
 export function initMemory() {
   stopMemoryTimers();
+  const level = campaignLevel();
+  pack = level === undefined ? freePack : level <= 5 ? "friends" : "mixed";
+  state.memoryPairs = level === undefined ? freePairs : [2, 3, 3, 4, 5, 5, 6, 7, 8, 9][level - 1];
   heading(
     "cakey",
     pack === "friends"
@@ -78,6 +94,9 @@ export function initMemory() {
       ]),
   );
   const packSettings = el("memory-packs");
+  document.querySelector<HTMLElement>("#gf-memory-free-heading")!.hidden = level !== undefined;
+  packSettings.hidden = level !== undefined;
+  el("memory-settings").hidden = level !== undefined;
   packSettings.replaceChildren();
   for (const [key, label] of [
     ["friends", "Kaverit"],
@@ -85,8 +104,8 @@ export function initMemory() {
     ["mixed", "Kaverit ja esineet"],
   ] as const) {
     const choice = button(label, () => {
-      pack = key;
-      if (key === "friends") state.memoryPairs = Math.min(state.memoryPairs, 6);
+      freePack = key;
+      if (key === "friends") freePairs = Math.min(freePairs, 6);
       initMemory();
     });
     choice.setAttribute("aria-pressed", String(pack === key));
@@ -97,13 +116,14 @@ export function initMemory() {
     pack === "friends" ? [2, 3, 4, 5, 6] : [2, 3, 4, 5, 6, 7, 8, 9];
   levels.forEach((n) => {
     const b = button(n + " paria", () => {
-      state.memoryPairs = n;
+      freePairs = n;
       initMemory();
     });
     if (n > 6) b.textContent = String(n);
     b.setAttribute("aria-pressed", String(n === state.memoryPairs));
     el("memory-settings").append(b);
   });
+  el("cards").replaceChildren();
   drawCards();
   progress(0, state.memoryPairs);
   feedback("Katso kuvat rauhassa.");
@@ -113,6 +133,19 @@ export function initMemory() {
 }
 
 export function drawCards() {
+  if (!memoryView && !memoryViewLoading) {
+    memoryViewLoading = true;
+    const generation = memoryGeneration;
+    const art = state.mem.map(({ friend }) => ({
+      id: friend.id,
+      folder: memoryFriends.some((item) => item.id === friend.id) ? "friends" as const : "objects" as const,
+    }));
+    void import("../phaser-room.js").then(({ createTileView }) => {
+      if (generation !== memoryGeneration) return;
+      memoryView = createTileView(el("memory"), "memory", art, 1, (_action, index) => flip(index));
+      memoryViewLoading = false;
+    }).catch(() => { if (generation === memoryGeneration) memoryViewLoading = false; });
+  }
   el("cards").className =
     "memory " +
     (state.memoryPairs === 2
@@ -122,14 +155,14 @@ export function drawCards() {
         : state.memoryPairs === 4
           ? "eight"
           : "twelve");
-  el("cards").replaceChildren();
   state.mem.forEach((m, i) => {
     const up = state.preview || m.found || state.opened.includes(i);
-    const b = button(
+    const b = el("cards").querySelector<HTMLButtonElement>(`[data-index="${i}"]`) ?? button(
       "",
-      () => flip(i),
+      () => { if (!memoryView?.activate("flip", i)) flip(i); },
       "memory-card" + (m.found ? " matched" : up ? " faceup" : ""),
     );
+    b.className = "memory-card" + (m.found ? " matched" : up ? " faceup" : "");
     const front =
       pack === "friends"
         ? '<span class="picture" data-cast="' +
@@ -154,7 +187,7 @@ export function drawCards() {
     b.setAttribute("aria-pressed", String(up));
     b.disabled = m.found || state.preview;
     b.dataset.index = String(i);
-    el("cards").append(b);
+    if (!b.isConnected) el("cards").append(b);
   });
 }
 

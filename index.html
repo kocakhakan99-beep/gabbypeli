@@ -4,20 +4,86 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gabbypeli</title>
-    <link rel="stylesheet" href="./app/styles.css?v=dollhouse-play-2" />
+    <link rel="stylesheet" href="./app/styles.css?v=dollhouse-facade-5" />
   </head>
   <body>
     <div id="gabby-fi" lang="fi">
       <div class="shell">
-        <header>
-          <p class="eyebrow">Pieniä tassuja, suuria seikkailuja</p>
-          <h2>Gabbyn nukketalo</h2>
-          <p class="sub">Leikitään yhdessä!</p>
+        <header class="house-toolbar">
+        <div class="house-controls">
+          <button
+            type="button"
+            class="tool cursor-interaction"
+            id="gf-settings-toggle"
+            aria-expanded="false"
+            aria-controls="gf-settings"
+          >
+            Aikuiselle</button
+          ><button
+            type="button"
+            class="tool cursor-interaction"
+            id="gf-sound"
+            aria-pressed="true"
+          >
+            Äänet päällä
+          </button>
+        </div>
+          <div class="house-balances">
+            <span class="home-sticker-count" id="gf-home-sticker-count"></span>
+            <strong><span class="coin-icon" aria-hidden="true"></span><span>Kisukolikot <output id="gf-coins">0</output></span></strong>
+          </div>
         </header>
+        <section
+          class="adult-settings"
+          id="gf-settings"
+          hidden
+          aria-labelledby="gf-settings-title"
+        >
+          <h3 id="gf-settings-title">Äänet ja puhe</h3>
+          <label
+            ><input type="checkbox" id="gf-speech-enabled" /> Puhutut
+            ohjeet</label
+          ><label
+            ><input type="checkbox" id="gf-effects-enabled" /> Leikin
+            äänitehosteet</label
+          ><label for="gf-volume">Äänenvoimakkuus</label
+          ><input type="range" id="gf-volume" min="0" max="100" value="65" />
+          <p id="gf-voice-status"></p>
+          <button
+            type="button"
+            class="tool cursor-interaction"
+            id="gf-audio-test"
+          >
+            Kokeile ääntä
+          </button>
+          <p class="note">
+            Tarrat ja ääniasetukset tallennetaan tähän selaimeen. Hahmojen
+            valmiit puheäänitteet on tuotettu tekoälyllä.
+          </p>
+        </section>
         <section id="gf-home">
-          <div class="dollhouse">
-            <div class="dollhouse-roof" aria-hidden="true">
-              <span class="picture" data-cast="gabby"></span>
+
+          <div class="mode-hub" hidden>
+            <section id="gf-campaign-map" hidden>
+              <h2 id="gf-map-title" tabindex="-1">Seikkailukartta</h2>
+              <p class="map-intro">Valitse leikki ja löydä seuraava taso!</p>
+              <button type="button" id="gf-map-back" class="tool">Takaisin nukketaloon</button>
+              <div class="campaign-progress">
+                <span id="gf-map-progress-label">Eteneminen 0 / 10</span>
+                <progress id="gf-map-progress" max="10" value="0" aria-label="Valitun leikin eteneminen"></progress>
+              </div>
+              <div id="gf-levels" role="group" aria-label="Seikkailun tasot"></div>
+              <button type="button" class="primary campaign-resume" id="gf-campaign-resume" hidden></button>
+            </section>
+          </div>
+          <div class="dollhouse" id="gf-free-games">
+            <div class="house-welcome" aria-hidden="true">
+              <img src="./assets/friends/gabby.webp" alt="" />
+              <img src="./assets/friends/pandy.webp" alt="" />
+            </div>
+            <div class="dollhouse-roof home-house">
+              <img src="./assets/menu/roof.webp" width="1440" height="480" alt="" fetchpriority="high" />
+              <h1>Gabbyn<br />nukketalo</h1>
             </div>
             <div
               class="menu dollhouse-rooms"
@@ -28,6 +94,7 @@
                 type="button"
                 class="game-link"
                 id="gf-open-drawing"
+                hidden
                 aria-label="Taidepöytä"
               >
                 <span class="menu-art" aria-hidden="true"
@@ -38,6 +105,10 @@
                   >Taidepöytä<small>Piirrä sormella</small></span
                 >
               </button>
+              <div class="game-link art-room" aria-label="Taidepöytä, koristehuone">
+                <span class="menu-art" aria-hidden="true"><img class="room-toy" src="./assets/menu/art.webp" alt="" /></span>
+                <span class="game-label">Taidepöytä</span>
+              </div>
               <button
                 type="button"
                 class="game-link"
@@ -45,8 +116,7 @@
                 aria-label="Kisukeijun puutarha"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><span class="picture" data-object="watering"></span
-                  ><span class="picture" data-cast="fairy"></span
+                  ><img class="room-toy" src="./assets/menu/garden.webp" alt="" /><span class="picture" data-cast="fairy"></span
                 ></span>
                 <span class="game-label"
                   >Kisukeijun puutarha<small>Herätä kukat</small></span
@@ -59,8 +129,7 @@
                 aria-label="Hileen leipomo"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><span class="picture" data-object="cupcakes"></span
-                  ><span class="picture" data-cast="cakey"></span></span
+                  ><img class="room-toy" src="./assets/menu/baking.webp" alt="" /><span class="picture" data-cast="cakey"></span></span
                 ><span class="game-label"
                   >Hileen leipomo<small>Leivo ja laske kakkuja</small></span
                 ></button
@@ -98,8 +167,7 @@
                 aria-label="Kuka piilottelee?"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><span class="picture" data-object="star"></span
-                  ><span class="picture" data-cast="dj"></span></span
+                  ><img class="room-toy" src="./assets/menu/find.webp" alt="" /><span class="picture" data-cast="dj"></span></span
                 ><span class="game-label"
                   >Kuka piilottelee?<small
                     >Tunnista kuvan yksityiskohta</small
@@ -112,8 +180,7 @@
                 aria-label="Muistipeli"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><span class="picture" data-object="berry"></span
-                  ><span class="picture" data-cast="pandy"></span></span
+                  ><img class="room-toy" src="./assets/menu/memory.webp" alt="" /><span class="picture" data-cast="pandy"></span></span
                 ><span class="game-label"
                   >Muistipeli<small>Etsi samat kaverit</small></span
                 ></button
@@ -124,8 +191,7 @@
                 aria-label="Palapeli"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><span class="picture" data-object="blocks"></span
-                  ><span class="picture" data-cast="gabby"></span></span
+                  ><img class="room-toy" src="./assets/menu/puzzle.webp" alt="" /><span class="picture" data-cast="gabby"></span></span
                 ><span class="game-label"
                   >Palapeli<small>Kokoa taikakuva</small></span
                 ></button
@@ -145,8 +211,12 @@
               </button>
             </div>
           </div>
-          <section class="sticker-book" aria-labelledby="gf-sticker-title">
-            <h3 id="gf-sticker-title">Minun tarrakirjani</h3>
+          <div class="house-play-actions">
+            <button type="button" id="gf-campaign-toggle" aria-expanded="false" aria-controls="gf-campaign-map"><strong>Seikkailu</strong><small>Leiki nyt!</small></button>
+            <button type="button" id="gf-free-toggle" aria-controls="gf-free-games">Hiekkalaatikko</button>
+          </div>
+          <section class="sticker-book" id="gf-sticker-book" aria-labelledby="gf-sticker-title" hidden>
+            <h3 id="gf-sticker-title" tabindex="-1">Minun tarrakirjani</h3>
             <p id="gf-sticker-count"></p>
             <div class="album-workspace">
               <div
@@ -173,16 +243,22 @@
             </div>
             <div id="gf-stickers">
               <h4>Kaveritarrat</h4>
-              <p>Saat tarran, kun pelaat leikin loppuun.</p>
+              <p>Saat tarran, kun suoritat leikin ensimmäisen Seikkailutason.</p>
               <div class="stickers" id="gf-stickers-first"></div>
               <h4>Nukketalon aarteet</h4>
-              <p>Pelaa sama leikki loppuun uudestaan ja saat sen kuvatarran.</p>
+              <p>Suorita samassa leikissä kaksi eri Seikkailutasoa.</p>
               <div class="stickers" id="gf-stickers-bonus"></div>
               <h4>Salaiset aarteet</h4>
-              <p>Pelaa leikki loppuun kolmesti.</p>
+              <p>Suorita samassa leikissä kolme eri Seikkailutasoa.</p>
               <div class="stickers" id="gf-stickers-extra"></div>
             </div>
           </section>
+          <nav class="dollhouse-nav" aria-label="Nukketalo">
+            <button type="button" data-destination="home" aria-pressed="true">Koti</button>
+            <button type="button" data-destination="free" aria-pressed="false" aria-controls="gf-free-games">Leikit</button>
+            <button type="button" data-destination="stickers" aria-pressed="false" aria-controls="gf-sticker-book">Tarrakirja</button>
+            <button type="button" disabled>Kauppa <small>Tulossa pian</small></button>
+          </nav>
         </section>
         <section id="gf-play" hidden>
           <div class="nav">
@@ -224,6 +300,10 @@
                 </div>
               </div>
               <div id="gf-memory" hidden>
+                <div class="free-play-heading" id="gf-memory-free-heading" hidden>
+                  <span class="picture" data-cast="pandy" aria-hidden="true"></span>
+                  <div><strong>Hiekkalaatikko</strong><span>Valitse kuvat ja korttien määrä</span></div>
+                </div>
                 <div
                   class="settings"
                   id="gf-memory-packs"
@@ -243,6 +323,10 @@
                 ></div>
               </div>
               <div id="gf-puzzle" hidden>
+                <div class="free-play-heading" id="gf-puzzle-free-heading" hidden>
+                  <span class="picture" data-cast="gabby" aria-hidden="true"></span>
+                  <div><strong>Hiekkalaatikko</strong><span>Valitse kuva ja palojen määrä</span></div>
+                </div>
                 <div
                   class="settings"
                   id="gf-puzzle-settings"
@@ -480,6 +564,7 @@
               </div>
             </div>
             <div class="win" id="gf-win" hidden>
+              <div class="celebration-banner">Hienosti tehty!</div>
               <div
                 class="picture"
                 id="gf-win-art"
@@ -489,6 +574,8 @@
               <p class="eyebrow">Kissa-tastisen hienoa!</p>
               <h3 id="gf-win-title">Sinä osasit!</h3>
               <p id="gf-win-text"></p>
+              <p id="gf-coin-reward" hidden></p>
+              <button type="button" id="gf-next-level" class="primary" hidden>Seuraava taso</button>
               <div id="gf-sticker-reward" class="sticker-reward" hidden></div>
               <div class="actions">
                 <button
@@ -513,52 +600,7 @@
             ></div>
           </div>
         </section>
-        <div class="bottom">
-          <button
-            type="button"
-            class="tool cursor-interaction"
-            id="gf-settings-toggle"
-            aria-expanded="false"
-            aria-controls="gf-settings"
-          >
-            Aikuiselle</button
-          ><button
-            type="button"
-            class="tool cursor-interaction"
-            id="gf-sound"
-            aria-pressed="true"
-          >
-            Äänet päällä
-          </button>
-        </div>
-        <section
-          class="adult-settings"
-          id="gf-settings"
-          hidden
-          aria-labelledby="gf-settings-title"
-        >
-          <h3 id="gf-settings-title">Äänet ja puhe</h3>
-          <label
-            ><input type="checkbox" id="gf-speech-enabled" /> Puhutut
-            ohjeet</label
-          ><label
-            ><input type="checkbox" id="gf-effects-enabled" /> Leikin
-            äänitehosteet</label
-          ><label for="gf-volume">Äänenvoimakkuus</label
-          ><input type="range" id="gf-volume" min="0" max="100" value="65" />
-          <p id="gf-voice-status"></p>
-          <button
-            type="button"
-            class="tool cursor-interaction"
-            id="gf-audio-test"
-          >
-            Kokeile ääntä
-          </button>
-          <p class="note">
-            Tarrat ja ääniasetukset tallennetaan tähän selaimeen. Hahmojen
-            valmiit puheäänitteet on tuotettu tekoälyllä.
-          </p>
-        </section>
+
         <p class="note" id="gf-audio-note">
           Leikitään yhdessä aikuisen kanssa, omaan tahtiin. Ääniasetukset löydät
           Aikuiselle-painikkeesta.

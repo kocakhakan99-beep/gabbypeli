@@ -1,3 +1,5 @@
+import { bindStroke, type Point } from "./stroke.js";
+import { campaignLevel } from "../campaign.js";
 import {
   advanceAfterSuccess,
   button,
@@ -75,7 +77,10 @@ const roomSurprises: Record<string, { id: string; name: string }> = {
 export function renderFind(): void {
   stopFind();
   const generation = roomGeneration;
-  const friend = friends[state.learnIndex];
+  const level = campaignLevel();
+  const roomCount = level === undefined ? friends.length : Math.min(friends.length, 1 + Math.floor(level / 2));
+  const offset = level === undefined ? 0 : (level - 1) % friends.length;
+  const friend = friends[(offset + state.learnIndex) % friends.length];
   state.learnDone = false;
   heading(
     friend.id,
@@ -98,8 +103,8 @@ export function renderFind(): void {
   field.append(room);
   feedback("");
   setAction("", null);
-  progress(state.learnIndex, friends.length);
-  const furniture = roomObjects[friend.id];
+  progress(state.learnIndex, roomCount);
+  const furniture = shuffle(roomObjects[friend.id]).slice(0, level === undefined ? 4 : level <= 2 ? 2 : level <= 5 ? 3 : 4);
   const surprise = roomSurprises[friend.id];
   const hidingPlace = Math.floor(Math.random() * furniture.length);
   const roomItems = shuffle(furniture).map((item, index) => ({
@@ -109,7 +114,7 @@ export function renderFind(): void {
   roomItems.forEach((roomItem, index) => {
     const item = furniture.find((object) => object.id === roomItem.id)!;
     const isHiding = index === hidingPlace;
-    let pointer: { id: number; x: number; y: number; distance: number } | null = null;
+    let origin: Point | undefined;
     let suppressClick = false;
     const spot = button(
       "",
@@ -140,16 +145,16 @@ export function renderFind(): void {
         portrait.setAttribute("aria-label", friend.name);
         feedback("Löysit kaverin! " + friend.name + "!");
         ding("discovery");
-        progress(state.learnIndex + 1, friends.length);
+        progress(state.learnIndex + 1, roomCount);
         setAction(
-          state.learnIndex === friends.length - 1
+          state.learnIndex === roomCount - 1
             ? "Juhlitaan!"
             : "Seuraava kaveri",
           () => {
             state.learnIndex++;
-            if (state.learnIndex === friends.length) {
+            if (state.learnIndex === roomCount) {
               stopFind();
-              finish("Tarkat silmät!", "Löysit kaikki kuusi kaveria!", "gabby");
+              finish("Tarkat silmät!", "Löysit kaikki tämän leikin kaverit!", "gabby");
             } else renderFind();
           },
         );
@@ -159,31 +164,27 @@ export function renderFind(): void {
     );
     spot.style.setProperty("--spot-delay", `${index * 0.35}s`);
     spot.setAttribute("aria-label", "Tutki " + item.name.toLowerCase());
-    spot.addEventListener("pointerdown", (event) => {
-      if (spot.disabled || spot.classList.contains("opened") || !event.isPrimary) return;
-      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0 };
-      spot.setPointerCapture(event.pointerId);
-    });
-    spot.addEventListener("pointermove", (event) => {
-      if (!pointer || pointer.id !== event.pointerId) return;
-      pointer.distance = Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y);
-      roomView?.drag(index, pointer.distance / Math.max(48, spot.clientWidth * 0.35));
-    });
-    spot.addEventListener("pointerup", (event) => {
-      if (!pointer || pointer.id !== event.pointerId) return;
-      const moved = pointer.distance >= Math.max(28, spot.clientWidth * 0.2);
-      pointer = null;
-      if (moved) {
-        spot.click();
-        suppressClick = true;
-        window.setTimeout(() => { suppressClick = false; }, 0);
-      } else {
-        roomView?.drag(index, 0);
-      }
-    });
-    spot.addEventListener("pointercancel", () => {
-      pointer = null;
-      roomView?.drag(index, 0);
+    bindStroke(spot, {
+      start(point) {
+        if (!spot.disabled && !spot.classList.contains("opened")) origin = point;
+      },
+      move(_previous, point) {
+        if (!origin) return;
+        const distance = Math.hypot(point.x - origin.x, point.y - origin.y);
+        roomView?.drag(index, distance / Math.max(48, spot.clientWidth * 0.35));
+      },
+      end(point) {
+        const start = origin;
+        origin = undefined;
+        if (!start) return;
+        if (point && Math.hypot(point.x - start.x, point.y - start.y) >= Math.max(28, spot.clientWidth * 0.2)) {
+          spot.click();
+          suppressClick = true;
+          window.setTimeout(() => { suppressClick = false; }, 0);
+        } else {
+          roomView?.drag(index, 0);
+        }
+      },
     });
     spot.innerHTML =
       '<span class="hiding-friend">' +

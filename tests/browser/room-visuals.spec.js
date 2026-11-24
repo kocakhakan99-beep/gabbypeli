@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 test("garden room and its illustrated watering can load", async ({ page }) => {
   await page.goto("/");
   await page.locator("#gf-open-garden").click();
+  await expect(page.locator("#gf-garden-field")).toHaveClass(/phaser-garden-ready/);
   await expect(page.locator(".game-panel")).toHaveCSS(
     "background-image",
     /room-garden\.webp/,

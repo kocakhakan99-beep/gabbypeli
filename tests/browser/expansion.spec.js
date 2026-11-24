@@ -49,9 +49,9 @@ for (const width of [320, 768, 1100]) {
     );
     await expect(page.locator("#gf-win")).toBeVisible();
     await page.locator("#gf-other").click();
-    await expect(page.locator("#gf-stickers .earned")).toHaveCount(1);
+    await expect(page.locator("#gf-stickers .earned")).toHaveCount(0);
     await page.reload();
-    await expect(page.locator("#gf-stickers .earned")).toHaveCount(1);
+    await expect(page.locator("#gf-stickers .earned")).toHaveCount(0);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

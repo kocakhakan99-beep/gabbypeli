@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
 import { bindStroke, stopStroke } from "./stroke.js";
@@ -8,6 +9,16 @@ import { el } from "../dom.js";
 import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
+let puzzleView;
+function activateTile(action, index) {
+    if (puzzleView?.activate(action, index))
+        return;
+    if (action === "select")
+        select(index);
+    else
+        place(index);
+}
+let puzzleGeneration = 0;
 const scenes = [
     ...friends,
     ...playObjects.map((object) => ({ ...object, room: "Esinepalapelit" })),
@@ -49,7 +60,15 @@ export function crop(piece) {
         p.image +
         '" aria-hidden="true"></span>');
 }
+let freeSize = 2;
+let freeArt = 0;
 export function initPuzzle() {
+    const level = campaignLevel();
+    state.puzzleSize = level === undefined ? freeSize : level <= 3 ? 2 : level <= 6 ? 4 : 6;
+    state.puzzleArt = level === undefined ? freeArt : level - 1;
+    document.querySelector("#gf-puzzle-free-heading").hidden = level !== undefined;
+    el("puzzle-settings").hidden = level !== undefined;
+    el("scenes").hidden = level !== undefined;
     stopPuzzleDrag();
     state.selected = null;
     state.placed = new Set();
@@ -60,7 +79,7 @@ export function initPuzzle() {
     el("puzzle-settings").replaceChildren();
     [2, 4, 6].forEach((n) => {
         const b = button(n + " palaa", () => {
-            state.puzzleSize = n;
+            freeSize = n;
             initPuzzle();
         });
         b.setAttribute("aria-pressed", String(n === state.puzzleSize));
@@ -69,7 +88,7 @@ export function initPuzzle() {
     el("scenes").replaceChildren();
     scenes.forEach((f, i) => {
         const b = button("", () => {
-            state.puzzleArt = i;
+            freeArt = i;
             initPuzzle();
         }, "scene-choice");
         b.innerHTML = picture(f.id);
@@ -87,7 +106,7 @@ export function initPuzzle() {
     el("board").setAttribute("aria-label", "Palapelialusta");
     el("tray").replaceChildren();
     for (let i = 0; i < state.puzzleSize; i++) {
-        const b = button("", () => place(i), "slot");
+        const b = button("", () => activateTile("place", i), "slot");
         b.innerHTML = crop(i);
         b.setAttribute("aria-label", "Paikka " +
             (i + 1) +
@@ -102,7 +121,7 @@ export function initPuzzle() {
         el("board").append(b);
     }
     shuffle(Array.from({ length: state.puzzleSize }, (_, i) => i)).forEach((i) => {
-        const b = button("", () => select(i), "piece");
+        const b = button("", () => activateTile("select", i), "piece");
         bindPieceDrag(b, i);
         b.innerHTML = crop(i);
         b.dataset.piece = String(i);
@@ -110,6 +129,19 @@ export function initPuzzle() {
         b.setAttribute("aria-pressed", "false");
         el("tray").append(b);
     });
+    const generation = puzzleGeneration;
+    const art = { id: f.id, folder: state.puzzleArt < friends.length ? "friends" : "objects" };
+    const rows = state.puzzleSize / 2;
+    void import("../phaser-room.js").then(({ createTileView }) => {
+        if (generation !== puzzleGeneration)
+            return;
+        puzzleView = createTileView(el("puzzle"), "puzzle", [art], rows, (action, index) => {
+            if (action === "select")
+                select(index);
+            else if (action === "place")
+                place(index);
+        });
+    }).catch(() => { });
     setAction("", null);
     feedback("Valitse ensin yksi pala.");
     progress(0, state.puzzleSize);
@@ -198,6 +230,9 @@ export function showPuzzleHint() {
     say("Kosketa korostettua paikkaa kuvassa.");
 }
 export function stopPuzzleDrag() {
+    puzzleGeneration++;
+    puzzleView?.destroy();
+    puzzleView = undefined;
     el("tray").querySelectorAll("button").forEach(stopStroke);
 }
 function bindPieceDrag(piece, index) {
@@ -232,7 +267,7 @@ function bindPieceDrag(piece, index) {
                 root.append(ghost);
                 destination = el("board").querySelector(`[data-piece="${index}"]`);
                 piece.classList.add("dragging");
-                select(index);
+                activateTile("select", index);
             }
             destination?.classList.toggle("snap-ready", nearSlot(to));
             ghost.style.left = to.x + "px";
@@ -250,14 +285,14 @@ function bindPieceDrag(piece, index) {
             if (!point)
                 return;
             if (snap) {
-                place(index);
+                activateTile("place", index);
                 return;
             }
             const slot = document
                 .elementFromPoint(point.x, point.y)
                 ?.closest("#gf-board .slot");
             if (slot)
-                place(Number(slot.dataset.piece));
+                activateTile("place", Number(slot.dataset.piece));
         },
     });
 }

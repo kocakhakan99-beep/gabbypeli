@@ -1,3 +1,4 @@
+import { campaignGames, campaignLevel, renderCampaign, type CampaignGame } from "./campaign.js";
 import { cancelAdvance, iconButton } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
 import { showPuzzleHint } from "./games/puzzle.js";
@@ -26,7 +27,7 @@ initStickerAlbum();
 iconButton(el("home-button"), "home", "Takaisin nukketaloon");
 iconButton(el("hint"), "hint", "Näytä vihje");
 iconButton(el("repeat"), "voice", "Kuuntele Gabbyn ohje uudelleen");
-iconButton(el("again"), "replay", "Leiki uudestaan");
+el("again").textContent = "Pelaa uudelleen";
 iconButton(el("other"), "home", "Takaisin nukketaloon");
 iconButton(el("sound"), "voice", "Äänet päällä");
 iconButton(el("drawing-brush"), "brush", "Paksu kynä");
@@ -46,10 +47,77 @@ for (const mode of [
   "drawing",
   "garden",
 ] as const) {
-  el(`open-${mode}`).addEventListener("click", () => open(mode));
+  el(`open-${mode}`).addEventListener("click", () => {
+    if (selectedMode === "campaign" && campaignGames.some((game) => game === mode)) {
+      mapGame = mode as CampaignGame;
+      showDestination("campaign");
+      document.querySelector<HTMLElement>("#gf-campaign-resume:not([hidden]), #gf-levels button:not(:disabled)")?.focus();
+    } else open(mode);
+  });
 }
-el("home-button").addEventListener("click", home);
-el("other").addEventListener("click", home);
+let mapGame: CampaignGame = "memory";
+let selectedMode: "campaign" | "free" = "free";
+function updateMap(): void {
+  renderCampaign(mapGame, (level) => open(mapGame, level));
+  const names: Record<CampaignGame, string> = { memory: "Muistipeli", puzzle: "Palapeli", find: "Piilopeli", garden: "Kisukeijun puutarha", baking: "Hileen leipomo" };
+  document.querySelector("#gf-map-title")!.textContent = names[mapGame] + " – Seikkailu";
+}
+type Destination = "home" | "campaign" | "free" | "stickers";
+const navigation = document.querySelectorAll<HTMLButtonElement>(".dollhouse-nav button");
+const mapPanel = document.querySelector<HTMLElement>("#gf-campaign-map")!;
+const roomPanel = document.querySelector<HTMLElement>("#gf-free-games")!;
+const stickerPanel = document.querySelector<HTMLElement>("#gf-sticker-book")!;
+
+function showDestination(destination: Destination): void {
+  el("home").dataset.destination = destination;
+  el("home").dataset.mode = selectedMode;
+  mapPanel.hidden = destination !== "campaign";
+  mapPanel.parentElement!.hidden = mapPanel.hidden;
+  roomPanel.hidden = destination !== "home" && destination !== "free";
+  stickerPanel.hidden = destination !== "stickers";
+  document.querySelector("#gf-campaign-toggle")!.setAttribute("aria-expanded", String(selectedMode === "campaign"));
+  document.querySelector("#gf-free-toggle")!.setAttribute("aria-pressed", String(selectedMode === "free"));
+  for (const button of navigation)
+    button.setAttribute("aria-pressed", String(button.dataset.destination === destination));
+  updateMap();
+}
+
+for (const button of navigation) {
+  if (button.disabled) continue;
+  button.addEventListener("click", () => showDestination(button.dataset.destination as Destination));
+}
+document.querySelector("#gf-campaign-toggle")!.addEventListener("click", () => {
+  selectedMode = "campaign";
+  showDestination("home");
+  roomPanel.querySelector<HTMLElement>("button:not([hidden])")?.focus();
+});
+document.querySelector("#gf-free-toggle")!.addEventListener("click", () => {
+  selectedMode = "free";
+  showDestination("free");
+  roomPanel.querySelector<HTMLElement>("button:not([hidden])")?.focus();
+});
+document.querySelector("#gf-map-back")!.addEventListener("click", () => {
+  selectedMode = "campaign";
+  showDestination("home");
+  document.querySelector<HTMLElement>(`#gf-open-${mapGame}`)?.focus();
+});
+document.querySelector("#gf-next-level")!.addEventListener("click", () => {
+  const level = campaignLevel();
+  if (level !== undefined) open(mapGame, level + 1);
+});
+function exitGame(): void {
+  const adventure = campaignLevel() !== undefined;
+  selectedMode = adventure ? "campaign" : "free";
+  home();
+  showDestination(adventure ? "campaign" : "free");
+  if (adventure) {
+    const next = document.querySelector<HTMLElement>('#gf-levels [aria-current="step"]');
+    (next ?? document.querySelector<HTMLElement>("#gf-map-back"))?.focus();
+  }
+}
+el("home-button").addEventListener("click", exitGame);
+el("other").addEventListener("click", exitGame);
+showDestination("home");
 el("action").addEventListener("click", () => {
   cancelAdvance();
   const action = state.action;
@@ -57,7 +125,7 @@ el("action").addEventListener("click", () => {
   action?.();
 });
 el("again").addEventListener("click", () => {
-  if (state.mode) open(state.mode);
+  if (state.mode) open(state.mode, campaignLevel());
 });
 el("repeat").addEventListener("click", () => {
   unlock();

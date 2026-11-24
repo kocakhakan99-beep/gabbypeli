@@ -1,3 +1,4 @@
+import { campaignLevel } from "../campaign.js";
 import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
 import { feedback, finish, heading, progress, } from "../ui.js";
@@ -10,9 +11,12 @@ let timer;
 let mixingView;
 let trayView;
 let ovenView;
+let preparationView;
 let mixingGeneration = 0;
 function stopMixingView() {
     mixingGeneration++;
+    preparationView?.destroy();
+    preparationView = undefined;
     ovenView?.destroy();
     ovenView = undefined;
     mixingView?.destroy();
@@ -31,6 +35,9 @@ export function stopBakingGestures() {
 export function startBaking() {
     stopBakingGestures();
     const game = el("baking");
+    const adventure = campaignLevel();
+    const portionCount = adventure === undefined ? 6 : 2 + Math.floor((adventure - 1) / 2);
+    const mixingGoal = adventure === undefined ? 4 : 2 + (adventure - 1) / 3;
     heading("cakey", "Hileen leipomo", "Valitse mitä haluat leipoa.", "Hileen keittiö");
     const scene = document.createElement("div");
     scene.className = "bakery-scene";
@@ -82,6 +89,10 @@ export function startBaking() {
         });
     }
     const piece = (recipe) => '<span class="bakery-piece ' + recipe.art + '" aria-hidden="true"></span>';
+    if (adventure !== undefined) {
+        wash(recipes[(adventure - 1) % recipes.length]);
+        return;
+    }
     scene.innerHTML = recipes
         .map((recipe, i) => '<button type="button" class="bakery-recipe" data-recipe="' +
         i +
@@ -106,13 +117,25 @@ export function startBaking() {
         const soap = scene.querySelector(".wash-soap");
         const tap = scene.querySelector(".wash-tap");
         const sink = scene.querySelector(".baking-wash");
+        let washStage = 0;
+        const washGeneration = mixingGeneration;
+        void import("../phaser-room.js").then(({ createPreparationView }) => {
+            if (washGeneration !== mixingGeneration || !sink.isConnected)
+                return;
+            preparationView = createPreparationView(sink, "wash");
+            preparationView.setStage(washStage);
+        }).catch(() => { });
         soap.onclick = () => {
+            washStage = 1;
+            preparationView?.setStage(washStage);
             sound();
             sink.classList.add("soapy");
             soap.disabled = true;
             tap.disabled = false;
         };
         tap.onclick = () => {
+            washStage = 2;
+            preparationView?.setStage(washStage);
             tap.disabled = true;
             sink.classList.add("rinsing");
             timer = setTimeout(() => ingredients(recipe), 850);
@@ -131,12 +154,22 @@ export function startBaking() {
             ...scene.querySelectorAll(".bakery-ingredients > div"),
         ];
         let added = 0;
+        let ingredientMask = 0;
+        const ingredientGeneration = mixingGeneration;
+        void import("../phaser-room.js").then(({ createPreparationView }) => {
+            if (ingredientGeneration !== mixingGeneration || !bowl.isConnected)
+                return;
+            preparationView = createPreparationView(bowl, "ingredients");
+            preparationView.setStage(ingredientMask);
+        }).catch(() => { });
         for (const item of items)
             transfer(item, bowl, () => {
                 if (item.hidden)
                     return;
                 item.hidden = true;
                 bowl.dataset.added = String(++added);
+                ingredientMask |= item.classList.contains("bakery-flour") ? 1 : item.classList.contains("bakery-egg") ? 2 : 4;
+                preparationView?.setStage(ingredientMask);
                 sound();
                 if (added === items.length)
                     mix(recipe);
@@ -162,7 +195,7 @@ export function startBaking() {
         });
         function add(amount) {
             turns += amount;
-            meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * 4)) * 100);
+            meter.value = Math.min(100, (Math.abs(turns) / (Math.PI * mixingGoal)) * 100);
             mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
             if (meter.value === 100)
                 tray(recipe);
@@ -234,7 +267,7 @@ export function startBaking() {
             el("instruction").textContent =
                 "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
             dough.hidden = false;
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < portionCount; i++) {
                 slots.insertAdjacentHTML("beforeend", '<span class="bakery-slot"></span>');
                 dough.insertAdjacentHTML("beforeend", '<div role="button" tabindex="0" aria-label="Siirrä ' +
                     recipe.piece +
@@ -276,7 +309,7 @@ export function startBaking() {
           <div class="bakery-door" role="button" tabindex="0" aria-label="Avaa uunin luukku"></div>
         </div>
       </div>
-      <div class="bakery-tray oven-tray lined" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${piece(recipe).repeat(6)}</div>`);
+      <div class="bakery-tray oven-tray lined" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${piece(recipe).repeat(portionCount)}</div>`);
         const cavity = scene.querySelector(".bakery-cavity");
         const door = scene.querySelector(".bakery-door");
         const knob = scene.querySelector(".bakery-knob");
@@ -352,7 +385,7 @@ export function startBaking() {
             const loaded = document.createElement("div");
             loaded.className = "bakery-loaded";
             loaded.setAttribute("aria-hidden", "true");
-            loaded.innerHTML = piece(recipe).repeat(6);
+            loaded.innerHTML = piece(recipe).repeat(portionCount);
             cavity.prepend(loaded);
             const generation = mixingGeneration;
             void import("../phaser-room.js").then(({ createBakingTrayView }) => {
@@ -360,7 +393,7 @@ export function startBaking() {
                     return;
                 trayView = createBakingTrayView(loaded, recipe.art);
                 trayView.line();
-                for (let index = 0; index < 6; index++)
+                for (let index = 0; index < portionCount; index++)
                     trayView.place(index);
             }).catch(() => {
                 // Keep the existing oven portions available if graphics cannot load.

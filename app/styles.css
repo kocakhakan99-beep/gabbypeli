@@ -1,9 +1,6 @@
 #gabby-fi {
   --ink: #59306f;
   --pink: #e7479f;
-  --atlas: url("../assets/friends/gabby.webp");
-  --friend-atlas: url("../assets/gabby-friends.webp");
-  --object-atlas: url("../assets/play-objects.webp");
   max-width: 760px;
   margin: auto;
   color: var(--ink);
@@ -66,8 +63,6 @@
 #gabby-fi .picture {
   display: block;
   flex-shrink: 0;
-  background-image: var(--atlas);
-  background-size: 200% 200%;
   background-position: 0 0;
   aspect-ratio: 1;
   width: 100%;
@@ -221,10 +216,6 @@
   width: 100%;
   height: 100%;
   aspect-ratio: 1;
-  background-size: 300% 200%;
-}
-#gabby-fi .memory-front .picture[data-cast] {
-  background-image: url("../assets/gabby-friends.webp");
 }
 #gabby-fi .memory-front [data-cast="gabby"],
 #gabby-fi .menu-art [data-cast="gabby"] {
@@ -304,7 +295,6 @@
 #gabby-fi .menu-art > .picture[data-object] {
   width: 100%;
   height: 100%;
-  background-size: 300% 300%;
 }
 #gabby-fi .menu-art > .picture[data-cast] {
   position: absolute;
@@ -314,7 +304,6 @@
   height: 52px;
   border: 3px solid #fff;
   border-radius: 50%;
-  background-image: url("../assets/gabby-friends.webp");
   box-shadow: 0 3px 9px #51316645;
 }
 @keyframes memory-reveal {
@@ -545,7 +534,7 @@
 #gabby-fi .crop {
   position: absolute;
   inset: 0;
-  background-image: var(--puzzle-image, var(--atlas));
+  background-image: var(--puzzle-image, url("../assets/friends/gabby.webp"));
   background-size: var(--puzzle-columns) var(--puzzle-rows);
   background-position: var(--bx) var(--by);
 }
@@ -1508,11 +1497,6 @@ body {
   box-shadow: 0 7px 18px #63397866;
 }
 
-#gabby-fi .picture[data-object] {
-  background-image: var(--object-atlas);
-  background-size: 300% 300%;
-  background-position: var(--tile-x) var(--tile-y);
-}
 
 #gabby-fi #gf-sticker-count {
   color: #784581;
@@ -1526,9 +1510,6 @@ body {
   margin-bottom: 12px;
 }
 #gabby-fi .picture.bonus-art {
-  background-image: url("../assets/dollhouse-stickers.webp");
-  background-size: 300% 300%;
-  background-position: var(--sticker-x) var(--sticker-y);
   border-radius: 17px;
 }
 #gabby-fi .sticker-reward {
@@ -1852,7 +1833,6 @@ body {
   display: block;
   width: 100%;
   height: 100%;
-  background-size: 300% 300%;
 }
 #gabby-fi .menu-art > .picture[data-cast] {
   position: absolute;
@@ -1862,8 +1842,6 @@ body {
   height: 52px;
   border: 3px solid #fff;
   border-radius: 50%;
-  background-image: url("../assets/gabby-friends.webp");
-  background-size: 300% 200%;
   box-shadow: 0 3px 9px #51316645;
 }
 #gabby-fi .memory-card .memory-front .picture {
@@ -1963,10 +1941,6 @@ body {
   }
 }
 
-#gabby-fi .picture[data-cast] {
-  background-image: var(--friend-atlas);
-  background-size: 300% 200%;
-}
 #gabby-fi .picture[data-cast="gabby"] {
   background-position: 0 0;
 }
@@ -1986,8 +1960,6 @@ body {
   background-position: 100% 100%;
 }
 #gabby-fi .portrait.find-clue {
-  background-size: 900% 600%;
-  background-position: var(--clue-x) var(--clue-y);
   animation: clue-pulse 1.5s ease-in-out infinite;
 }
 #gabby-fi .portrait.find-reveal {
@@ -2684,9 +2656,6 @@ body {
 }
 
 #gabby-fi .picture.character-sticker-art {
-  background-image: url("../assets/character-stickers.webp");
-  background-size: 300% 300%;
-  background-position: var(--sticker-x) var(--sticker-y);
   border-radius: 17px;
 }
 #gabby-fi .sticker.earned[role="button"] {
@@ -3479,4 +3448,820 @@ body {
 #gabby-fi .phaser-oven-ready .bakery-door::before,
 #gabby-fi .phaser-oven-ready .bakery-knob::after {
   visibility: hidden;
+}
+
+#gabby-fi .baking-wash,
+#gabby-fi .bakery-bowl {
+  position: relative;
+}
+#gabby-fi .phaser-preparation-ready > canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+#gabby-fi .phaser-preparation-ready .wash-stream,
+#gabby-fi .phaser-preparation-ready.soapy .wash-hands::after {
+  visibility: hidden;
+}
+
+#gabby-fi .phaser-garden-ready > canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gabby-fi .phaser-garden-ready .garden-flower > span:not(.garden-meter) {
+  visibility: hidden;
+}
+#gabby-fi .phaser-garden-ready .garden-flower,
+#gabby-fi .phaser-garden-ready .garden-tool {
+  z-index: 2;
+}
+
+#gabby-fi #gf-memory,
+#gabby-fi #gf-puzzle {
+  position: relative;
+}
+#gabby-fi .phaser-tile-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+#gabby-fi .phaser-memory-ready .memory-front .picture,
+#gabby-fi .phaser-puzzle-ready .slot .crop,
+#gabby-fi .phaser-puzzle-ready .piece .crop {
+  visibility: hidden;
+}
+
+#gabby-fi .mode-hub {
+  padding: clamp(14px, 3vw, 28px);
+  border: 4px solid white;
+  border-radius: 30px;
+  background: linear-gradient(155deg, #fae6ff, #e9faff);
+  color: #4d176b;
+  box-shadow: 0 6px #ab6dc153;
+  margin-bottom: 20px;
+}
+#gabby-fi .mode-header, #gabby-fi .mode-choices {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+#gabby-fi .mode-header { margin-bottom: 16px; }
+#gabby-fi .mode-header strong, #gabby-fi #gf-coin-reward {
+  background: #ffeda8;
+  color: #50226c;
+  padding: 8px 14px;
+  border-radius: 16px;
+}
+#gabby-fi .mode-choices button, #gabby-fi #gf-levels button {
+  border: 3px solid #fff;
+  border-radius: 24px;
+  background: linear-gradient(#b149e5, #8313ad);
+  color: white;
+  min-height: 52px;
+  font-weight: 800;
+  box-shadow: 0 4px #6a388c55;
+}
+#gabby-fi .mode-choices button { flex: 1 1 120px; font-size: 1.2rem; }
+#gabby-fi #gf-free-toggle { background: linear-gradient(#087f97, #08667c); }
+#gabby-fi #gf-levels {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 0;
+}
+#gabby-fi #gf-levels button:disabled { background: #796883; }
+#gabby-fi #gf-levels button[data-completed="true"] { background: #ffe085; color: #50226c; }
+#gabby-fi #gf-free-games[hidden], #gabby-fi #gf-campaign-map[hidden],
+#gabby-fi #gf-next-level[hidden], #gabby-fi #gf-coin-reward[hidden],
+#gabby-fi #gf-memory-packs[hidden], #gabby-fi #gf-memory-settings[hidden] { display: none; }
+
+#gabby-fi #gf-campaign-map button[aria-pressed="true"] {
+  background: #ffe085;
+  color: #50226c;
+}
+#gabby-fi #gf-puzzle-settings[hidden], #gabby-fi #gf-scenes[hidden] {
+  display: none;
+}
+
+/* Home and adventure map */
+#gabby-fi .mode-hub {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 32px);
+  border: 5px solid #fff4ff;
+  border-radius: 32px;
+  background: linear-gradient(135deg, #fff3fbe8, #e9d9ffe8), url("../assets/rooms/playroom.webp") center / cover;
+  box-shadow: 0 8px 0 #a77ac2, 0 15px 25px #763e8744;
+}
+#gabby-fi .mode-header strong,
+#gabby-fi .shop-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border: 3px solid white;
+  border-radius: 24px;
+  background: #fff5db;
+  box-shadow: 0 3px 0 #dca46c;
+  font-weight: 800;
+}
+#gabby-fi .shop-label { background: #e9dded; color: #6a5372; box-shadow: 0 3px 0 #bca1c5; }
+#gabby-fi .coin-icon {
+  width: 30px;
+  aspect-ratio: 1;
+  display: inline-block;
+  border: 4px solid #ffdb64;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe881 0 37%, #e99508 40% 65%, #ffd342 68%);
+  box-shadow: 0 2px #be7400;
+}
+#gabby-fi .mode-choices { gap: 14px; }
+#gabby-fi .mode-choices button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 82px;
+  padding: 10px 14px;
+  border: 4px solid white;
+  border-radius: 28px;
+  background: linear-gradient(#f5a3fa 0%, #d32ee4 45%, #8e15bd 100%);
+  box-shadow: inset 0 4px #ffffff80, 0 5px #8a41aa, 0 9px 12px #7d3b8f44;
+  color: white;
+  text-shadow: 0 2px 2px #612377;
+}
+#gabby-fi #gf-free-toggle {
+  background: linear-gradient(#7deef1, #05bfc9 52%, #087e99);
+  box-shadow: inset 0 4px #ffffff80, 0 5px #117e92, 0 9px 12px #3f7e8c55;
+}
+#gabby-fi .mode-icon {
+  flex: 0 0 54px;
+  height: 54px;
+  background: center / contain no-repeat;
+  filter: drop-shadow(0 3px 2px #4e236455);
+}
+#gabby-fi .adventure-icon { background-image: url("../assets/stickers/bonus-2.webp"); }
+#gabby-fi .free-icon { background-image: url("../assets/objects/blocks.webp"); }
+#gabby-fi #gf-campaign-map {
+  margin-top: 24px;
+  padding: clamp(14px, 3vw, 24px);
+  border: 4px solid white;
+  border-radius: 26px;
+  background: linear-gradient(#f7e8ffea, #fff2f9ef), url("../assets/rooms/playroom.webp") center / cover;
+}
+#gabby-fi #gf-campaign-map h2 { margin: 0; color: #661b8d; }
+#gabby-fi .map-intro { margin: 5px 0 14px; font-weight: 700; }
+#gabby-fi #gf-campaign-map .mode-choices { gap: 6px; }
+#gabby-fi #gf-campaign-map .mode-choices button {
+  min-height: 48px;
+  flex: 1 1 100px;
+  border-radius: 20px;
+  font-size: .9rem;
+}
+#gabby-fi #gf-levels {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 25px;
+  background: linear-gradient(145deg, #ffe9b7cc, #f7c5e8cc);
+}
+#gabby-fi #gf-levels button {
+  min-height: 62px;
+  border-radius: 40% 40% 45% 45%;
+  font-size: 1.3rem;
+  box-shadow: inset 0 3px #ffffff75, 0 4px #8a59a1;
+}
+#gabby-fi #gf-levels button[data-completed="true"] { border-color: #fff; }
+#gabby-fi #gf-levels button:disabled { opacity: .7; box-shadow: none; }
+#gabby-fi .mode-hub button:focus-visible { outline: 4px solid #512171; outline-offset: 3px; }
+@media (max-width: 480px) {
+  #gabby-fi .mode-icon { flex-basis: 38px; height: 38px; }
+  #gabby-fi .mode-choices button { min-height: 64px; font-size: 1rem; }
+  #gabby-fi #gf-levels { gap: 5px; padding: 10px; }
+  #gabby-fi #gf-levels button { min-height: 48px; }
+}
+
+#gabby-fi .free-play-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border: 3px solid #fff;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #f9e9ff, #e6faff);
+  color: #4f2469;
+  box-shadow: 0 4px #cba8d5;
+}
+#gabby-fi .free-play-heading[hidden] { display: none; }
+#gabby-fi .free-play-heading .picture {
+  flex: 0 0 72px;
+  height: 72px;
+}
+#gabby-fi .free-play-heading strong,
+#gabby-fi .free-play-heading span:not(.picture) { display: block; }
+#gabby-fi .free-play-heading strong { font-size: 1.25rem; }
+#gabby-fi .free-play-heading span:not(.picture) { font-size: .9rem; }
+#gabby-fi #gf-memory .settings,
+#gabby-fi #gf-puzzle .settings {
+  padding: 10px;
+  border-radius: 18px;
+  background: #f7e8fb;
+}
+#gabby-fi #gf-win {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(20px, 5vw, 38px);
+  border: 5px solid white;
+  border-radius: 32px;
+  background: linear-gradient(#fff1f7ed, #efddffed), url("../assets/rooms/kitchen.webp") center / cover;
+  box-shadow: 0 8px #a86dc0, 0 14px 24px #7a4a8655;
+}
+#gabby-fi #gf-win .celebration-banner {
+  margin: -4px auto 12px;
+  padding: 10px 20px;
+  border: 3px solid white;
+  border-radius: 24px;
+  background: linear-gradient(#ff8cc7, #df278e);
+  color: white;
+  font-size: clamp(1.25rem, 5vw, 2rem);
+  font-weight: 900;
+  text-shadow: 0 2px #8b2878;
+}
+#gabby-fi #gf-win-art { width: clamp(120px, 35vw, 210px); height: clamp(120px, 35vw, 210px); margin: 0 auto; }
+#gabby-fi #gf-win-title { color: #62208a; }
+#gabby-fi #gf-coin-reward {
+  display: inline-block;
+  border: 3px solid white;
+  font-size: 1.2rem;
+  font-weight: 900;
+  box-shadow: 0 4px #d3a650;
+}
+#gabby-fi #gf-coin-reward[hidden] { display: none; }
+#gabby-fi #gf-next-level {
+  min-height: 55px;
+  margin: 8px;
+  padding: 12px 22px;
+  border: 3px solid white;
+  border-radius: 22px;
+  background: linear-gradient(#ff78be, #e31f83);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 4px #a52372;
+}
+#gabby-fi #gf-win .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+#gabby-fi #gf-win .actions button { min-width: 56px; min-height: 52px; }
+@media (max-width: 480px) {
+  #gabby-fi .free-play-heading .picture { flex-basis: 54px; height: 54px; }
+  #gabby-fi #gf-win { padding: 18px; }
+}
+
+#gabby-fi .campaign-progress {
+  display: grid;
+  gap: 6px;
+  margin: 16px 2px 4px;
+  color: #5b2477;
+  font-weight: 800;
+}
+#gabby-fi .campaign-progress progress {
+  width: 100%;
+  height: 18px;
+  accent-color: #f5b82e;
+}
+
+#gabby-fi .home-house {
+  overflow: hidden;
+  width: min(100%, 920px);
+  margin: 0 auto 16px;
+  border-radius: 24px;
+  border: 3px solid #fff5fc;
+  box-shadow: 0 6px 14px #7b37764d;
+}
+#gabby-fi .home-house img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+#gabby-fi .mode-hub:has(#gf-campaign-map:not([hidden])) .home-house {
+  display: none;
+}
+#gabby-fi #gf-levels {
+  --map-room: url("../assets/rooms/playroom.webp");
+  position: relative;
+  isolation: isolate;
+  grid-template-rows: repeat(2, auto);
+  row-gap: 20px;
+  background: linear-gradient(#fff4fb66, #f5b5e866), var(--map-room) center / cover;
+}
+#gabby-fi #gf-levels[data-game="find"] { --map-room: url("../assets/rooms/music.webp"); }
+#gabby-fi #gf-levels[data-game="garden"] { --map-room: url("../assets/rooms/garden.webp"); }
+#gabby-fi #gf-levels[data-game="baking"] { --map-room: url("../assets/rooms/kitchen.webp"); }
+#gabby-fi #gf-levels::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 25% 7%;
+  border: 12px solid #ffd4ef;
+  border-left: 0;
+  border-radius: 0 80px 80px 0;
+  box-shadow: 0 0 0 2px #fff8;
+}
+#gabby-fi #gf-levels button:nth-child(n+6) { grid-row: 2; }
+#gabby-fi #gf-levels button:nth-child(6) { grid-column: 5; }
+#gabby-fi #gf-levels button:nth-child(7) { grid-column: 4; }
+#gabby-fi #gf-levels button:nth-child(8) { grid-column: 3; }
+#gabby-fi #gf-levels button:nth-child(9) { grid-column: 2; }
+#gabby-fi #gf-levels button:nth-child(10) { grid-column: 1; }
+#gabby-fi #gf-levels button[aria-current="step"] {
+  border-color: #ffdb65;
+  background: linear-gradient(#e752df, #8c21b3);
+}
+
+/* Keep large tap targets in two rows on narrow screens. */
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game] {
+    display: block;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    background: url("../assets/rooms/adventure-path.webp") center / cover;
+  }
+  #gabby-fi #gf-levels[data-game]::before { content: none; }
+  #gabby-fi #gf-levels[data-game] button {
+    position: absolute;
+    left: var(--node-x);
+    top: var(--node-y);
+    transform: translate(-50%, -50%);
+    width: clamp(46px, 6vw, 66px);
+    min-height: 0;
+    aspect-ratio: 1;
+  }
+  #gabby-fi #gf-levels button:nth-child(1) { --node-x: 9%; --node-y: 61%; }
+  #gabby-fi #gf-levels button:nth-child(2) { --node-x: 22%; --node-y: 60%; }
+  #gabby-fi #gf-levels button:nth-child(3) { --node-x: 34%; --node-y: 49%; }
+  #gabby-fi #gf-levels button:nth-child(4) { --node-x: 49%; --node-y: 45%; }
+  #gabby-fi #gf-levels button:nth-child(5) { --node-x: 62%; --node-y: 51%; }
+  #gabby-fi #gf-levels button:nth-child(6) { --node-x: 51%; --node-y: 63%; }
+  #gabby-fi #gf-levels button:nth-child(7) { --node-x: 38%; --node-y: 71%; }
+  #gabby-fi #gf-levels button:nth-child(8) { --node-x: 53%; --node-y: 82%; }
+  #gabby-fi #gf-levels button:nth-child(9) { --node-x: 69%; --node-y: 76%; }
+  #gabby-fi #gf-levels button:nth-child(10) { --node-x: 86%; --node-y: 61%; }
+}
+
+#gabby-fi #gf-win {
+  background: linear-gradient(#fff3f944, #fff0fa99), url("../assets/rooms/celebration.webp") center / cover;
+}
+#gabby-fi #gf-win-title,
+#gabby-fi #gf-win-text {
+  max-width: 34rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: #fff6f4dc;
+}
+
+#gabby-fi .dollhouse-nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 6px;
+  border: 3px solid #fff;
+  border-radius: 24px;
+  background: #f2ddfb;
+  box-shadow: 0 4px #c79bd9;
+}
+#gabby-fi .dollhouse-nav button {
+  min-height: 48px;
+  padding: 6px 3px;
+  border: 2px solid #fff9;
+  border-radius: 16px;
+  background: #fff4ff;
+  color: #582174;
+  font: inherit;
+  font-size: clamp(.73rem, 2.9vw, 1rem);
+  font-weight: 800;
+  cursor: pointer;
+}
+#gabby-fi .dollhouse-nav button[aria-pressed="true"] {
+  background: #ffe193;
+  border-color: #fff;
+  color: #50226c;
+}
+#gabby-fi .dollhouse-nav button:focus-visible { outline: 3px solid #512171; }
+#gabby-fi .home-sticker-count {
+  align-self: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+  background: #fff4ff;
+  color: #582174;
+  font-weight: 800;
+}
+#gabby-fi #gf-home[data-destination="free"] .home-house,
+#gabby-fi #gf-home[data-destination="stickers"] .home-house,
+#gabby-fi #gf-sticker-book[hidden],
+#gabby-fi .campaign-resume[hidden] { display: none; }
+#gabby-fi .campaign-resume {
+  display: block;
+  min-height: 50px;
+  margin: 16px auto 0;
+}
+@media (max-width: 370px) {
+  #gabby-fi .dollhouse-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 760px) {
+  #gabby-fi #gf-home[data-destination="home"] .home-house {
+    margin-bottom: 0;
+  }
+  #gabby-fi #gf-home[data-destination="home"] .mode-hub > .mode-choices {
+    position: relative;
+    width: min(88%, 740px);
+    margin: -56px auto 0;
+  }
+}
+
+#gabby-fi .house-toolbar,
+#gabby-fi .house-controls,
+#gabby-fi .house-balances,
+#gabby-fi .house-balances strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#gabby-fi .house-toolbar {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 6px 0 12px;
+}
+#gabby-fi .house-controls { flex-direction: row-reverse; }
+#gabby-fi .house-balances { flex-wrap: wrap; }
+#gabby-fi .house-balances strong, #gabby-fi .house-balances .home-sticker-count {
+  margin: 0;
+  padding: 7px 10px;
+  border: 2px solid white;
+  border-radius: 24px;
+  background: #fff3fa;
+  color: #57216e;
+}
+#gabby-fi .house-balances .coin-icon { width: 24px; }
+#gabby-fi #gf-home .mode-hub[hidden] { display: none; }
+#gabby-fi #gf-free-games {
+  max-width: 920px;
+  margin: 0 auto;
+  filter: drop-shadow(0 12px 12px #7a3b7355);
+}
+#gabby-fi #gf-free-games .dollhouse-roof.home-house {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  clip-path: none;
+  box-shadow: none;
+}
+#gabby-fi .dollhouse-roof h1 {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  width: max-content;
+  margin: 0;
+  padding: .2em .65em;
+  border: 3px solid #fff6fb;
+  border-radius: 30px;
+  background: linear-gradient(#fff8fb, #fbd4ef);
+  box-shadow: 0 4px 8px #a8438966;
+  color: #652179;
+  font: 900 clamp(1rem, 5vw, 3.3rem)/.97 ui-rounded, "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  text-align: center;
+}
+#gabby-fi .dollhouse-rooms {
+  width: 96%;
+  margin: 0 auto;
+  gap: clamp(5px, 1vw, 12px);
+  padding: clamp(5px, 1.1vw, 12px);
+  border: 5px solid #ffdded;
+  background: linear-gradient(#ffddee, #ec94bf);
+}
+#gabby-fi .dollhouse-rooms .game-link:not([hidden]) {
+  display: block;
+  min-width: 0;
+  aspect-ratio: 1.38;
+  border: 2px solid #fff2e9;
+  border-radius: clamp(9px, 2vw, 19px);
+  overflow: hidden;
+}
+#gabby-fi .dollhouse-rooms .menu-art {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  background: radial-gradient(ellipse at top, #fffbd5a8, transparent 57%), linear-gradient(#efc3ed88, #fee6e269), var(--room-art, url("../assets/rooms/playroom.webp")) center / cover;
+}
+#gabby-fi .dollhouse-rooms .menu-art::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 44%;
+  width: 12%;
+  height: 6%;
+  border-radius: 50%;
+  background: #fff6c7;
+  box-shadow: 0 0 18px 7px #fff0ad;
+}
+#gabby-fi #gf-open-garden { --room-art: url("../assets/rooms/garden.webp"); }
+#gabby-fi #gf-open-baking { --room-art: url("../assets/rooms/kitchen.webp"); }
+#gabby-fi #gf-open-find { --room-art: url("../assets/rooms/music.webp"); }
+#gabby-fi #gf-open-memory { --room-art: url("../assets/rooms/bathroom.webp"); }
+#gabby-fi .dollhouse-rooms .room-toy {
+  position: absolute;
+  top: 2%;
+  left: 12%;
+  width: 76%;
+  height: 83%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 5px #71365b70);
+}
+#gabby-fi .dollhouse-rooms .menu-art > .picture[data-cast] {
+  bottom: 24%;
+  right: 4%;
+  width: clamp(25px, 6vw, 52px);
+  aspect-ratio: 1;
+  border: 2px solid white;
+  border-radius: 50%;
+  background-color: #fff2f9;
+}
+#gabby-fi .dollhouse-rooms .game-label {
+  inset: auto 4% 4%;
+  min-height: 22%;
+  border: 1px solid white;
+  border-radius: 20px;
+  font-size: clamp(.68rem, 2.7vw, 1.2rem);
+  box-shadow: 0 3px 5px #71365b45;
+}
+#gabby-fi .house-play-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+#gabby-fi .house-play-actions button {
+  min-height: 50px;
+  padding: 8px 22px;
+  border: 3px solid white;
+  border-radius: 25px;
+  background: linear-gradient(#b76de0, #7841b4);
+  box-shadow: 0 4px #934ca7;
+  color: white;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+#gabby-fi #gf-campaign-toggle { background: linear-gradient(#81d454, #278927); box-shadow: 0 4px #317c38; }
+#gabby-fi #gf-home[data-destination="stickers"] .house-play-actions { display: none; }
+#gabby-fi .dollhouse-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 16px; }
+#gabby-fi .dollhouse-nav button small { display: block; font-size: .72em; }
+#gabby-fi .level-mark { position: absolute; right: 5px; top: 3px; font-size: .65em; }
+#gabby-fi #gf-levels button { position: relative; }
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game] button { position: absolute; }
+}
+@media (max-width: 600px) {
+  #gabby-fi .dollhouse-rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #gabby-fi .house-toolbar { justify-content: center; }
+  #gabby-fi .house-balances { font-size: .78rem; }
+}
+
+#gabby-fi:has(#gf-home:not([hidden])[data-destination="home"]) {
+  max-width: 1240px;
+}
+#gabby-fi:has(#gf-home:not([hidden])[data-destination="home"]) .shell {
+  background: #e3f1ff url("../assets/menu/garden-backdrop.webp") center / cover;
+}
+#gabby-fi #gf-free-games { position: relative; }
+#gabby-fi .house-welcome { display: none; }
+#gabby-fi #gf-campaign-toggle {
+  display: grid;
+  place-items: center;
+  min-width: min(145px, 100%);
+  line-height: 1.15;
+}
+#gabby-fi #gf-campaign-toggle strong { font-size: 1.18em; }
+#gabby-fi #gf-campaign-toggle small { font-size: .78em; }
+#gabby-fi .house-play-actions button[aria-expanded="true"],
+#gabby-fi .house-play-actions button[aria-pressed="true"] { border-color: #ffe18b; }
+#gabby-fi .dollhouse-nav {
+  background: linear-gradient(#bc7ade, #8047b4);
+  box-shadow: 0 5px #6b389e;
+}
+#gabby-fi .house-play-actions button:focus-visible { outline: 3px solid #4e176b; outline-offset: 3px; }
+@media (min-width: 1000px) {
+  #gabby-fi #gf-home[data-destination="home"] #gf-free-games { width: 82%; }
+  #gabby-fi #gf-home[data-destination="home"] .house-welcome {
+    display: block;
+    position: absolute;
+    inset: auto auto 0 -13%;
+    width: 25%;
+    z-index: 2;
+    pointer-events: none;
+  }
+  #gabby-fi .house-welcome img { display: block; width: 100%; filter: drop-shadow(0 5px 5px #4e245d55); }
+  #gabby-fi .house-welcome img + img { width: 55%; margin: -44% 0 0 37%; }
+}
+
+#gabby-fi #gf-home[data-mode="campaign"] #gf-campaign-toggle,
+#gabby-fi #gf-home[data-mode="free"] #gf-free-toggle {
+  border-color: #ffe18b;
+  outline: 3px solid #fff5;
+}
+#gabby-fi #gf-map-back {
+  min-height: 48px;
+  margin: 8px 0;
+}
+
+/* Bakery path coordinates match the illustrated room. */
+#gabby-fi #gf-levels[data-game="baking"] {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  background: url("../assets/rooms/bakery-map-tall.webp") center / 100% 100%;
+}
+#gabby-fi #gf-levels[data-game="baking"]::before { content: none; }
+#gabby-fi #gf-levels[data-game="baking"] button {
+  position: absolute;
+  left: var(--bakery-x);
+  top: var(--bakery-y);
+  transform: translate(-50%, -50%);
+  width: clamp(44px, 13vw, 60px);
+  min-height: 44px;
+  aspect-ratio: 1;
+}
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(1) { --bakery-x: 50%; --bakery-y: 90%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(2) { --bakery-x: 43%; --bakery-y: 82%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(3) { --bakery-x: 26%; --bakery-y: 75%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(4) { --bakery-x: 23%; --bakery-y: 67%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(5) { --bakery-x: 38%; --bakery-y: 60%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(6) { --bakery-x: 59%; --bakery-y: 57%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(7) { --bakery-x: 75%; --bakery-y: 50%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(8) { --bakery-x: 61%; --bakery-y: 43%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(9) { --bakery-x: 36%; --bakery-y: 38%; }
+#gabby-fi #gf-levels[data-game="baking"] button:nth-child(10) { --bakery-x: 42%; --bakery-y: 29%; }
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game="baking"] {
+    aspect-ratio: 16 / 9;
+    background-image: url("../assets/rooms/bakery-map-wide.webp");
+  }
+  #gabby-fi #gf-levels[data-game="baking"] button { width: clamp(44px, 6vw, 66px); }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(1) { --bakery-x: 10%; --bakery-y: 68%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(2) { --bakery-x: 19%; --bakery-y: 63%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(3) { --bakery-x: 31%; --bakery-y: 68%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(4) { --bakery-x: 43%; --bakery-y: 70%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(5) { --bakery-x: 56%; --bakery-y: 68%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(6) { --bakery-x: 70%; --bakery-y: 63%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(7) { --bakery-x: 84%; --bakery-y: 66%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(8) { --bakery-x: 78%; --bakery-y: 79%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(9) { --bakery-x: 59%; --bakery-y: 87%; }
+  #gabby-fi #gf-levels[data-game="baking"] button:nth-child(10) { --bakery-x: 37%; --bakery-y: 84%; }
+}
+@media (max-width: 679px) {
+  #gabby-fi #gf-levels[data-game="baking"] { min-height: 680px; }
+}
+
+/* Garden trail uses its own illustrated layout at each orientation. */
+#gabby-fi #gf-levels[data-game="garden"] {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  background: url("../assets/rooms/garden-map-tall.webp") center / 100% 100%;
+}
+#gabby-fi #gf-levels[data-game="garden"]::before { content: none; }
+#gabby-fi #gf-levels[data-game="garden"] button {
+  position: absolute;
+  left: var(--garden-map-x);
+  top: var(--garden-map-y);
+  transform: translate(-50%, -50%);
+  width: clamp(44px, 13vw, 60px);
+  min-height: 44px;
+  aspect-ratio: 1;
+}
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(1) { --garden-map-x: 42%; --garden-map-y: 94%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(2) { --garden-map-x: 29%; --garden-map-y: 85%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(3) { --garden-map-x: 36%; --garden-map-y: 76%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(4) { --garden-map-x: 61%; --garden-map-y: 72%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(5) { --garden-map-x: 75%; --garden-map-y: 63%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(6) { --garden-map-x: 56%; --garden-map-y: 54%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(7) { --garden-map-x: 26%; --garden-map-y: 48%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(8) { --garden-map-x: 43%; --garden-map-y: 40%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(9) { --garden-map-x: 68%; --garden-map-y: 33%; }
+#gabby-fi #gf-levels[data-game="garden"] button:nth-child(10) { --garden-map-x: 44%; --garden-map-y: 24%; }
+@media (max-width: 679px) {
+  #gabby-fi #gf-levels[data-game="garden"] { min-height: 680px; }
+}
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels[data-game="garden"] {
+    aspect-ratio: 16 / 9;
+    background-image: url("../assets/rooms/garden-map-wide.webp");
+  }
+  #gabby-fi #gf-levels[data-game="garden"] button { width: clamp(44px, 6vw, 66px); }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(1) { --garden-map-x: 10%; --garden-map-y: 55%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(2) { --garden-map-x: 22%; --garden-map-y: 58%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(3) { --garden-map-x: 36%; --garden-map-y: 60%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(4) { --garden-map-x: 50%; --garden-map-y: 57%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(5) { --garden-map-x: 64%; --garden-map-y: 51%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(6) { --garden-map-x: 78%; --garden-map-y: 50%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(7) { --garden-map-x: 91%; --garden-map-y: 58%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(8) { --garden-map-x: 81%; --garden-map-y: 73%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(9) { --garden-map-x: 62%; --garden-map-y: 80%; }
+  #gabby-fi #gf-levels[data-game="garden"] button:nth-child(10) { --garden-map-x: 42%; --garden-map-y: 75%; }
+}
+
+/* A single illustrated cat marker works with live HTML numbers and states. */
+#gabby-fi #gf-levels button {
+  position: relative;
+  padding: 9px 3px 2px;
+  border: 0;
+  border-radius: 0;
+  color: #fff;
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 4px 2px #53256699);
+  font-size: clamp(1.15rem, 3.4vw, 1.7rem);
+  font-weight: 900;
+  text-shadow: -2px -2px #653078, 2px -2px #653078, -2px 2px #653078, 2px 2px #653078;
+}
+#gabby-fi #gf-levels button[data-completed="true"] {
+  color: white;
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+}
+#gabby-fi #gf-levels button[aria-current="step"] {
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  filter: drop-shadow(0 0 5px #ffe36a) drop-shadow(0 4px 2px #53256699);
+}
+#gabby-fi #gf-levels button:disabled {
+  color: #eee2f4;
+  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  filter: grayscale(.6) brightness(.72);
+  opacity: .92;
+}
+#gabby-fi #gf-levels .level-mark {
+  display: block;
+  position: absolute;
+  width: 19px;
+  height: 19px;
+  top: 1px;
+  right: -2px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ffcf55;
+  box-shadow: 0 2px 3px #50206788;
+}
+#gabby-fi #gf-levels .level-mark.completed::after {
+  content: "✓";
+  display: block;
+  color: #603000;
+  font-size: 13px;
+  line-height: 15px;
+  text-shadow: none;
+}
+#gabby-fi #gf-levels .level-mark.locked::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #704b0e;
+  border-radius: 6px 6px 0 0;
+}
+#gabby-fi #gf-levels .level-mark.locked::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 9px;
+  height: 7px;
+  border-radius: 2px;
+  background: #704b0e;
+}
+#gabby-fi #gf-levels button:focus-visible {
+  outline: 3px solid #42145c;
+  outline-offset: 3px;
+}
+@media (max-width: 679px) {
+  #gabby-fi #gf-levels[data-game="baking"],
+  #gabby-fi #gf-levels[data-game="garden"] {
+    min-height: max(680px, 165vw);
+    background-size: 100% 100%;
+  }
+  #gabby-fi #gf-levels[data-game="baking"] button,
+  #gabby-fi #gf-levels[data-game="garden"] button { width: clamp(48px, 13vw, 60px); }
 }

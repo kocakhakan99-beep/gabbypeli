@@ -43454,4 +43454,241 @@ function re(e) {
 		}
 	};
 }
-export { Q as createBakingTrayView, Z as createMixingView, re as createOvenView, ne as createRoomView };
+function ie(e, t) {
+	let n = 0, r = !0, i, a = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	function o(e) {
+		if (i) {
+			if (i.clear(), t === "wash") {
+				if (n === 0) return;
+				if (n === 2) {
+					i.lineStyle(12, 10479871, .8), i.lineBetween(140, 94, 140, 166);
+					for (let t = 0; t < 8; t++) {
+						let n = 100 + (t * 11 + (a ? 0 : e / 18)) % 65;
+						i.fillStyle(15072255, .9), i.fillEllipse(140, n, 9, 5);
+					}
+				}
+				for (let t = 0; t < 12; t++) {
+					let r = 125 + t % 4 * 18, o = 170 + Math.floor(t / 4) * 10 + (a ? 0 : Math.sin(e / 240 + t) * 3);
+					i.fillStyle(16777215, n === 2 ? .45 : .85), i.fillCircle(r, o, 5 + t % 3);
+				}
+			} else n & 1 && (i.fillStyle(16774105), i.fillEllipse(150, 162, 145, 68)), n & 2 && (i.fillStyle(16760141), i.fillCircle(160, 150, 26), i.fillStyle(16771233, .8), i.fillEllipse(153, 144, 12, 9)), n & 4 && (i.fillStyle(16776690, .85), i.fillEllipse(150, 161, 170, 70));
+		}
+	}
+	let s = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: 300,
+		height: 240,
+		scale: {
+			mode: X.Scale.FIT,
+			autoCenter: X.Scale.CENTER_BOTH
+		},
+		scene: {
+			create() {
+				r && (i = this.add.graphics(), e.classList.add("phaser-preparation-ready"), o(0));
+			},
+			update(e) {
+				o(e);
+			}
+		}
+	});
+	return {
+		setStage(e) {
+			n = e, o(0);
+		},
+		destroy() {
+			r = !1, e.classList.remove("phaser-preparation-ready"), s.destroy(!0);
+		}
+	};
+}
+function ae(e, t) {
+	let n = !0, r = window.matchMedia("(prefers-reduced-motion: reduce)").matches, i = [
+		16746684,
+		16766840,
+		12228351,
+		16754377
+	], a, o = new X.Game({
+		type: X.CANVAS,
+		parent: e,
+		transparent: !0,
+		width: e.clientWidth,
+		height: e.clientHeight,
+		scale: { mode: X.Scale.RESIZE },
+		scene: {
+			create() {
+				n && (a = this.add.graphics(), e.classList.add("phaser-garden-ready"));
+			},
+			update(o) {
+				if (!n || !a) return;
+				a.clear();
+				let s = e.clientWidth, c = e.clientHeight;
+				t.forEach((t, n) => {
+					let l = parseFloat(t.style.getPropertyValue("--flower-x")) * s / 100, u = parseFloat(t.style.getPropertyValue("--flower-y")) * c / 100, d = Number(t.style.getPropertyValue("--growth")) || 0, f = t.classList.contains("water-done") ? 1 : e.dataset.stage === "water" ? d : 0, p = r ? 0 : Math.sin(o / 700 + n) * f * 3;
+					if (a.fillStyle(t.classList.contains("soil-done") ? 7358511 : 9659206), a.fillEllipse(l, u + 25, 65, 22), f > 0) {
+						a.lineStyle(5, 3769165), a.lineBetween(l, u + 23, l + p, u - 30 * f), a.fillStyle(6662226), a.fillEllipse(l + 10, u + 5, 22 * f, 10 * f);
+						let e = u - 30 * f;
+						a.fillStyle(i[n % i.length]);
+						for (let t = 0; t < 6; t++) {
+							let n = t * Math.PI / 3;
+							a.fillCircle(l + p + Math.cos(n) * 13 * f, e + Math.sin(n) * 13 * f, 10 * f);
+						}
+						a.fillStyle(16772504), a.fillCircle(l + p, e, 8 * f);
+					}
+					e.dataset.stage === "tidy" && !t.classList.contains("tidy-done") && (a.fillStyle(10056010, 1 - d), a.fillEllipse(l - 20, u + 20, 13, 6), a.fillEllipse(l + 22, u + 28, 12, 5));
+				});
+			}
+		}
+	});
+	return { destroy() {
+		n = !1, e.classList.remove("phaser-garden-ready"), o.destroy(!0);
+	} };
+}
+function oe(e, t, n, r = 1, i) {
+	let a = document.createElement("div");
+	a.className = "phaser-tile-layer", a.setAttribute("aria-hidden", "true"), e.append(a);
+	let o = !0, s = !1, c = window.matchMedia("(prefers-reduced-motion: reduce)").matches, l, u = /* @__PURE__ */ new Map(), d = new X.Game({
+		type: X.CANVAS,
+		parent: a,
+		transparent: !0,
+		width: e.clientWidth,
+		height: e.clientHeight,
+		scale: { mode: X.Scale.RESIZE },
+		scene: {
+			preload() {
+				this.load.on("loaderror", () => {
+					s = !0;
+				});
+				for (let e of new Map(n.map((e) => [e.id, e])).values()) this.textures.exists(e.id) || this.load.image(e.id, `./assets/${e.folder}/${e.id}.webp`);
+			},
+			create() {
+				if (o && !s) {
+					if (t === "puzzle") {
+						let e = this.textures.get(n[0].id), t = e.getSourceImage();
+						for (let n = 0; n < r * 2; n++) e.add(String(n), 0, n % 2 * t.width / 2, Math.floor(n / 2) * t.height / r, t.width / 2, t.height / r);
+					}
+					l = this, i && this.events.on("tile-action", i), e.classList.add(`phaser-${t}-ready`);
+				}
+			},
+			update() {
+				if (!o || s) return;
+				let r = e.getBoundingClientRect(), i = [...e.querySelectorAll(t === "memory" ? ".memory-card" : ".slot, .piece")], a = new Set(i);
+				u.forEach((e, t) => {
+					a.has(t) || (e.image.destroy(), u.delete(t));
+				}), i.forEach((e) => {
+					let i = Number(e.dataset[t === "memory" ? "index" : "piece"]), a = t === "memory" ? n[i] : n[0];
+					if (!a || !this.textures.exists(a.id)) return;
+					let o = e.getBoundingClientRect(), s = t === "memory" ? e.getAttribute("aria-pressed") === "true" && !e.classList.contains("closing") : !e.disabled || e.classList.contains("filled"), l = u.get(e);
+					l || (l = {
+						image: this.add.image(0, 0, a.id, t === "puzzle" ? String(i) : void 0),
+						up: s,
+						openness: +!!s
+					}, u.set(e, l));
+					let d = l.image, f = t === "memory" ? l.openness > .5 : !e.classList.contains("piece") || !e.disabled;
+					if (d.setVisible(f), d.setPosition(o.left - r.left + o.width / 2, o.top - r.top + o.height / 2), t === "memory") {
+						let e = Math.min(Math.max(1, o.width - 10) / d.frame.realWidth, Math.max(1, o.height - 10) / d.frame.realHeight);
+						d.setScale(e * Math.abs(Math.cos(l.openness * Math.PI)), e);
+					} else d.setDisplaySize(Math.max(1, o.width - 10), Math.max(1, o.height - 10));
+					t === "puzzle" && d.setAlpha(e.classList.contains("slot") && !e.classList.contains("filled") ? .23 : 1), l.up !== s && (l.up = s, t === "memory" ? (this.tweens.killTweensOf(l), c ? l.openness = +!!s : this.tweens.add({
+						targets: l,
+						openness: +!!s,
+						duration: 360,
+						ease: "Sine.easeInOut"
+					})) : s && !c && (d.setAlpha(.2), this.tweens.add({
+						targets: d,
+						alpha: 1,
+						duration: 240
+					})));
+				});
+			}
+		}
+	});
+	return {
+		activate(e, t) {
+			return !o || !l || !i ? !1 : (l.events.emit("tile-action", e, t), !0);
+		},
+		destroy() {
+			o = !1, l = void 0, e.classList.remove(`phaser-${t}-ready`), d.destroy(!0), a.remove();
+		}
+	};
+}
+function se(e, t) {
+	let n, r = document.createElement("div");
+	r.hidden = !0, r.setAttribute("aria-hidden", "true"), e.append(r);
+	function i(e) {
+		let t = e.event;
+		if (t instanceof MouseEvent) return {
+			x: t.clientX,
+			y: t.clientY
+		};
+		if (t instanceof TouchEvent) {
+			let n = Array.from(t.changedTouches).find((t) => t.identifier === e.identifier);
+			if (n) return {
+				x: n.clientX,
+				y: n.clientY
+			};
+		}
+	}
+	function a() {
+		let e = n;
+		n = void 0, e && t.handlers(e.surface)?.end();
+	}
+	return new X.Game({
+		type: X.CANVAS,
+		parent: r,
+		width: 1,
+		height: 1,
+		audio: { noAudio: !0 },
+		input: {
+			keyboard: !1,
+			mouse: {
+				target: e,
+				preventDefaultMove: !1
+			},
+			touch: {
+				target: e,
+				capture: !1
+			}
+		},
+		scene: { create() {
+			let r = (e) => {
+				if (e.event instanceof MouseEvent && e.event.button !== 0 || n && n.surface.isConnected && t.handlers(n.surface)) return;
+				let r = t.find(e.downElement), a = i(e);
+				r && a && (n = {
+					pointer: e,
+					touchId: e.event instanceof TouchEvent ? e.identifier : void 0,
+					surface: r,
+					previous: a
+				}, t.handlers(r)?.start(a));
+			}, o = (e) => {
+				if (n?.pointer !== e || n.touchId !== void 0) return;
+				let r = i(e);
+				if (!r) return;
+				let a = n.previous;
+				n.previous = r, t.handlers(n.surface)?.move(a, r);
+			}, s = (e) => {
+				if (n?.pointer !== e) return;
+				if (e.wasCanceled) {
+					a();
+					return;
+				}
+				let r = n;
+				n = void 0;
+				let o = i(e), s = t.handlers(r.surface);
+				o && s?.move(r.previous, o), r.surface.isConnected && s?.end(o);
+			};
+			e.addEventListener("touchmove", (e) => {
+				let r = n;
+				if (r?.touchId === void 0) return;
+				let i = Array.from(e.changedTouches).find((e) => e.identifier === r.touchId);
+				if (!i) return;
+				let a = {
+					x: i.clientX,
+					y: i.clientY
+				}, o = r.previous;
+				r.previous = a, t.handlers(r.surface)?.move(o, a), !r.surface.isConnected && n === r && (n = void 0, r.pointer.reset());
+			}, { passive: !0 }), this.input.on("pointerdown", r), this.input.on("pointerdownoutside", r), this.input.on("pointermove", o), this.input.on("pointerup", s), this.input.on("pointerupoutside", s), this.game.events.on("blur", a), t.ready();
+		} }
+	}), a;
+}
+export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView, oe as createTileView, se as startRoomInput };

@@ -1,3 +1,4 @@
+import { setCampaignLevel } from "./campaign.js";
 import { el } from "./dom.js";
 import { cancelAdvance, feedback, setAction } from "./ui.js";
 import { initMemory, stopMemoryTimers } from "./games/memory.js";
@@ -9,10 +10,13 @@ import { startBaking, stopBakingGestures } from "./games/baking.js";
 import { startBubbles } from "./games/bubbles.js";
 import { state } from "./state.js";
 import { stopSpeech, silenceEffects, unlock } from "./audio.js";
-import { startDrawing } from "./games/drawing.js";
-import { startGarden } from "./games/garden.js";
-import { stopStroke } from "./games/stroke.js";
+import { startGarden, stopGarden } from "./games/garden.js";
+import { enableSceneStrokes, sceneStrokeHandlers, sceneStrokeTarget, stopStroke } from "./games/stroke.js";
+let inputStarted = false;
+let cancelRoomInput;
 function stopGestures() {
+    cancelRoomInput?.();
+    stopGarden();
     stopFind();
     stopMemoryTimers();
     stopStroke(el("portrait"));
@@ -31,10 +35,11 @@ const starters = {
     sizes: renderSizes,
     baking: startBaking,
     bubbles: startBubbles,
-    drawing: startDrawing,
+    drawing: home,
     garden: startGarden,
 };
 export function home() {
+    setCampaignLevel();
     const previousRoom = state.mode;
     cancelAdvance();
     stopGestures();
@@ -48,7 +53,15 @@ export function home() {
     if (previousRoom)
         el(`open-${previousRoom}`).focus();
 }
-export function open(which) {
+export function open(which, level) {
+    if (which === "memory" || which === "puzzle" || which === "find" || which === "garden" || which === "baking")
+        setCampaignLevel(level, which);
+    else
+        setCampaignLevel();
+    if (which === "drawing") {
+        home();
+        return;
+    }
     cancelAdvance();
     stopGestures();
     stopSpeech();
@@ -77,6 +90,20 @@ export function open(which) {
     el("learn").hidden = !["find", "learn", "sizes"].includes(which);
     feedback("");
     setAction("", null);
+    if (!inputStarted && ["memory", "puzzle", "find", "garden", "baking"].includes(which)) {
+        inputStarted = true;
+        const target = el("play");
+        void import("./phaser-room.js").then(({ startRoomInput }) => {
+            cancelRoomInput = startRoomInput(target, {
+                ready: () => {
+                    enableSceneStrokes(target);
+                    target.dataset.input = "phaser";
+                },
+                find: sceneStrokeTarget,
+                handlers: sceneStrokeHandlers,
+            });
+        }).catch(() => { inputStarted = false; });
+    }
     starters[which]();
     el("title").focus();
     el("play").scrollIntoView({ block: "start" });
