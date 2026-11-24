@@ -8,7 +8,7 @@ test("adventure map and celebration fit a small touch screen", async ({ page }, 
   await page.goto("/");
   const rooms = page.locator(".dollhouse-rooms");
   await expect(rooms.locator(".game-link:visible")).toHaveCount(6);
-  await expect(rooms.locator("button:visible")).toHaveCount(5);
+  await expect(rooms.locator("button:visible")).toHaveCount(6);
   const images = page.locator(".home-house img, .dollhouse-rooms img");
   await expect(images).toHaveCount(7);
   await expect.poll(() => images.evaluateAll((elements) =>

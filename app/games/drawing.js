@@ -101,7 +101,7 @@ export function startDrawing() {
         undo.disabled = strokes.length === 0;
         progress(strokes.length ? 1 : 0, 1);
         setAction(strokes.length ? "Kuva on valmis" : "", strokes.length
-            ? () => finish("Hieno taikakuva!", "Sait taiteilijan tarran!", "gabby")
+            ? () => finish("Hieno taikakuva!", "Sinä teit oman taikakuvan!", "gabby")
             : null);
     }
     context.clearRect(0, 0, canvas.width, canvas.height);

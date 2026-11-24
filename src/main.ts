@@ -83,7 +83,11 @@ function showDestination(destination: Destination): void {
 
 for (const button of navigation) {
   if (button.disabled) continue;
-  button.addEventListener("click", () => showDestination(button.dataset.destination as Destination));
+  button.addEventListener("click", () => {
+    const destination = button.dataset.destination as Destination;
+    if (destination === "free") selectedMode = "free";
+    showDestination(destination);
+  });
 }
 document.querySelector("#gf-campaign-toggle")!.addEventListener("click", () => {
   selectedMode = "campaign";
