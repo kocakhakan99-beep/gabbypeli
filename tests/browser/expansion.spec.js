@@ -5,6 +5,37 @@ async function mutedGame(page) {
   await page.locator("#gf-sound").click();
 }
 
+async function bake(page, piparit, mixes, portions) {
+  await page.getByRole("button", { name: "Ota saippuaa" }).click();
+  await page.getByRole("button", { name: "Huuhtele kädet" }).click();
+  for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
+    await page.getByRole("button", { name }).press("Enter");
+  for (let i = 0; i < mixes; i++)
+    await page.locator(".bakery-bowl.mixing").press("Enter");
+  await page
+    .getByRole("button", { name: "Aseta leivinpaperi pellille" })
+    .press("Enter");
+  await expect(page.locator(".bakery-dough > div")).toHaveCount(portions);
+  for (const portion of await page.locator(".bakery-dough > div").all())
+    await portion.press("Enter");
+  await page
+    .getByRole("button", { name: "Avaa uunin luukku" })
+    .press("Enter");
+  await page
+    .getByRole("button", { name: "Siirrä pelti uuniin" })
+    .press("Enter");
+  await page
+    .getByRole("button", { name: "Sulje uunin luukku" })
+    .press("Enter");
+  const dial = page.getByRole("slider", { name: "Uunin lämpötila" });
+  for (let i = 0; i < (piparit ? 7 : 8); i++) await dial.press("ArrowUp");
+  await expect(dial).toHaveAttribute(
+    "aria-valuenow",
+    piparit ? "175" : "200",
+  );
+  await expect(page.locator("#gf-win")).toBeVisible();
+}
+
 for (const width of [320, 768, 1100]) {
   test(`baking is playable at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
@@ -21,33 +52,7 @@ for (const width of [320, 768, 1100]) {
     await page
       .getByRole("button", { name: piparit ? "Piparit" : "Kuppikakut" })
       .click();
-    await page.getByRole("button", { name: "Ota saippuaa" }).click();
-    await page.getByRole("button", { name: "Huuhtele kädet" }).click();
-    for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
-      await page.getByRole("button", { name }).press("Enter");
-    for (let i = 0; i < 4; i++)
-      await page.locator(".bakery-bowl.mixing").press("Enter");
-    await page
-      .getByRole("button", { name: "Aseta leivinpaperi pellille" })
-      .press("Enter");
-    for (const portion of await page.locator(".bakery-dough > div").all())
-      await portion.press("Enter");
-    await page
-      .getByRole("button", { name: "Avaa uunin luukku" })
-      .press("Enter");
-    await page
-      .getByRole("button", { name: "Siirrä pelti uuniin" })
-      .press("Enter");
-    await page
-      .getByRole("button", { name: "Sulje uunin luukku" })
-      .press("Enter");
-    const dial = page.getByRole("slider", { name: "Uunin lämpötila" });
-    for (let i = 0; i < (piparit ? 7 : 8); i++) await dial.press("ArrowUp");
-    await expect(dial).toHaveAttribute(
-      "aria-valuenow",
-      piparit ? "175" : "200",
-    );
-    await expect(page.locator("#gf-win")).toBeVisible();
+    await bake(page, piparit, 4, 6);
     await page.locator("#gf-other").click();
     await expect(page.locator("#gf-stickers .earned")).toHaveCount(0);
     await page.reload();
@@ -60,6 +65,28 @@ for (const width of [320, 768, 1100]) {
     expect(errors).toEqual([]);
   });
 }
+
+test("all bakery adventure levels scale and award progress once", async ({ page }) => {
+  test.setTimeout(180_000);
+  page.setDefaultTimeout(12_000);
+  await mutedGame(page);
+  await page.locator("#gf-campaign-toggle").click();
+  await page.locator("#gf-open-baking").click();
+  await page.getByRole("button", { name: "Taso 1", exact: true }).click();
+  const mixing = [2, 2, 3, 3, 3, 4, 4, 4, 5, 5];
+  for (const [index, mixes] of mixing.entries()) {
+    await bake(page, index % 2 === 0, mixes, 2 + Math.floor(index / 2));
+    await expect(page.locator("#gf-coin-reward")).toHaveText("+25 kisukolikkoa");
+    if (index < 9) await page.locator("#gf-next-level").click();
+  }
+  await expect(page.locator("#gf-next-level")).toBeHidden();
+  await page.locator("#gf-again").click();
+  await bake(page, false, 5, 6);
+  await expect(page.locator("#gf-coin-reward")).toHaveText("Taso suoritettu uudelleen!");
+  await page.locator("#gf-other").click();
+  await expect(page.locator("#gf-map-progress")).toHaveJSProperty("value", 10);
+  await expect(page.locator("#gf-coins")).toHaveText("250");
+});
 
 test("memory pairs and all puzzle sizes finish through visible buttons", async ({
   page,
