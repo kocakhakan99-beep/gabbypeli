@@ -4007,6 +4007,7 @@ body {
   bottom: 24%;
   right: 4%;
   width: clamp(25px, 6vw, 52px);
+  height: auto;
   aspect-ratio: 1;
   border: 2px solid white;
   border-radius: 50%;
