@@ -1,8 +1,14 @@
 import Phaser from "phaser";
 
+function loadGabbyAtlas(scene: Phaser.Scene, key: string): void {
+  const base = `./assets/gabby/atlases/${key}.webp`;
+  scene.load.atlas(key, base, `${base}.json`);
+}
+
 export interface RoomItem {
   id: string;
   hidden: boolean;
+  frame?: string;
 }
 
 export interface RoomView {
@@ -59,11 +65,15 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: s
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: {
       preload() {
-        for (const item of items) this.load.image(item.id, `./assets/furniture/${item.id}.webp`);
+        if (items.some((item) => item.frame)) loadGabbyAtlas(this, "hide");
+        for (const item of items) {
+          if (!item.frame) this.load.image(item.id, `./assets/furniture/${item.id}.webp`);
+        }
         this.load.image("hidden-friend", `./assets/friends/${friend}.webp`);
         this.load.image("hidden-surprise", `./assets/objects/${surprise}.webp`);
       },
       create() {
+        if (items.some((item) => item.frame) && !this.textures.exists("hide")) return;
         scene = this;
         const positions = [[200, 140], [600, 140], [200, 420], [600, 420]];
         items.forEach((item, index) => {
@@ -72,7 +82,7 @@ export function createRoomView(parent: HTMLElement, items: RoomItem[], friend: s
           const surprise = this.add.image(x, y, item.hidden ? "hidden-friend" : "hidden-surprise");
           surprise.setDisplaySize(135, 135).setVisible(false);
           surprises.push(surprise);
-          const image = this.add.image(x, y, item.id);
+          const image = this.add.image(x, y, item.frame ? "hide" : item.id, item.frame);
           const scale = Math.min(280 / image.width, 235 / image.height);
           image.setScale(scale);
           furniture.push(image);
@@ -95,7 +105,7 @@ export interface MixingView {
 /** Draws the spoon and batter as the player stirs the mixing bowl. */
 export function createMixingView(parent: HTMLElement): MixingView {
   let scene: Phaser.Scene | undefined;
-  let spoon: Phaser.GameObjects.Container | undefined;
+  let spoon: Phaser.GameObjects.Image | undefined;
   let trails: Phaser.GameObjects.Graphics | undefined;
   let position = { x: 0.5, y: 0.5, progress: 0 };
   let alive = true;
@@ -108,7 +118,7 @@ export function createMixingView(parent: HTMLElement): MixingView {
     };
     if (!scene || !spoon || !trails) return;
     spoon.setPosition(position.x * 300, position.y * 300);
-    spoon.setRotation(Math.atan2(position.y - 0.5, position.x - 0.5) + 0.8);
+    spoon.setRotation(Math.atan2(position.y - 0.5, position.x - 0.5) - Math.PI / 2);
     trails.clear();
     trails.lineStyle(7, 0xfff3c9, 0.7);
     trails.beginPath();
@@ -124,15 +134,13 @@ export function createMixingView(parent: HTMLElement): MixingView {
     height: 300,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: {
+      preload() { loadGabbyAtlas(this, "bakery"); },
       create() {
-        if (!alive) return;
+        if (!alive || !this.textures.exists("bakery")) return;
         scene = this;
         trails = this.add.graphics();
-        const shadow = this.add.ellipse(8, 50, 38, 85, 0x8b5535, 0.25);
-        const handle = this.add.rectangle(0, 32, 18, 100, 0xae6842).setOrigin(0.5, 0.15);
-        const head = this.add.ellipse(0, 0, 48, 64, 0xd7925c);
-        const highlight = this.add.ellipse(-6, -8, 20, 28, 0xf5bc80, 0.55);
-        spoon = this.add.container(150, 150, [shadow, handle, head, highlight]);
+        spoon = this.add.image(150, 150, "bakery", "spoon").setOrigin(0.5, 0.25);
+        spoon.setScale(108 / spoon.height);
         parent.classList.add("phaser-mixing-ready");
         move(position.x, position.y, position.progress);
       },
@@ -157,7 +165,7 @@ export interface BakingTrayView {
 /** Draws the parchment and individual portions on the baking tray. */
 export function createBakingTrayView(parent: HTMLElement, recipe: string): BakingTrayView {
   let scene: Phaser.Scene | undefined;
-  let paper: Phaser.GameObjects.Rectangle | undefined;
+  let paper: Phaser.GameObjects.Image | undefined;
   let alive = true;
   let lined = false;
   const placed = new Set<number>();
@@ -169,8 +177,10 @@ export function createBakingTrayView(parent: HTMLElement, recipe: string): Bakin
     if (!scene || !paper) return;
     paper.setVisible(true);
     if (!reducedMotion) {
-      paper.setScale(0.92);
-      scene.tweens.add({ targets: paper, scale: 1, duration: 250, ease: "Sine.easeOut" });
+      const x = paper.scaleX;
+      const y = paper.scaleY;
+      paper.setScale(x * 0.92, y * 0.92);
+      scene.tweens.add({ targets: paper, scaleX: x, scaleY: y, duration: 250, ease: "Sine.easeOut" });
     }
   }
 
@@ -180,10 +190,12 @@ export function createBakingTrayView(parent: HTMLElement, recipe: string): Bakin
     drawn.add(index);
     const x = 50 + (index % 3) * 100;
     const y = 27 + Math.floor(index / 3) * 54;
-    const portion = thisScenePortion(scene, x, y, recipe);
+    const portion = scene.add.image(x, y, "bakery", recipe === "cupcake" ? "raw_pink" : "batter_dollop_large");
+    const scale = Math.min(43 / portion.width, 39 / portion.height);
+    portion.setScale(scale);
     if (!reducedMotion) {
-      portion.setScale(0.5);
-      scene.tweens.add({ targets: portion, scale: 1, duration: 300, ease: "Back.easeOut" });
+      portion.setScale(scale * 0.5);
+      scene.tweens.add({ targets: portion, scale, duration: 300, ease: "Back.easeOut" });
     }
   }
 
@@ -195,10 +207,11 @@ export function createBakingTrayView(parent: HTMLElement, recipe: string): Bakin
     height: 108,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: {
+      preload() { loadGabbyAtlas(this, "bakery"); },
       create() {
-        if (!alive) return;
+        if (!alive || !this.textures.exists("bakery")) return;
         scene = this;
-        paper = this.add.rectangle(150, 54, 296, 104, 0xfff0cf).setVisible(false);
+        paper = this.add.image(150, 54, "bakery", "parchment").setDisplaySize(290, 102).setVisible(false);
         parent.classList.add("phaser-tray-ready");
         if (lined) line();
         placed.forEach(place);
@@ -216,77 +229,13 @@ export function createBakingTrayView(parent: HTMLElement, recipe: string): Bakin
   };
 }
 
-function thisScenePortion(scene: Phaser.Scene, x: number, y: number, recipe: string): Phaser.GameObjects.Container {
-  if (recipe === "cupcake") {
-    const wrapper = scene.add.rectangle(0, 7, 28, 22, 0xb98bdb);
-    const icing = scene.add.ellipse(0, -6, 34, 23, 0xffb5db);
-    const highlight = scene.add.ellipse(-7, -9, 9, 5, 0xffedf7, 0.8);
-    return scene.add.container(x, y, [wrapper, icing, highlight]);
-  }
-  const cookie = scene.add.ellipse(0, 0, 36, 33, 0xd39b61);
-  const chips = [
-    scene.add.circle(-8, -5, 3, 0x80442f),
-    scene.add.circle(6, 6, 3, 0x80442f),
-    scene.add.circle(8, -8, 2, 0x80442f),
-  ];
-  return scene.add.container(x, y, [cookie, ...chips]);
-}
-
-export interface OvenView {
-  update(angle: number, heat: number): void;
-  destroy(): void;
-}
-
-export function createOvenView(parent: HTMLElement): OvenView {
-  let graphics: Phaser.GameObjects.Graphics | undefined;
-  let angle = 0;
-  let heat = 0;
-  let alive = true;
-  function update(nextAngle: number, nextHeat: number): void {
-    angle = Phaser.Math.Clamp(nextAngle, 0, 65);
-    heat = nextHeat;
-    if (!graphics) return;
-    graphics.clear();
-    graphics.fillStyle(0xa05d96);
-    graphics.fillCircle(40, 40, 21);
-    graphics.lineStyle(4, 0xfff3d0);
-    graphics.strokeCircle(40, 40, 21);
-    const radians = Phaser.Math.DegToRad(heat - 90);
-    graphics.lineStyle(5, 0xffffff);
-    graphics.lineBetween(40 + Math.cos(radians) * 8, 40 + Math.sin(radians) * 8, 40 + Math.cos(radians) * 17, 40 + Math.sin(radians) * 17);
-    const height = 125 * Math.cos(Phaser.Math.DegToRad(angle));
-    const top = 205 - height;
-    graphics.fillStyle(0x75b5c6, 0.55);
-    graphics.fillRoundedRect(20, top, 280, height, 12);
-    graphics.lineStyle(6, 0x73b9ae);
-    graphics.strokeRoundedRect(20, top, 280, height, 12);
-    graphics.fillStyle(0xffe1a5);
-    graphics.fillRoundedRect(95, top + 12, 130, 8, 4);
-  }
-  const game = new Phaser.Game({
-    type: Phaser.CANVAS, parent, transparent: true, width: 320, height: 230,
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: { create() {
-      if (!alive) return;
-      graphics = this.add.graphics();
-      parent.classList.add("phaser-oven-ready");
-      update(angle, heat);
-    } },
-  });
-  return { update, destroy() {
-    alive = false;
-    parent.classList.remove("phaser-oven-ready");
-    game.destroy(true);
-  } };
-}
-
 export interface PreparationView {
   setStage(stage: number): void;
   destroy(): void;
 }
 
-/** Animates washing and the ingredients accumulating in the bowl. */
-export function createPreparationView(parent: HTMLElement, mode: "wash" | "ingredients"): PreparationView {
+/** Animates the soap and rinse water. */
+export function createPreparationView(parent: HTMLElement): PreparationView {
   let stage = 0;
   let alive = true;
   let graphics: Phaser.GameObjects.Graphics | undefined;
@@ -294,38 +243,21 @@ export function createPreparationView(parent: HTMLElement, mode: "wash" | "ingre
   function draw(time: number): void {
     if (!graphics) return;
     graphics.clear();
-    if (mode === "wash") {
-      if (stage === 0) return;
-      if (stage === 2) {
-        graphics.lineStyle(12, 0x9fe8ff, 0.8);
-        graphics.lineBetween(140, 94, 140, 166);
-        for (let i = 0; i < 8; i++) {
-          const y = 100 + ((i * 11 + (reducedMotion ? 0 : time / 18)) % 65);
-          graphics.fillStyle(0xe5fbff, 0.9);
-          graphics.fillEllipse(140, y, 9, 5);
-        }
+    if (stage === 0) return;
+    if (stage === 2) {
+      graphics.lineStyle(12, 0x9fe8ff, 0.8);
+      graphics.lineBetween(140, 94, 140, 166);
+      for (let i = 0; i < 8; i++) {
+        const y = 100 + ((i * 11 + (reducedMotion ? 0 : time / 18)) % 65);
+        graphics.fillStyle(0xe5fbff, 0.9);
+        graphics.fillEllipse(140, y, 9, 5);
       }
-      for (let i = 0; i < 12; i++) {
-        const x = 125 + (i % 4) * 18;
-        const y = 170 + Math.floor(i / 4) * 10 + (reducedMotion ? 0 : Math.sin(time / 240 + i) * 3);
-        graphics.fillStyle(0xffffff, stage === 2 ? 0.45 : 0.85);
-        graphics.fillCircle(x, y, 5 + (i % 3));
-      }
-      return;
     }
-    if (stage & 1) {
-      graphics.fillStyle(0xfff3d9);
-      graphics.fillEllipse(150, 162, 145, 68);
-    }
-    if (stage & 2) {
-      graphics.fillStyle(0xffbd4d);
-      graphics.fillCircle(160, 150, 26);
-      graphics.fillStyle(0xffe8a1, 0.8);
-      graphics.fillEllipse(153, 144, 12, 9);
-    }
-    if (stage & 4) {
-      graphics.fillStyle(0xfffdf2, 0.85);
-      graphics.fillEllipse(150, 161, 170, 70);
+    for (let i = 0; i < 12; i++) {
+      const x = 125 + (i % 4) * 18;
+      const y = 170 + Math.floor(i / 4) * 10 + (reducedMotion ? 0 : Math.sin(time / 240 + i) * 3);
+      graphics.fillStyle(0xffffff, stage === 2 ? 0.45 : 0.85);
+      graphics.fillCircle(x, y, 5 + (i % 3));
     }
   }
   const game = new Phaser.Game({
@@ -354,50 +286,45 @@ export function createPreparationView(parent: HTMLElement, mode: "wash" | "ingre
 export function createGardenView(parent: HTMLElement, flowers: HTMLButtonElement[]): { destroy(): void } {
   let alive = true;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const palette = [0xff88bc, 0xffd778, 0xba96ff, 0xffa6c9];
-  let graphics: Phaser.GameObjects.Graphics;
+  const plants: Array<{ soil: Phaser.GameObjects.Image; flower: Phaser.GameObjects.Image;
+    weed: Phaser.GameObjects.Image; stone: Phaser.GameObjects.Image }> = [];
   const game = new Phaser.Game({
     type: Phaser.CANVAS, parent, transparent: true,
     width: parent.clientWidth, height: parent.clientHeight,
     scale: { mode: Phaser.Scale.RESIZE },
     scene: {
+      preload() { loadGabbyAtlas(this, "garden"); },
       create() {
-        if (!alive) return;
-        graphics = this.add.graphics();
+        if (!alive || !this.textures.exists("garden")) return;
+        flowers.forEach(() => plants.push({
+          soil: this.add.image(0, 0, "garden", "soil_dry"),
+          flower: this.add.image(0, 0, "garden", "seedling").setOrigin(0.5, 1),
+          weed: this.add.image(0, 0, "garden", "weed_clover"),
+          stone: this.add.image(0, 0, "garden", "stone_small"),
+        }));
         parent.classList.add("phaser-garden-ready");
       },
       update(time: number) {
-        if (!alive || !graphics) return;
-        graphics.clear();
+        if (!alive) return;
         const width = parent.clientWidth;
         const height = parent.clientHeight;
-        flowers.forEach((flower, index) => {
-          const x = parseFloat(flower.style.getPropertyValue("--flower-x")) * width / 100;
-          const y = parseFloat(flower.style.getPropertyValue("--flower-y")) * height / 100;
-          const amount = Number(flower.style.getPropertyValue("--growth")) || 0;
-          const grown = flower.classList.contains("water-done") ? 1 : parent.dataset.stage === "water" ? amount : 0;
-          const sway = reducedMotion ? 0 : Math.sin(time / 700 + index) * grown * 3;
-          graphics.fillStyle(flower.classList.contains("soil-done") ? 0x70482f : 0x936346);
-          graphics.fillEllipse(x, y + 25, 65, 22);
-          if (grown > 0) {
-            graphics.lineStyle(5, 0x39834d);
-            graphics.lineBetween(x, y + 23, x + sway, y - 30 * grown);
-            graphics.fillStyle(0x65a852);
-            graphics.fillEllipse(x + 10, y + 5, 22 * grown, 10 * grown);
-            const top = y - 30 * grown;
-            graphics.fillStyle(palette[index % palette.length]);
-            for (let petal = 0; petal < 6; petal++) {
-              const angle = petal * Math.PI / 3;
-              graphics.fillCircle(x + sway + Math.cos(angle) * 13 * grown, top + Math.sin(angle) * 13 * grown, 10 * grown);
-            }
-            graphics.fillStyle(0xffed98);
-            graphics.fillCircle(x + sway, top, 8 * grown);
-          }
-          if (parent.dataset.stage === "tidy" && !flower.classList.contains("tidy-done")) {
-            graphics.fillStyle(0x99714a, 1 - amount);
-            graphics.fillEllipse(x - 20, y + 20, 13, 6);
-            graphics.fillEllipse(x + 22, y + 28, 12, 5);
-          }
+        plants.forEach(({ soil, flower, weed, stone }, index) => {
+          const button = flowers[index];
+          const x = parseFloat(button.style.getPropertyValue("--flower-x")) * width / 100;
+          const y = parseFloat(button.style.getPropertyValue("--flower-y")) * height / 100 + 12;
+          const growth = Number(button.style.getPropertyValue("--growth")) || 0;
+          const dug = button.classList.contains("soil-done");
+          const watered = button.classList.contains("water-done");
+          const tidy = parent.dataset.stage === "tidy" && !button.classList.contains("tidy-done");
+          soil.setFrame(watered ? "soil_wet" : dug ? "soil_loose" : "soil_dry").setPosition(x, y);
+          soil.setScale(64 / soil.frame.realWidth);
+          flower.setFrame(watered ? (index % 2 ? "flower_full" : "flower_bloom") : "seedling");
+          flower.setVisible(dug).setPosition(x, y + 6);
+          const size = watered ? 66 : parent.dataset.stage === "water" ? 26 + growth * 25 : 26;
+          flower.setScale(size / flower.frame.realHeight);
+          flower.setAngle(reducedMotion || !watered ? 0 : Math.sin(time / 700 + index) * 4);
+          weed.setPosition(x - 20, y).setScale(24 / weed.frame.realWidth).setVisible(tidy).setAlpha(1 - growth);
+          stone.setPosition(x + 22, y + 5).setScale(15 / stone.frame.realWidth).setVisible(tidy).setAlpha(1 - growth);
         });
       },
     },
@@ -411,7 +338,8 @@ export function createGardenView(parent: HTMLElement, flowers: HTMLButtonElement
 
 export interface TileArt {
   id: string;
-  folder: "friends" | "objects";
+  folder: "friends" | "objects" | "gabby/images";
+  frame?: string;
 }
 
 export interface TileView {
@@ -429,7 +357,12 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
   let failed = false;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let activeScene: Phaser.Scene | undefined;
-  const tiles = new Map<HTMLButtonElement, { image: Phaser.GameObjects.Image; up: boolean; openness: number }>();
+  const tiles = new Map<HTMLButtonElement, {
+    image: Phaser.GameObjects.Image;
+    backing?: Phaser.GameObjects.Image;
+    up: boolean;
+    openness: number;
+  }>();
   const game = new Phaser.Game({
     type: Phaser.CANVAS, parent: overlay, transparent: true,
     width: parent.clientWidth, height: parent.clientHeight,
@@ -437,8 +370,9 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
     scene: {
       preload() {
         this.load.on("loaderror", () => { failed = true; });
+        if (mode === "memory") loadGabbyAtlas(this, "memory-puzzle");
         for (const item of new Map(art.map((item) => [item.id, item])).values()) {
-          if (!this.textures.exists(item.id)) this.load.image(item.id, `./assets/${item.folder}/${item.id}.webp`);
+          if (!item.frame) this.load.image(item.id, `./assets/${item.folder}/${item.id}.webp`);
         }
       },
       create() {
@@ -447,7 +381,13 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
           const texture = this.textures.get(art[0].id);
           const source = texture.getSourceImage() as HTMLImageElement;
           for (let index = 0; index < rows * 2; index++) {
-            texture.add(String(index), 0, (index % 2) * source.width / 2, Math.floor(index / 2) * source.height / rows, source.width / 2, source.height / rows);
+            const column = index % 2;
+            const row = Math.floor(index / 2);
+            const left = Math.round(column * source.width / 2);
+            const top = Math.round(row * source.height / rows);
+            texture.add(String(index), 0, left, top,
+              Math.round((column + 1) * source.width / 2) - left,
+              Math.round((row + 1) * source.height / rows) - top);
           }
         }
         activeScene = this;
@@ -460,18 +400,25 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
         const buttons = [...parent.querySelectorAll<HTMLButtonElement>(mode === "memory" ? ".memory-card" : ".slot, .piece")];
         const current = new Set(buttons);
         tiles.forEach((tile, element) => {
-          if (!current.has(element)) { tile.image.destroy(); tiles.delete(element); }
+          if (!current.has(element)) {
+            tile.image.destroy();
+            tile.backing?.destroy();
+            tiles.delete(element);
+          }
         });
         buttons.forEach((button) => {
           const index = Number(button.dataset[mode === "memory" ? "index" : "piece"]);
           const item = mode === "memory" ? art[index] : art[0];
-          if (!item || !this.textures.exists(item.id)) return;
+          if (!item) return;
+          const texture = item.frame ? "memory-puzzle" : item.id;
+          if (!this.textures.exists(texture)) return;
           const rect = button.getBoundingClientRect();
           const up = mode === "memory" ? button.getAttribute("aria-pressed") === "true" && !button.classList.contains("closing") : !button.disabled || button.classList.contains("filled");
           let tile = tiles.get(button);
           if (!tile) {
-            const image = this.add.image(0, 0, item.id, mode === "puzzle" ? String(index) : undefined);
-            tile = { image, up, openness: up ? 1 : 0 };
+            const backing = mode === "memory" ? this.add.image(0, 0, "memory-puzzle", "card_back_purple") : undefined;
+            const image = this.add.image(0, 0, texture, mode === "puzzle" ? String(index) : item.frame);
+            tile = { image, backing, up, openness: up ? 1 : 0 };
             tiles.set(button, tile);
           }
           const image = tile.image;
@@ -479,10 +426,19 @@ export function createTileView(parent: HTMLElement, mode: "memory" | "puzzle", a
           image.setVisible(visible);
           image.setPosition(rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2);
           if (mode === "memory") {
-            const scale = Math.min(Math.max(1, rect.width - 10) / image.frame.realWidth, Math.max(1, rect.height - 10) / image.frame.realHeight);
-            image.setScale(scale * Math.abs(Math.cos(tile.openness * Math.PI)), scale);
+            const turn = Math.abs(Math.cos(tile.openness * Math.PI));
+            const backing = tile.backing!;
+            backing.setFrame(visible ? "card_front" : "card_back_purple");
+            backing.setPosition(image.x, image.y);
+            const cardScale = Math.min(rect.width / backing.frame.realWidth, rect.height / backing.frame.realHeight);
+            backing.setScale(cardScale * turn, cardScale);
+            const faceScale = Math.min((rect.width * 0.8) / image.frame.realWidth,
+              (rect.height * 0.8) / image.frame.realHeight);
+            image.setScale(faceScale * turn, faceScale);
           } else {
-            image.setDisplaySize(Math.max(1, rect.width - 10), Math.max(1, rect.height - 10));
+            const scale = Math.min(Math.max(1, rect.width - 10) / image.frame.realWidth,
+              Math.max(1, rect.height - 10) / image.frame.realHeight);
+            image.setScale(scale);
           }
           if (mode === "puzzle") image.setAlpha(button.classList.contains("slot") && !button.classList.contains("filled") ? 0.23 : 1);
           if (tile.up !== up) {

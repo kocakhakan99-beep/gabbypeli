@@ -1,0 +1,142 @@
+[
+  {
+    "atlas": "bakery",
+    "frame": "bowl_flour",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "bowl_batter",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "bowl_swirl",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "spatula",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "batter_arc",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "batter_splash",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "parchment",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "liner_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "liner_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "liner_yellow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "liner_dots",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "batter_dollop_medium",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "raw_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "raw_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "raw_yellow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "baked_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "baked_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "frosting_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "frosting_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "frosting_chocolate",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "frosting_yellow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "frosting_mint",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "sprinkles",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "star_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "bakery",
+    "frame": "star_empty",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "garden",
+    "frame": "flower_bud",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "garden",
+    "frame": "bed_soil",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "garden",
+    "frame": "house_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  }
+]

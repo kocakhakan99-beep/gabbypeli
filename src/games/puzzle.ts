@@ -18,7 +18,7 @@ import { friends } from "../data.js";
 import { shuffle } from "../utils.js";
 import { state } from "../state.js";
 
-import type { TileView } from "../phaser-room.js";
+import type { TileArt, TileView } from "../phaser-room.js";
 
 let puzzleView: TileView | undefined;
 
@@ -34,27 +34,22 @@ const scenes = [
   ...playObjects.map((object) => ({ ...object, room: "Esinepalapelit" })),
 ];
 
+function puzzleArt(): TileArt {
+  const id = scenes[state.puzzleArt].id;
+  if (id === "pandy") return { id: "puzzle-panda", folder: "gabby/images" };
+  if (id === "cupcakes") return { id: "puzzle-cupcake", folder: "gabby/images" };
+  return { id, folder: state.puzzleArt < friends.length ? "friends" : "objects" };
+}
+
 export function cropPosition(piece: number) {
-  const isObject = state.puzzleArt >= friends.length;
-  if (isObject) {
-    const rows = state.puzzleSize / 2;
-    const object = playObjects[state.puzzleArt - friends.length];
-    return {
-      x: (piece % 2) * 100,
-      y: rows === 1 ? 0 : (Math.floor(piece / 2) * 100) / (rows - 1),
-      columns: 2,
-      rows,
-      image: `url(../assets/objects/${object.id}.webp)`,
-    };
-  }
   const rows = state.puzzleSize / 2;
-  const friend = friends[state.puzzleArt];
+  const { folder, id } = puzzleArt();
   return {
     x: (piece % 2) * 100,
     y: rows === 1 ? 0 : (Math.floor(piece / 2) * 100) / (rows - 1),
     columns: 2,
     rows,
-    image: `url(../assets/friends/${friend.id}.webp)`,
+    image: `url(../assets/${folder}/${id}.webp)`,
   };
 }
 
@@ -160,7 +155,7 @@ export function initPuzzle() {
     },
   );
   const generation = puzzleGeneration;
-  const art = { id: f.id, folder: state.puzzleArt < friends.length ? "friends" as const : "objects" as const };
+  const art = puzzleArt();
   const rows = state.puzzleSize / 2;
   void import("../phaser-room.js").then(({ createTileView }) => {
     if (generation !== puzzleGeneration) return;

@@ -1,4 +1,4 @@
-// ../phaser-work/node_modules/phaser/dist/phaser.esm.js
+// node_modules/phaser/dist/phaser.esm.js
 var e = {
 	50792(e) {
 		var t = Object.prototype.hasOwnProperty, n = "~";
@@ -43244,7 +43244,11 @@ var i = n(8054), a = n(61061), o = n(60421), s = n(10312), c = n(83388), l = n(2
 r.Q8, r.En, r.Qw, r.gd, r.j$, r.l2, r.Tm, r.Xs, r.iJ, r.XT, r.dv, r.PX, r.B_, r.nl, r.sV, r.SY, r.Cu, r.Zt, r.xS, r.Dh, r.qt, r.pd, r.M3, r.Ae, r.aH, r.zU, r.x3, r.AQ, r.ry, r.NS, r.A4, r.FE, r.zA, r.Z5, r._k, r.AB, r.ho, r.D7, r.O1, r.gX, r.sx, r.Fu, r.UP, r.Aq, r.xv, r.CB;
 var X = r.Ay;
 // src/phaser-room.ts
-function ne(e, t, n, r) {
+function ne(e, t) {
+	let n = `./assets/gabby/atlases/${t}.webp`;
+	e.load.atlas(t, n, `${n}.json`);
+}
+function Z(e, t, n, r) {
 	let i = [], a = [], o = [], s = window.matchMedia("(prefers-reduced-motion: reduce)").matches, c, l = !1, u = /* @__PURE__ */ new Set();
 	function d(e, t) {
 		let n = i[e];
@@ -43292,10 +43296,12 @@ function ne(e, t, n, r) {
 		},
 		scene: {
 			preload() {
-				for (let e of t) this.load.image(e.id, `./assets/furniture/${e.id}.webp`);
+				t.some((e) => e.frame) && ne(this, "hide");
+				for (let e of t) e.frame || this.load.image(e.id, `./assets/furniture/${e.id}.webp`);
 				this.load.image("hidden-friend", `./assets/friends/${n}.webp`), this.load.image("hidden-surprise", `./assets/objects/${r}.webp`);
 			},
 			create() {
+				if (t.some((e) => e.frame) && !this.textures.exists("hide")) return;
 				c = this;
 				let n = [
 					[200, 140],
@@ -43308,7 +43314,7 @@ function ne(e, t, n, r) {
 					o.push(r);
 					let c = this.add.image(r, s, e.hidden ? "hidden-friend" : "hidden-surprise");
 					c.setDisplaySize(135, 135).setVisible(!1), a.push(c);
-					let l = this.add.image(r, s, e.id), u = Math.min(280 / l.width, 235 / l.height);
+					let l = this.add.image(r, s, e.frame ? "hide" : e.id, e.frame), u = Math.min(280 / l.width, 235 / l.height);
 					l.setScale(u), i.push(l);
 				}), l = !0, e.parentElement?.classList.add("phaser-ready"), u.forEach(f), u.clear();
 			}
@@ -43322,7 +43328,7 @@ function ne(e, t, n, r) {
 		}
 	};
 }
-function Z(e) {
+function Q(e) {
 	let t, n, r, i = {
 		x: .5,
 		y: .5,
@@ -43333,7 +43339,7 @@ function Z(e) {
 			x: X.Math.Clamp(e, .15, .85),
 			y: X.Math.Clamp(a, .15, .85),
 			progress: X.Math.Clamp(o, 0, 1)
-		}, t && n && r && (n.setPosition(i.x * 300, i.y * 300), n.setRotation(Math.atan2(i.y - .5, i.x - .5) + .8), r.clear(), r.lineStyle(7, 16774089, .7), r.beginPath(), r.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + i.progress * Math.PI * 2), r.strokePath());
+		}, t && n && r && (n.setPosition(i.x * 300, i.y * 300), n.setRotation(Math.atan2(i.y - .5, i.x - .5) - Math.PI / 2), r.clear(), r.lineStyle(7, 16774089, .7), r.beginPath(), r.arc(150, 150, 65, -Math.PI / 2, -Math.PI / 2 + i.progress * Math.PI * 2), r.strokePath());
 	}
 	let s = new X.Game({
 		type: X.CANVAS,
@@ -43345,17 +43351,14 @@ function Z(e) {
 			mode: X.Scale.FIT,
 			autoCenter: X.Scale.CENTER_BOTH
 		},
-		scene: { create() {
-			if (!a) return;
-			t = this, r = this.add.graphics();
-			let s = this.add.ellipse(8, 50, 38, 85, 9131317, .25), c = this.add.rectangle(0, 32, 18, 100, 11429954).setOrigin(.5, .15), l = this.add.ellipse(0, 0, 48, 64, 14127708), u = this.add.ellipse(-6, -8, 20, 28, 16104576, .55);
-			n = this.add.container(150, 150, [
-				s,
-				c,
-				l,
-				u
-			]), e.classList.add("phaser-mixing-ready"), o(i.x, i.y, i.progress);
-		} }
+		scene: {
+			preload() {
+				ne(this, "bakery");
+			},
+			create() {
+				a && this.textures.exists("bakery") && (t = this, r = this.add.graphics(), n = this.add.image(150, 150, "bakery", "spoon").setOrigin(.5, .25), n.setScale(108 / n.height), e.classList.add("phaser-mixing-ready"), o(i.x, i.y, i.progress));
+			}
+		}
 	});
 	return {
 		move: o,
@@ -43364,23 +43367,27 @@ function Z(e) {
 		}
 	};
 }
-function Q(e, t) {
+function $(e, t) {
 	let n, r, i = !0, a = !1, o = /* @__PURE__ */ new Set(), s = /* @__PURE__ */ new Set(), c = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	function l() {
-		a = !0, n && r && (r.setVisible(!0), c || (r.setScale(.92), n.tweens.add({
-			targets: r,
-			scale: 1,
-			duration: 250,
-			ease: "Sine.easeOut"
-		})));
+		if (a = !0, n && r && (r.setVisible(!0), !c)) {
+			let e = r.scaleX, t = r.scaleY;
+			r.setScale(e * .92, t * .92), n.tweens.add({
+				targets: r,
+				scaleX: e,
+				scaleY: t,
+				duration: 250,
+				ease: "Sine.easeOut"
+			});
+		}
 	}
 	function u(e) {
 		if (o.add(e), !n || s.has(e)) return;
 		s.add(e);
-		let r = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, a = $(n, r, i, t);
-		c || (a.setScale(.5), n.tweens.add({
+		let r = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, a = n.add.image(r, i, "bakery", t === "cupcake" ? "raw_pink" : "batter_dollop_large"), l = Math.min(43 / a.width, 39 / a.height);
+		a.setScale(l), c || (a.setScale(l * .5), n.tweens.add({
 			targets: a,
-			scale: 1,
+			scale: l,
 			duration: 300,
 			ease: "Back.easeOut"
 		}));
@@ -43395,9 +43402,14 @@ function Q(e, t) {
 			mode: X.Scale.FIT,
 			autoCenter: X.Scale.CENTER_BOTH
 		},
-		scene: { create() {
-			i && (n = this, r = this.add.rectangle(150, 54, 296, 104, 16773327).setVisible(!1), e.classList.add("phaser-tray-ready"), a && l(), o.forEach(u));
-		} }
+		scene: {
+			preload() {
+				ne(this, "bakery");
+			},
+			create() {
+				i && this.textures.exists("bakery") && (n = this, r = this.add.image(150, 54, "bakery", "parchment").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), a && l(), o.forEach(u));
+			}
+		}
 	});
 	return {
 		line: l,
@@ -43407,74 +43419,24 @@ function Q(e, t) {
 		}
 	};
 }
-function $(e, t, n, r) {
-	if (r === "cupcake") {
-		let r = e.add.rectangle(0, 7, 28, 22, 12159963), i = e.add.ellipse(0, -6, 34, 23, 16758235), a = e.add.ellipse(-7, -9, 9, 5, 16772599, .8);
-		return e.add.container(t, n, [
-			r,
-			i,
-			a
-		]);
-	}
-	let i = e.add.ellipse(0, 0, 36, 33, 13867873), a = [
-		e.add.circle(-8, -5, 3, 8406063),
-		e.add.circle(6, 6, 3, 8406063),
-		e.add.circle(8, -8, 2, 8406063)
-	];
-	return e.add.container(t, n, [i, ...a]);
-}
 function re(e) {
-	let t, n = 0, r = 0, i = !0;
-	function a(e, i) {
-		if (n = X.Math.Clamp(e, 0, 65), r = i, !t) return;
-		t.clear(), t.fillStyle(10509718), t.fillCircle(40, 40, 21), t.lineStyle(4, 16774096), t.strokeCircle(40, 40, 21);
-		let a = X.Math.DegToRad(r - 90);
-		t.lineStyle(5, 16777215), t.lineBetween(40 + Math.cos(a) * 8, 40 + Math.sin(a) * 8, 40 + Math.cos(a) * 17, 40 + Math.sin(a) * 17);
-		let o = 125 * Math.cos(X.Math.DegToRad(n)), s = 205 - o;
-		t.fillStyle(7714246, .55), t.fillRoundedRect(20, s, 280, o, 12), t.lineStyle(6, 7584174), t.strokeRoundedRect(20, s, 280, o, 12), t.fillStyle(16769445), t.fillRoundedRect(95, s + 12, 130, 8, 4);
+	let t = 0, n = !0, r, i = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	function a(e) {
+		if (r && (r.clear(), t !== 0)) {
+			if (t === 2) {
+				r.lineStyle(12, 10479871, .8), r.lineBetween(140, 94, 140, 166);
+				for (let t = 0; t < 8; t++) {
+					let n = 100 + (t * 11 + (i ? 0 : e / 18)) % 65;
+					r.fillStyle(15072255, .9), r.fillEllipse(140, n, 9, 5);
+				}
+			}
+			for (let n = 0; n < 12; n++) {
+				let a = 125 + n % 4 * 18, o = 170 + Math.floor(n / 4) * 10 + (i ? 0 : Math.sin(e / 240 + n) * 3);
+				r.fillStyle(16777215, t === 2 ? .45 : .85), r.fillCircle(a, o, 5 + n % 3);
+			}
+		}
 	}
 	let o = new X.Game({
-		type: X.CANVAS,
-		parent: e,
-		transparent: !0,
-		width: 320,
-		height: 230,
-		scale: {
-			mode: X.Scale.FIT,
-			autoCenter: X.Scale.CENTER_BOTH
-		},
-		scene: { create() {
-			i && (t = this.add.graphics(), e.classList.add("phaser-oven-ready"), a(n, r));
-		} }
-	});
-	return {
-		update: a,
-		destroy() {
-			i = !1, e.classList.remove("phaser-oven-ready"), o.destroy(!0);
-		}
-	};
-}
-function ie(e, t) {
-	let n = 0, r = !0, i, a = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	function o(e) {
-		if (i) {
-			if (i.clear(), t === "wash") {
-				if (n === 0) return;
-				if (n === 2) {
-					i.lineStyle(12, 10479871, .8), i.lineBetween(140, 94, 140, 166);
-					for (let t = 0; t < 8; t++) {
-						let n = 100 + (t * 11 + (a ? 0 : e / 18)) % 65;
-						i.fillStyle(15072255, .9), i.fillEllipse(140, n, 9, 5);
-					}
-				}
-				for (let t = 0; t < 12; t++) {
-					let r = 125 + t % 4 * 18, o = 170 + Math.floor(t / 4) * 10 + (a ? 0 : Math.sin(e / 240 + t) * 3);
-					i.fillStyle(16777215, n === 2 ? .45 : .85), i.fillCircle(r, o, 5 + t % 3);
-				}
-			} else n & 1 && (i.fillStyle(16774105), i.fillEllipse(150, 162, 145, 68)), n & 2 && (i.fillStyle(16760141), i.fillCircle(160, 150, 26), i.fillStyle(16771233, .8), i.fillEllipse(153, 144, 12, 9)), n & 4 && (i.fillStyle(16776690, .85), i.fillEllipse(150, 161, 170, 70));
-		}
-	}
-	let s = new X.Game({
 		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43486,29 +43448,24 @@ function ie(e, t) {
 		},
 		scene: {
 			create() {
-				r && (i = this.add.graphics(), e.classList.add("phaser-preparation-ready"), o(0));
+				n && (r = this.add.graphics(), e.classList.add("phaser-preparation-ready"), a(0));
 			},
 			update(e) {
-				o(e);
+				a(e);
 			}
 		}
 	});
 	return {
 		setStage(e) {
-			n = e, o(0);
+			t = e, a(0);
 		},
 		destroy() {
-			r = !1, e.classList.remove("phaser-preparation-ready"), s.destroy(!0);
+			n = !1, e.classList.remove("phaser-preparation-ready"), o.destroy(!0);
 		}
 	};
 }
-function ae(e, t) {
-	let n = !0, r = window.matchMedia("(prefers-reduced-motion: reduce)").matches, i = [
-		16746684,
-		16766840,
-		12228351,
-		16754377
-	], a, o = new X.Game({
+function ie(e, t) {
+	let n = !0, r = window.matchMedia("(prefers-reduced-motion: reduce)").matches, i = [], a = new X.Game({
 		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43516,35 +43473,34 @@ function ae(e, t) {
 		height: e.clientHeight,
 		scale: { mode: X.Scale.RESIZE },
 		scene: {
-			create() {
-				n && (a = this.add.graphics(), e.classList.add("phaser-garden-ready"));
+			preload() {
+				ne(this, "garden");
 			},
-			update(o) {
-				if (!n || !a) return;
-				a.clear();
-				let s = e.clientWidth, c = e.clientHeight;
-				t.forEach((t, n) => {
-					let l = parseFloat(t.style.getPropertyValue("--flower-x")) * s / 100, u = parseFloat(t.style.getPropertyValue("--flower-y")) * c / 100, d = Number(t.style.getPropertyValue("--growth")) || 0, f = t.classList.contains("water-done") ? 1 : e.dataset.stage === "water" ? d : 0, p = r ? 0 : Math.sin(o / 700 + n) * f * 3;
-					if (a.fillStyle(t.classList.contains("soil-done") ? 7358511 : 9659206), a.fillEllipse(l, u + 25, 65, 22), f > 0) {
-						a.lineStyle(5, 3769165), a.lineBetween(l, u + 23, l + p, u - 30 * f), a.fillStyle(6662226), a.fillEllipse(l + 10, u + 5, 22 * f, 10 * f);
-						let e = u - 30 * f;
-						a.fillStyle(i[n % i.length]);
-						for (let t = 0; t < 6; t++) {
-							let n = t * Math.PI / 3;
-							a.fillCircle(l + p + Math.cos(n) * 13 * f, e + Math.sin(n) * 13 * f, 10 * f);
-						}
-						a.fillStyle(16772504), a.fillCircle(l + p, e, 8 * f);
-					}
-					e.dataset.stage === "tidy" && !t.classList.contains("tidy-done") && (a.fillStyle(10056010, 1 - d), a.fillEllipse(l - 20, u + 20, 13, 6), a.fillEllipse(l + 22, u + 28, 12, 5));
+			create() {
+				n && this.textures.exists("garden") && (t.forEach(() => i.push({
+					soil: this.add.image(0, 0, "garden", "soil_dry"),
+					flower: this.add.image(0, 0, "garden", "seedling").setOrigin(.5, 1),
+					weed: this.add.image(0, 0, "garden", "weed_clover"),
+					stone: this.add.image(0, 0, "garden", "stone_small")
+				})), e.classList.add("phaser-garden-ready"));
+			},
+			update(a) {
+				if (!n) return;
+				let o = e.clientWidth, s = e.clientHeight;
+				i.forEach(({ soil: n, flower: i, weed: c, stone: l }, u) => {
+					let d = t[u], f = parseFloat(d.style.getPropertyValue("--flower-x")) * o / 100, p = parseFloat(d.style.getPropertyValue("--flower-y")) * s / 100 + 12, m = Number(d.style.getPropertyValue("--growth")) || 0, h = d.classList.contains("soil-done"), g = d.classList.contains("water-done"), _ = e.dataset.stage === "tidy" && !d.classList.contains("tidy-done");
+					n.setFrame(g ? "soil_wet" : h ? "soil_loose" : "soil_dry").setPosition(f, p), n.setScale(64 / n.frame.realWidth), i.setFrame(g ? u % 2 ? "flower_full" : "flower_bloom" : "seedling"), i.setVisible(h).setPosition(f, p + 6);
+					let v = g ? 66 : e.dataset.stage === "water" ? 26 + m * 25 : 26;
+					i.setScale(v / i.frame.realHeight), i.setAngle(r || !g ? 0 : Math.sin(a / 700 + u) * 4), c.setPosition(f - 20, p).setScale(24 / c.frame.realWidth).setVisible(_).setAlpha(1 - m), l.setPosition(f + 22, p + 5).setScale(15 / l.frame.realWidth).setVisible(_).setAlpha(1 - m);
 				});
 			}
 		}
 	});
 	return { destroy() {
-		n = !1, e.classList.remove("phaser-garden-ready"), o.destroy(!0);
+		n = !1, e.classList.remove("phaser-garden-ready"), a.destroy(!0);
 	} };
 }
-function oe(e, t, n, r = 1, i) {
+function ae(e, t, n, r = 1, i) {
 	let a = document.createElement("div");
 	a.className = "phaser-tile-layer", a.setAttribute("aria-hidden", "true"), e.append(a);
 	let o = !0, s = !1, c = window.matchMedia("(prefers-reduced-motion: reduce)").matches, l, u = /* @__PURE__ */ new Map(), d = new X.Game({
@@ -43558,14 +43514,17 @@ function oe(e, t, n, r = 1, i) {
 			preload() {
 				this.load.on("loaderror", () => {
 					s = !0;
-				});
-				for (let e of new Map(n.map((e) => [e.id, e])).values()) this.textures.exists(e.id) || this.load.image(e.id, `./assets/${e.folder}/${e.id}.webp`);
+				}), t === "memory" && ne(this, "memory-puzzle");
+				for (let e of new Map(n.map((e) => [e.id, e])).values()) e.frame || this.load.image(e.id, `./assets/${e.folder}/${e.id}.webp`);
 			},
 			create() {
 				if (o && !s) {
 					if (t === "puzzle") {
 						let e = this.textures.get(n[0].id), t = e.getSourceImage();
-						for (let n = 0; n < r * 2; n++) e.add(String(n), 0, n % 2 * t.width / 2, Math.floor(n / 2) * t.height / r, t.width / 2, t.height / r);
+						for (let n = 0; n < r * 2; n++) {
+							let i = n % 2, a = Math.floor(n / 2), o = Math.round(i * t.width / 2), s = Math.round(a * t.height / r);
+							e.add(String(n), 0, o, s, Math.round((i + 1) * t.width / 2) - o, Math.round((a + 1) * t.height / r) - s);
+						}
 					}
 					l = this, i && this.events.on("tile-action", i), e.classList.add(`phaser-${t}-ready`);
 				}
@@ -43574,28 +43533,41 @@ function oe(e, t, n, r = 1, i) {
 				if (!o || s) return;
 				let r = e.getBoundingClientRect(), i = [...e.querySelectorAll(t === "memory" ? ".memory-card" : ".slot, .piece")], a = new Set(i);
 				u.forEach((e, t) => {
-					a.has(t) || (e.image.destroy(), u.delete(t));
+					a.has(t) || (e.image.destroy(), e.backing?.destroy(), u.delete(t));
 				}), i.forEach((e) => {
 					let i = Number(e.dataset[t === "memory" ? "index" : "piece"]), a = t === "memory" ? n[i] : n[0];
-					if (!a || !this.textures.exists(a.id)) return;
-					let o = e.getBoundingClientRect(), s = t === "memory" ? e.getAttribute("aria-pressed") === "true" && !e.classList.contains("closing") : !e.disabled || e.classList.contains("filled"), l = u.get(e);
-					l || (l = {
-						image: this.add.image(0, 0, a.id, t === "puzzle" ? String(i) : void 0),
-						up: s,
-						openness: +!!s
-					}, u.set(e, l));
-					let d = l.image, f = t === "memory" ? l.openness > .5 : !e.classList.contains("piece") || !e.disabled;
-					if (d.setVisible(f), d.setPosition(o.left - r.left + o.width / 2, o.top - r.top + o.height / 2), t === "memory") {
-						let e = Math.min(Math.max(1, o.width - 10) / d.frame.realWidth, Math.max(1, o.height - 10) / d.frame.realHeight);
-						d.setScale(e * Math.abs(Math.cos(l.openness * Math.PI)), e);
-					} else d.setDisplaySize(Math.max(1, o.width - 10), Math.max(1, o.height - 10));
-					t === "puzzle" && d.setAlpha(e.classList.contains("slot") && !e.classList.contains("filled") ? .23 : 1), l.up !== s && (l.up = s, t === "memory" ? (this.tweens.killTweensOf(l), c ? l.openness = +!!s : this.tweens.add({
-						targets: l,
-						openness: +!!s,
+					if (!a) return;
+					let o = a.frame ? "memory-puzzle" : a.id;
+					if (!this.textures.exists(o)) return;
+					let s = e.getBoundingClientRect(), l = t === "memory" ? e.getAttribute("aria-pressed") === "true" && !e.classList.contains("closing") : !e.disabled || e.classList.contains("filled"), d = u.get(e);
+					if (!d) {
+						let n = t === "memory" ? this.add.image(0, 0, "memory-puzzle", "card_back_purple") : void 0;
+						d = {
+							image: this.add.image(0, 0, o, t === "puzzle" ? String(i) : a.frame),
+							backing: n,
+							up: l,
+							openness: +!!l
+						}, u.set(e, d);
+					}
+					let f = d.image, p = t === "memory" ? d.openness > .5 : !e.classList.contains("piece") || !e.disabled;
+					if (f.setVisible(p), f.setPosition(s.left - r.left + s.width / 2, s.top - r.top + s.height / 2), t === "memory") {
+						let e = Math.abs(Math.cos(d.openness * Math.PI)), t = d.backing;
+						t.setFrame(p ? "card_front" : "card_back_purple"), t.setPosition(f.x, f.y);
+						let n = Math.min(s.width / t.frame.realWidth, s.height / t.frame.realHeight);
+						t.setScale(n * e, n);
+						let r = Math.min(s.width * .8 / f.frame.realWidth, s.height * .8 / f.frame.realHeight);
+						f.setScale(r * e, r);
+					} else {
+						let e = Math.min(Math.max(1, s.width - 10) / f.frame.realWidth, Math.max(1, s.height - 10) / f.frame.realHeight);
+						f.setScale(e);
+					}
+					t === "puzzle" && f.setAlpha(e.classList.contains("slot") && !e.classList.contains("filled") ? .23 : 1), d.up !== l && (d.up = l, t === "memory" ? (this.tweens.killTweensOf(d), c ? d.openness = +!!l : this.tweens.add({
+						targets: d,
+						openness: +!!l,
 						duration: 360,
 						ease: "Sine.easeInOut"
-					})) : s && !c && (d.setAlpha(.2), this.tweens.add({
-						targets: d,
+					})) : l && !c && (f.setAlpha(.2), this.tweens.add({
+						targets: f,
 						alpha: 1,
 						duration: 240
 					})));
@@ -43612,7 +43584,7 @@ function oe(e, t, n, r = 1, i) {
 		}
 	};
 }
-function se(e, t) {
+function oe(e, t) {
 	let n, r = document.createElement("div");
 	r.hidden = !0, r.setAttribute("aria-hidden", "true"), e.append(r);
 	function i(e) {
@@ -43691,4 +43663,4 @@ function se(e, t) {
 		} }
 	}), a;
 }
-export { Q as createBakingTrayView, ae as createGardenView, Z as createMixingView, re as createOvenView, ie as createPreparationView, ne as createRoomView, oe as createTileView, se as startRoomInput };
+export { $ as createBakingTrayView, ie as createGardenView, Q as createMixingView, re as createPreparationView, Z as createRoomView, ae as createTileView, oe as startRoomInput };

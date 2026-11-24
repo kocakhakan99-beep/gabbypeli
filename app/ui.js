@@ -1,3 +1,5 @@
+import { loadDOMAtlas } from "./dom-atlases.js";
+import { stopFreePlayClock } from "./free-play-clock.js";
 import { awardCampaignLevel, campaignLevel, levelCount } from "./campaign.js";
 import { playObjects } from "./play-objects.js";
 import { completeGame } from "./storage.js";
@@ -162,6 +164,8 @@ export function setAction(label, fn) {
     state.action = fn;
 }
 export function finish(title, text, art) {
+    void loadDOMAtlas("rewards");
+    stopFreePlayClock();
     const level = campaignLevel();
     const coins = awardCampaignLevel();
     if (state.mode && coins > 0)
@@ -169,7 +173,20 @@ export function finish(title, text, art) {
     else
         document.querySelector("#gf-sticker-reward").hidden = true;
     const reward = document.querySelector("#gf-coin-reward");
+    const banner = document.querySelector("#gf-celebration-banner");
+    banner.textContent = level === undefined ? "Hienosti tehty!" : "Taso suoritettu!";
+    const stars = document.querySelector("#gf-celebration-stars");
+    const earned = el("stars").querySelectorAll(".star.earned").length;
+    const total = el("stars").querySelectorAll(".star").length;
+    const celebrationRating = total ? Math.ceil(3 * earned / total) : 0;
+    stars.replaceChildren(...Array.from({ length: total ? 3 : 0 }, (_, index) => {
+        const star = document.createElement("span");
+        star.className = index < celebrationRating ? "earned" : "";
+        return star;
+    }));
+    document.querySelector("#gf-reward-rule").hidden = level === undefined;
     reward.hidden = level === undefined;
+    reward.classList.toggle("coins-earned", coins > 0);
     reward.textContent = coins ? `+${coins} kisukolikkoa` : "Taso suoritettu uudelleen!";
     document.querySelector("#gf-next-level").hidden = level === undefined || level >= levelCount;
     setAction("", null);

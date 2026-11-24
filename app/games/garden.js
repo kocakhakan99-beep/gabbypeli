@@ -39,7 +39,7 @@ function plantBed(level) {
     tool.className = "garden-watering-can garden-tool";
     tool.setAttribute("aria-hidden", "true");
     tool.innerHTML =
-        '<span class="garden-shovel"></span><img class="watering-icon" src="./assets/furniture/watering.webp" alt=""><span class="garden-drops"></span><span class="garden-brush"></span>';
+        '<span class="garden-shovel"></span><span class="watering-icon"></span><span class="garden-drops"></span><span class="garden-brush"></span>';
     field.append(tool);
     row.forEach((x, index) => {
         const flower = button("", () => work(index, effort), "garden-flower");

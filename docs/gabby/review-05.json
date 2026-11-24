@@ -1,0 +1,102 @@
+[
+  {
+    "atlas": "memory-puzzle",
+    "frame": "card_back_gold",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "card_matched_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "card_matched_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "stars_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "face_flower",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "face_rainbow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "face_paw",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "face_heart",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "face_star",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "face_gift",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "board_2x2_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "board_3x3_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_flower",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_cat",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_purple",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_house",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_house",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_panda",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_tree",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "memory-puzzle",
+    "frame": "piece_example_tree",
+    "note": "composite example: do not use as independent moving component"
+  }
+]

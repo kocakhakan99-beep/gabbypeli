@@ -1,0 +1,117 @@
+[
+  {
+    "atlas": "adventure",
+    "frame": "level_one_star_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "level_two_star_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "level_three_star_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "level_three_star_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "level_locked_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "level_locked_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "portal",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "pillow_paw",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "vine_corner",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "vine_horizontal",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "vine_small",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "adventure",
+    "frame": "leaf_large",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "streamer_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "streamer_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "reward_panel_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "reward_panel_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "heart_pale",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "heart_outline",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "sticker_rainbow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "sticker_paw",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "sticker_cat_happy",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "banner_leaf",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "rewards",
+    "frame": "banner_gamepad",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  }
+]

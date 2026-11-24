@@ -1,3 +1,4 @@
+import { loadDOMAtlas } from "./dom-atlases.js";
 import { campaignGames, campaignLevel, renderCampaign, type CampaignGame } from "./campaign.js";
 import { cancelAdvance, iconButton } from "./ui.js";
 import { showMemoryHint } from "./games/memory.js";
@@ -20,6 +21,8 @@ import {
   saveProgress,
 } from "./storage.js";
 
+void loadDOMAtlas("home");
+void loadDOMAtlas("ui");
 void loadNarration();
 renderStickers();
 initStickerAlbum();
@@ -69,12 +72,15 @@ const roomPanel = document.querySelector<HTMLElement>("#gf-free-games")!;
 const stickerPanel = document.querySelector<HTMLElement>("#gf-sticker-book")!;
 
 function showDestination(destination: Destination): void {
+  if (destination === "campaign") void loadDOMAtlas("adventure");
+  if (destination === "free") void loadDOMAtlas("controls");
   el("home").dataset.destination = destination;
   el("home").dataset.mode = selectedMode;
   mapPanel.hidden = destination !== "campaign";
   mapPanel.parentElement!.hidden = mapPanel.hidden;
   roomPanel.hidden = destination !== "home" && destination !== "free";
   stickerPanel.hidden = destination !== "stickers";
+  document.querySelector<HTMLElement>("#gf-free-options")!.hidden = destination !== "free";
   document.querySelector("#gf-campaign-toggle")!.setAttribute("aria-expanded", String(selectedMode === "campaign"));
   document.querySelector("#gf-free-toggle")!.setAttribute("aria-pressed", String(selectedMode === "free"));
   for (const button of navigation)
@@ -84,7 +90,11 @@ function showDestination(destination: Destination): void {
 
 for (const button of navigation) {
   if (button.disabled) continue;
-  button.addEventListener("click", () => showDestination(button.dataset.destination as Destination));
+  button.addEventListener("click", () => {
+    const destination = button.dataset.destination as Destination;
+    if (destination === "free") selectedMode = "free";
+    showDestination(destination);
+  });
 }
 document.querySelector("#gf-campaign-toggle")!.addEventListener("click", () => {
   selectedMode = "campaign";
@@ -116,6 +126,9 @@ function exitGame(): void {
   }
 }
 el("home-button").addEventListener("click", exitGame);
+document.querySelector("#gf-free-restart")!.addEventListener("click", () => {
+  if (state.mode) open(state.mode);
+});
 el("other").addEventListener("click", exitGame);
 showDestination("home");
 el("action").addEventListener("click", () => {
@@ -156,12 +169,16 @@ el("sound").addEventListener("click", () => {
 
 el("settings-toggle").addEventListener("click", () => {
   const expanded = el("settings").hidden;
+  if (expanded) void loadDOMAtlas("controls");
   el("settings").hidden = !expanded;
   el("settings-toggle").setAttribute("aria-expanded", String(expanded));
 });
 el("speech-enabled").checked = savedProgress.preferences.speech;
 el("effects-enabled").checked = savedProgress.preferences.effects;
-el("volume").value = String(Math.round(savedProgress.preferences.volume * 100));
+const volume = el("volume");
+volume.value = String(Math.round(savedProgress.preferences.volume * 100));
+const syncVolumeFill = () => volume.style.setProperty("--volume-fill", `${volume.value}%`);
+syncVolumeFill();
 el("speech-enabled").addEventListener("change", () => {
   savedProgress.preferences.speech = el("speech-enabled").checked;
   stopSpeech();
@@ -172,8 +189,9 @@ el("effects-enabled").addEventListener("change", () => {
   if (!savedProgress.preferences.effects) silenceEffects();
   saveProgress();
 });
-el("volume").addEventListener("input", () => {
-  savedProgress.preferences.volume = Number(el("volume").value) / 100;
+volume.addEventListener("input", () => {
+  syncVolumeFill();
+  savedProgress.preferences.volume = Number(volume.value) / 100;
   saveProgress();
 });
 el("audio-test").addEventListener("click", () => {

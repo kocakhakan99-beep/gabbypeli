@@ -1,0 +1,237 @@
+[
+  {
+    "atlas": "hide",
+    "frame": "chair_closed_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "chair_closed_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "hide",
+    "frame": "chair_lifted_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "chair_lifted_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "hide",
+    "frame": "chair_base",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "chair_cushion",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "chair_pillow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cabinet_closed_example",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cabinet_closed_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cabinet_open_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "hide",
+    "frame": "hood",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "jar_empty_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "jar_empty_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "jar_empty_gold",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "jar_lid_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "jar_lid_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "jar_lid_gold",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cake_stand_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cake_stand",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cake_dome",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "basket_handle",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "basket_base",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "basket_lid",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "basket_plain",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "gift_closed",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "gift_base",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "gift_lid",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "oven_mitt",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cup_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cup_mint",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "cup_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "curtain_left",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "curtain_right",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "curtain_valance",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "bow",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "character_cupcake",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "character_orange",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "character_bunny",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "character_star",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "character_octopus",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "character_toast",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "peek_white",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "peek_gray",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "peek_orange",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "peek_bunny",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "peek_bear",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "hide",
+    "frame": "peek_penguin",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  }
+]

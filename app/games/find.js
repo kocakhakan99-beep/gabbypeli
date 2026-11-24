@@ -21,7 +21,7 @@ const roomObjects = {
         { id: "tent", name: "Leikkiteltta" },
     ],
     cakey: [
-        { id: "oven", name: "Uuni" },
+        { id: "basket", name: "Kori" },
         { id: "cupboard", name: "Keittiökaappi" },
         { id: "box", name: "Kakkulaatikko" },
         { id: "chair", name: "Keittiötuoli" },
@@ -50,6 +50,12 @@ const roomObjects = {
         { id: "cupboard", name: "Musiikkikaappi" },
         { id: "chair", name: "Musiikkituoli" },
     ],
+};
+const hideFrames = {
+    cupboard: "cabinet_closed_example",
+    chair: "chair_closed_example",
+    box: "gift_closed",
+    basket: "basket_plain",
 };
 const roomSurprises = {
     gabby: { id: "star", name: "tähtityyny" },
@@ -90,6 +96,7 @@ export function renderFind() {
     const roomItems = shuffle(furniture).map((item, index) => ({
         id: item.id,
         hidden: index === hidingPlace,
+        frame: hideFrames[item.id],
     }));
     roomItems.forEach((roomItem, index) => {
         const item = furniture.find((object) => object.id === roomItem.id);
@@ -167,9 +174,9 @@ export function renderFind() {
         spot.innerHTML =
             '<span class="hiding-friend">' +
                 picture(isHiding ? friend.id : surprise.id) +
-                '</span><img class="furniture-image" src="./assets/furniture/' +
-                item.id +
-                '.webp" alt="" draggable="false">';
+                '</span><img class="furniture-image" src="' +
+                (roomItem.frame ? `./assets/gabby/hide/${roomItem.frame}.webp` : `./assets/furniture/${item.id}.webp`) +
+                '" alt="" draggable="false">';
         room.append(spot);
     });
     {

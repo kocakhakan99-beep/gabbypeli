@@ -1,4 +1,6 @@
-import { setCampaignLevel } from "./campaign.js";
+import { loadDOMAtlas } from "./dom-atlases.js";
+import { startFreePlayClock, stopFreePlayClock } from "./free-play-clock.js";
+import { campaignLevel, setCampaignLevel } from "./campaign.js";
 import { el } from "./dom.js";
 import { cancelAdvance, feedback, setAction } from "./ui.js";
 import { initMemory, stopMemoryTimers } from "./games/memory.js";
@@ -39,6 +41,7 @@ const starters = {
     garden: startGarden,
 };
 export function home() {
+    stopFreePlayClock();
     setCampaignLevel();
     const previousRoom = state.mode;
     cancelAdvance();
@@ -54,6 +57,7 @@ export function home() {
         el(`open-${previousRoom}`).focus();
 }
 export function open(which, level) {
+    stopFreePlayClock();
     if (which === "memory" || which === "puzzle" || which === "find" || which === "garden" || which === "baking")
         setCampaignLevel(level, which);
     else
@@ -75,6 +79,8 @@ export function open(which, level) {
     el("home").hidden = true;
     el("play").hidden = false;
     el("win").hidden = true;
+    const expired = document.querySelector("#gf-free-expired");
+    expired.hidden = true;
     el("content").hidden = false;
     for (const panel of [
         "memory",
@@ -104,7 +110,27 @@ export function open(which, level) {
             });
         }).catch(() => { inputStarted = false; });
     }
+    if (campaignLevel() === undefined && (which === "memory" || which === "puzzle")) {
+        void loadDOMAtlas("controls");
+    }
+    if (which === "baking")
+        void loadDOMAtlas("bakery");
+    if (which === "garden")
+        void loadDOMAtlas("garden");
     starters[which]();
+    if (campaignLevel() === undefined) {
+        startFreePlayClock(() => {
+            cancelAdvance();
+            setAction("", null);
+            stopGestures();
+            stopSpeech();
+            silenceEffects();
+            el("content").hidden = true;
+            el("hint").hidden = true;
+            expired.hidden = false;
+            document.querySelector("#gf-free-expired-title").focus();
+        });
+    }
     el("title").focus();
     el("play").scrollIntoView({ block: "start" });
 }
