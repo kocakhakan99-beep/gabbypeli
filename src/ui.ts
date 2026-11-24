@@ -192,6 +192,8 @@ export function finish(title: string, text: string, art: string) {
   else document.querySelector<HTMLElement>("#gf-sticker-reward")!.hidden = true;
   const reward = document.querySelector<HTMLElement>("#gf-coin-reward")!;
   reward.hidden = level === undefined;
+  reward.dataset.earned = String(coins > 0);
+  document.querySelector<HTMLElement>("#gf-coin-note")!.hidden = level === undefined;
   reward.textContent = coins ? `+${coins} kisukolikkoa` : "Taso suoritettu uudelleen!";
   document.querySelector<HTMLElement>("#gf-next-level")!.hidden = level === undefined || level >= levelCount;
   setAction("", null);

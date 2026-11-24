@@ -3700,19 +3700,19 @@ body {
   display: flex;
   align-items: end;
   justify-content: center;
-  height: clamp(110px, 29vw, 280px);
+  height: clamp(150px, 36vw, 320px);
 }
 #gabby-fi .celebration-characters img {
-  width: 48%;
+  width: 60%;
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 0 10px #fff5cdaa);
 }
 #gabby-fi .celebration-characters img + img {
-  width: 35%;
-  height: 79%;
-  margin-inline-start: -8%;
+  width: 43%;
+  height: 83%;
+  margin-inline-start: -12%;
 }
 #gabby-fi .celebration-rewards {
   position: relative;
@@ -3740,7 +3740,7 @@ body {
 }
 #gabby-fi .celebration-stars span:nth-child(2) { font-size: 1.17em; }
 #gabby-fi #gf-coin-reward {
-  width: fit-content;
+  width: 100%;
   margin: 0 auto 12px;
   padding: .45em 1em;
   border: 3px solid white;
@@ -3749,6 +3749,29 @@ body {
   font-size: clamp(1.05rem, 3vw, 2rem);
   font-weight: 900;
   box-shadow: 0 3px #deb35e;
+}
+#gabby-fi #gf-coin-reward[data-earned="true"]::before {
+  content: "★";
+  display: inline-grid;
+  place-items: center;
+  width: 1.8em;
+  aspect-ratio: 1;
+  margin-right: .5em;
+  border: .15em solid #ffd75d;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffdf58 35%, #f7a600 38%, #d98100 75%);
+  color: #fff5a8;
+  vertical-align: middle;
+  box-shadow: 0 2px #b56e00;
+}
+#gabby-fi .celebration-note {
+  margin: 0 0 10px;
+  padding: .5em .8em;
+  border-radius: 20px;
+  background: #f3d8eb;
+  color: #612274;
+  font-size: .84rem;
+  font-weight: 700;
 }
 #gabby-fi #gf-win .sticker-reward:not([hidden]) {
   display: flex;
