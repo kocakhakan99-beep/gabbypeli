@@ -1,7 +1,7 @@
 import { campaignLevel } from "../campaign.js";
 import { advanceAfterSuccess } from "../ui.js";
 import { playObjects } from "../play-objects.js";
-import { button, cat, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
+import { button, feedback, finish, heading, picture, progress, setAction, } from "../ui.js";
 import { ding, say, unlock } from "../audio.js";
 import { el } from "../dom.js";
 import { shuffle } from "../utils.js";
@@ -23,6 +23,13 @@ const memoryFriends = [
     { id: "fairy", name: "Kisukeiju" },
     { id: "dj", name: "DJ Catnip" },
 ];
+const memoryFrames = {
+    gabby: "face_girl",
+    pandy: "face_panda_cat",
+    cakey: "face_cupcake",
+    berry: "face_strawberry",
+    star: "face_star",
+};
 export function stopMemoryTimers() {
     memoryGeneration++;
     memoryView?.destroy();
@@ -116,6 +123,7 @@ export function drawCards() {
         const generation = memoryGeneration;
         const art = state.mem.map(({ friend }) => ({
             id: friend.id,
+            frame: memoryFrames[friend.id],
             folder: memoryFriends.some((item) => item.id === friend.id) ? "friends" : "objects",
         }));
         void import("../phaser-room.js").then(({ createTileView }) => {
@@ -140,15 +148,17 @@ export function drawCards() {
         const b = el("cards").querySelector(`[data-index="${i}"]`) ?? button("", () => { if (!memoryView?.activate("flip", i))
             flip(i); }, "memory-card" + (m.found ? " matched" : up ? " faceup" : ""));
         b.className = "memory-card" + (m.found ? " matched" : up ? " faceup" : "");
-        const front = pack === "friends"
-            ? '<span class="picture" data-cast="' +
-                m.friend.id +
-                '" aria-hidden="true"></span>'
-            : picture(m.friend.id);
+        const frame = memoryFrames[m.friend.id];
+        const artAttribute = memoryFriends.some((friend) => friend.id === m.friend.id) ? "data-cast" : "data-object";
+        const front = frame
+            ? `<img class="memory-face-art" ${artAttribute}="${m.friend.id}" src="./assets/gabby/memory-puzzle/${frame}.webp" alt="" draggable="false">`
+            : pack === "friends"
+                ? '<span class="picture" data-cast="' +
+                    m.friend.id +
+                    '" aria-hidden="true"></span>'
+                : picture(m.friend.id);
         b.innerHTML =
-            '<span class="memory-inner"><span class="memory-side memory-back">' +
-                cat() +
-                '</span><span class="memory-side memory-front">' +
+            '<span class="memory-inner"><span class="memory-side memory-back"></span><span class="memory-side memory-front">' +
                 front +
                 "</span></span>";
         b.setAttribute("aria-label", "Kortti " +

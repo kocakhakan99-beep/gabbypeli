@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "format": "Phaser JSON Hash",
+  "archive": "gabby-07-referenssit-seikkailu-palkinnot.zip",
+  "atlases": {},
+  "standalone": {},
+  "references": [
+    "references/adventure.png",
+    "references/rewards.png"
+  ],
+  "spriteCount": 0,
+  "reviewCount": 0
+}

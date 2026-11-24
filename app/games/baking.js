@@ -10,15 +10,12 @@ const recipes = [
 let timer;
 let mixingView;
 let trayView;
-let ovenView;
 let preparationView;
 let mixingGeneration = 0;
 function stopMixingView() {
     mixingGeneration++;
     preparationView?.destroy();
     preparationView = undefined;
-    ovenView?.destroy();
-    ovenView = undefined;
     mixingView?.destroy();
     mixingView = undefined;
     trayView?.destroy();
@@ -122,7 +119,7 @@ export function startBaking() {
         void import("../phaser-room.js").then(({ createPreparationView }) => {
             if (washGeneration !== mixingGeneration || !sink.isConnected)
                 return;
-            preparationView = createPreparationView(sink, "wash");
+            preparationView = createPreparationView(sink);
             preparationView.setStage(washStage);
         }).catch(() => { });
         soap.onclick = () => {
@@ -155,13 +152,6 @@ export function startBaking() {
         ];
         let added = 0;
         let ingredientMask = 0;
-        const ingredientGeneration = mixingGeneration;
-        void import("../phaser-room.js").then(({ createPreparationView }) => {
-            if (ingredientGeneration !== mixingGeneration || !bowl.isConnected)
-                return;
-            preparationView = createPreparationView(bowl, "ingredients");
-            preparationView.setStage(ingredientMask);
-        }).catch(() => { });
         for (const item of items)
             transfer(item, bowl, () => {
                 if (item.hidden)
@@ -169,7 +159,7 @@ export function startBaking() {
                 item.hidden = true;
                 bowl.dataset.added = String(++added);
                 ingredientMask |= item.classList.contains("bakery-flour") ? 1 : item.classList.contains("bakery-egg") ? 2 : 4;
-                preparationView?.setStage(ingredientMask);
+                bowl.dataset.ingredient = ingredientMask & 1 ? "flour" : ingredientMask & 2 ? "egg" : "milk";
                 sound();
                 if (added === items.length)
                     mix(recipe);
@@ -319,20 +309,9 @@ export function startBaking() {
         let start;
         let heat = 0;
         let dial = 0;
-        let doorAngle = 0;
-        const ovenElement = scene.querySelector(".bakery-oven");
-        const ovenGeneration = mixingGeneration;
-        void import("../phaser-room.js").then(({ createOvenView }) => {
-            if (ovenGeneration !== mixingGeneration || !ovenElement.isConnected)
-                return;
-            ovenView = createOvenView(ovenElement);
-            ovenView.update(doorAngle, heat);
-        }).catch(() => { });
         function toggleDoor() {
             if (step === 0) {
                 step = 1;
-                doorAngle = 53;
-                ovenView?.update(doorAngle, heat);
                 cavity.classList.add("door-open");
                 pan.hidden = false;
                 door.setAttribute("aria-label", "Uunin luukku on auki");
@@ -340,8 +319,6 @@ export function startBaking() {
             }
             else if (step === 2) {
                 step = 3;
-                doorAngle = 0;
-                ovenView?.update(doorAngle, heat);
                 cavity.classList.remove("door-open");
                 door.setAttribute("aria-label", "Uunin luukku on kiinni");
                 knob.setAttribute("aria-disabled", "false");
@@ -358,12 +335,10 @@ export function startBaking() {
                     return;
                 const base = step === 2 ? 53 : 0;
                 const angle = Math.max(0, Math.min(65, base + (point.y - start.y)));
-                ovenView?.update(angle, heat);
                 door.style.setProperty("--door-angle", -angle + "deg");
             },
             end(point) {
                 door.style.removeProperty("--door-angle");
-                ovenView?.update(doorAngle, heat);
                 if (point &&
                     ((step === 0 && point.y - start.y > 25) ||
                         (step === 2 && start.y - point.y > 25)))
@@ -406,7 +381,6 @@ export function startBaking() {
             if (step !== 3)
                 return;
             heat = Math.max(0, Math.min(recipe.heat, value));
-            ovenView?.update(doorAngle, heat);
             knob.style.setProperty("--dial", heat + "deg");
             knob.setAttribute("aria-valuenow", String(Math.round(heat)));
             temperature.value = Math.round(heat) + " °C";

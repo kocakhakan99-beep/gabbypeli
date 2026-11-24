@@ -1,0 +1,92 @@
+[
+  {
+    "atlas": "ui",
+    "frame": "icon_play",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "ui",
+    "frame": "icon_close",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "ui",
+    "frame": "icon_add",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "ui",
+    "frame": "icon_info",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "door_main",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_frame_cream",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_frame_purple",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_art",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_garden",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_bakery",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_hide",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_memory",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "room_puzzle",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "home",
+    "frame": "flower_bush_pink",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "controls",
+    "frame": "settings_panel_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "controls",
+    "frame": "chip_selected_small",
+    "note": "opaque pixels touch source crop boundary; inspect for clipping or adjacent sprite"
+  },
+  {
+    "atlas": "controls",
+    "frame": "toggle_on_example",
+    "note": "composite example: do not use as independent moving component"
+  },
+  {
+    "atlas": "controls",
+    "frame": "toggle_on_example_2",
+    "note": "composite example: do not use as independent moving component"
+  }
+]

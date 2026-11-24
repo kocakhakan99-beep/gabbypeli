@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gabbypeli</title>
-    <link rel="stylesheet" href="./app/styles.css?v=home-rebuild-1" />
+    <link rel="stylesheet" href="./app/styles.css?v=gabby-atlases-4" />
   </head>
   <body>
     <div id="gabby-fi" lang="fi">
@@ -76,16 +76,26 @@
               <button type="button" class="primary campaign-resume" id="gf-campaign-resume" hidden></button>
             </section>
           </div>
+          <section class="free-play-options" id="gf-free-options" aria-labelledby="gf-free-title" hidden>
+            <h2 id="gf-free-title">Vapaa leikki</h2>
+            <label for="gf-free-time">Aikaraja</label>
+            <select id="gf-free-time">
+              <option value="0">Ei aikarajaa</option>
+              <option value="1">1 minuutti</option>
+              <option value="3">3 minuuttia</option>
+              <option value="5">5 minuuttia</option>
+            </select>
+          </section>
           <div class="dollhouse" id="gf-free-games">
             <div class="house-welcome" aria-hidden="true">
               <img src="./assets/friends/gabby.webp" alt="" />
               <img src="./assets/friends/pandy.webp" alt="" />
             </div>
             <div class="dollhouse-roof home-house">
-              <img src="./assets/menu/roof.webp" width="1440" height="480" alt="" fetchpriority="high" />
-              <h1>Gabbyn<br />nukketalo</h1>
+              <img data-gabby-frame="home/roof_center" width="546" height="148" alt="" fetchpriority="high" />
+              <h1><span>Gabbyn nukketalo</span></h1>
+              <p class="house-invitation">Valitse huone ja leiki!</p>
             </div>
-            <p class="house-invitation">Valitse huone ja leiki!</p>
             <div
               class="menu dollhouse-rooms"
               role="group"
@@ -97,7 +107,7 @@
                 id="gf-open-drawing"
                 aria-label="Taidepöytä"
               >
-                <span class="menu-art" aria-hidden="true"><img class="room-toy" src="./assets/menu/art.webp" alt="" /><span class="picture" data-cast="gabby"></span></span>
+                <span class="menu-art" aria-hidden="true"><img class="room-toy" data-gabby-frame="home/room_art" alt="" /></span>
                 <span class="game-label">Taidepöytä<small>Piirrä sormella</small></span>
               </button>
               <button
@@ -107,8 +117,7 @@
                 aria-label="Kisukeijun puutarha"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><img class="room-toy" src="./assets/menu/garden.webp" alt="" /><span class="picture" data-cast="fairy"></span
-                ></span>
+                  ><img class="room-toy" data-gabby-frame="home/room_garden" alt="" /></span>
                 <span class="game-label"
                   >Kisukeijun puutarha<small>Herätä kukat</small></span
                 >
@@ -120,7 +129,7 @@
                 aria-label="Hileen leipomo"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><img class="room-toy" src="./assets/menu/baking.webp" alt="" /><span class="picture" data-cast="cakey"></span></span
+                  ><img class="room-toy" data-gabby-frame="home/room_bakery" alt="" /></span
                 ><span class="game-label"
                   >Hileen leipomo<small>Leivo ja laske kakkuja</small></span
                 ></button
@@ -158,7 +167,7 @@
                 aria-label="Kuka piilottelee?"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><img class="room-toy" src="./assets/menu/find.webp" alt="" /><span class="picture" data-cast="dj"></span></span
+                  ><img class="room-toy" data-gabby-frame="home/room_hide" alt="" /></span
                 ><span class="game-label"
                   >Kuka piilottelee?<small
                     >Tunnista kuvan yksityiskohta</small
@@ -171,7 +180,7 @@
                 aria-label="Muistipeli"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><img class="room-toy" src="./assets/menu/memory.webp" alt="" /><span class="picture" data-cast="pandy"></span></span
+                  ><img class="room-toy" data-gabby-frame="home/room_memory" alt="" /></span
                 ><span class="game-label"
                   >Muistipeli<small>Etsi samat kaverit</small></span
                 ></button
@@ -182,7 +191,7 @@
                 aria-label="Palapeli"
               >
                 <span class="menu-art" aria-hidden="true"
-                  ><img class="room-toy" src="./assets/menu/puzzle.webp" alt="" /><span class="picture" data-cast="gabby"></span></span
+                  ><img class="room-toy" data-gabby-frame="home/room_puzzle" alt="" /></span
                 ><span class="game-label"
                   >Palapeli<small>Kokoa taikakuva</small></span
                 ></button
@@ -200,6 +209,11 @@
                   >Pikku puuhat<small>Värit, muodot ja määrät</small></span
                 >
               </button>
+            </div>
+            <div class="house-entrance">
+              <div class="house-locked"><span>Tulossa pian</span></div>
+              <img class="house-door" data-gabby-frame="home/door_main" alt="" width="213" height="181" />
+              <div class="house-locked"><span>Tulossa pian</span></div>
             </div>
           </div>
           <section class="sticker-book" id="gf-sticker-book" aria-labelledby="gf-sticker-title" hidden>
@@ -277,6 +291,11 @@
             </button>
           </div>
           <div class="game-panel">
+            <output id="gf-free-time-left" aria-label="Aikaa jäljellä" aria-live="off" hidden></output>
+            <section class="free-play-expired" id="gf-free-expired" aria-labelledby="gf-free-expired-title" hidden>
+              <h3 id="gf-free-expired-title" tabindex="-1">Aika loppui!</h3>
+              <button type="button" class="primary" id="gf-free-restart">Leiki uudelleen</button>
+            </section>
             <div id="gf-content">
               <div class="game-heading">
                 <div
@@ -563,10 +582,10 @@
                 <img src="assets/friends/pandy.webp" alt="" />
               </div>
               <div class="celebration-rewards">
-                <div class="celebration-stars" aria-hidden="true"><span>★</span><span>★</span><span>★</span></div>
+                <div class="celebration-stars" id="gf-celebration-stars" aria-hidden="true"></div>
                 <p id="gf-coin-reward" hidden></p>
                 <div id="gf-sticker-reward" class="sticker-reward" hidden></div>
-                <p id="gf-coin-note" class="celebration-note" hidden>Kisukolikot myönnetään vain tason ensimmäisestä suorittamisesta.</p>
+                <p id="gf-reward-rule" class="celebration-note reward-rule" hidden>Kisukolikot myönnetään vain tason ensimmäisestä suorittamisesta.</p>
                 <div class="celebration-message">
                   <div class="picture" id="gf-win-art" aria-hidden="true"></div>
                   <div>

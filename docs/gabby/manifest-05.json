@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "format": "Phaser JSON Hash",
+  "archive": "gabby-05-muistipeli-palapeli.zip",
+  "atlases": {
+    "memory-puzzle": {
+      "webp": "atlases/memory-puzzle.webp",
+      "webpJson": "atlases/memory-puzzle.webp.json",
+      "count": 36,
+      "size": [
+        2048,
+        832
+      ],
+      "frames": [
+        "puzzle_panda_source",
+        "puzzle_cupcake_source",
+        "board_3x3_example",
+        "board_2x2_example",
+        "card_matched_example",
+        "card_back_purple",
+        "card_selected",
+        "card_back_pink",
+        "card_back_gold",
+        "card_front",
+        "piece_example_flower",
+        "piece_example_cat",
+        "face_girl",
+        "slot_blank",
+        "piece_example_purple",
+        "piece_example_house",
+        "face_panda_cat",
+        "piece_example_tree",
+        "piece_pink",
+        "face_white_cat",
+        "face_cupcake",
+        "piece_example_panda",
+        "face_gift",
+        "piece_purple",
+        "piece_gold",
+        "piece_green",
+        "piece_peach",
+        "piece_blue",
+        "face_strawberry",
+        "face_flower",
+        "face_star",
+        "face_rainbow",
+        "face_paw",
+        "face_heart",
+        "sparkles",
+        "stars_example"
+      ]
+    }
+  },
+  "standalone": {
+    "puzzle-cupcake": "images/puzzle-cupcake.webp",
+    "puzzle-panda": "images/puzzle-panda.webp"
+  },
+  "references": [
+    "references/IMG_6698(2).jpeg",
+    "references/IMG_6704.jpeg"
+  ],
+  "spriteCount": 36,
+  "reviewCount": 20
+}

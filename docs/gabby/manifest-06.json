@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "format": "Phaser JSON Hash",
+  "archive": "gabby-06-referenssit-etusivu-asetukset.zip",
+  "atlases": {},
+  "standalone": {},
+  "references": [
+    "references/free-play.png",
+    "references/home.png"
+  ],
+  "spriteCount": 0,
+  "reviewCount": 0
+}

@@ -3337,22 +3337,6 @@ body {
   visibility: hidden;
 }
 
-#gabby-fi .bakery-oven > canvas {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-#gabby-fi .phaser-oven-ready .bakery-door,
-#gabby-fi .phaser-oven-ready .bakery-knob {
-  background: transparent;
-  border-color: transparent;
-}
-#gabby-fi .phaser-oven-ready .bakery-door::before,
-#gabby-fi .phaser-oven-ready .bakery-knob::after {
-  visibility: hidden;
-}
-
 #gabby-fi .baking-wash,
 #gabby-fi .bakery-bowl {
   position: relative;
@@ -3990,10 +3974,6 @@ body {
   background: #fff6c7;
   box-shadow: 0 0 18px 7px #fff0ad;
 }
-#gabby-fi #gf-open-garden { --room-art: url("../assets/rooms/garden.webp"); }
-#gabby-fi #gf-open-baking { --room-art: url("../assets/rooms/kitchen.webp"); }
-#gabby-fi #gf-open-find { --room-art: url("../assets/rooms/music.webp"); }
-#gabby-fi #gf-open-memory { --room-art: url("../assets/rooms/bathroom.webp"); }
 #gabby-fi .dollhouse-rooms .room-toy {
   position: absolute;
   top: 2%;
@@ -4200,73 +4180,47 @@ body {
   #gabby-fi #gf-levels[data-game="garden"] button:nth-child(10) { --garden-map-x: 42%; --garden-map-y: 75%; }
 }
 
-/* A single illustrated cat marker works with live HTML numbers and states. */
+/* A level number and its status stay separate from the raster marker. */
 #gabby-fi #gf-levels button {
   position: relative;
-  padding: 9px 3px 2px;
+  padding: 8px 3px 2px;
   border: 0;
   border-radius: 0;
-  color: #fff;
-  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  color: white;
+  background: var(--gabby-adventure-level_base, none) center / contain no-repeat;
   box-shadow: none;
   filter: drop-shadow(0 4px 2px #53256699);
-  font-size: clamp(1.15rem, 3.4vw, 1.7rem);
+  font-size: clamp(1.05rem, 3.4vw, 1.65rem);
   font-weight: 900;
-  text-shadow: -2px -2px #653078, 2px -2px #653078, -2px 2px #653078, 2px 2px #653078;
+  text-shadow: -1px -1px #49215e, 1px 1px #49215e, 0 2px #49215e;
 }
 #gabby-fi #gf-levels button[data-completed="true"] {
   color: white;
-  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
+  background: var(--gabby-adventure-level_base, none) center / contain no-repeat;
 }
 #gabby-fi #gf-levels button[aria-current="step"] {
-  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
-  filter: drop-shadow(0 0 5px #ffe36a) drop-shadow(0 4px 2px #53256699);
+  background: var(--gabby-adventure-level_current, none) center / contain no-repeat;
 }
 #gabby-fi #gf-levels button:disabled {
   color: #eee2f4;
-  background: url("../assets/menu/level-cat.webp") center / 100% 100% no-repeat;
-  filter: grayscale(.6) brightness(.72);
-  opacity: .92;
+  background: var(--gabby-adventure-level_base, none) center / contain no-repeat;
 }
 #gabby-fi #gf-levels .level-mark {
-  display: block;
   position: absolute;
-  width: 19px;
-  height: 19px;
-  top: 1px;
-  right: -2px;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  background: #ffcf55;
-  box-shadow: 0 2px 3px #50206788;
+  width: clamp(14px, 4vw, 21px);
+  aspect-ratio: 1;
+  height: auto;
+  background: var(--level-mark) center / contain no-repeat;
 }
-#gabby-fi #gf-levels .level-mark.completed::after {
-  content: "✓";
-  display: block;
-  color: #603000;
-  font-size: 13px;
-  line-height: 15px;
-  text-shadow: none;
+#gabby-fi #gf-levels .level-mark.completed {
+  --level-mark: var(--gabby-adventure-star_gold, none);
+  inset: auto auto -8% 50%;
+  transform: translateX(-50%);
 }
-#gabby-fi #gf-levels .level-mark.locked::before {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 7px;
-  height: 7px;
-  border: 2px solid #704b0e;
-  border-radius: 6px 6px 0 0;
-}
-#gabby-fi #gf-levels .level-mark.locked::after {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 7px;
-  width: 9px;
-  height: 7px;
-  border-radius: 2px;
-  background: #704b0e;
+#gabby-fi #gf-levels .level-mark.locked {
+  --level-mark: var(--gabby-adventure-lock_gold, none);
+  top: 0;
+  right: 1%;
 }
 #gabby-fi #gf-levels button:focus-visible {
   outline: 3px solid #42145c;
@@ -4393,23 +4347,6 @@ body {
 }
 
 /* Home composition. Rooms remain the same controls in both play modes. */
-#gabby-fi .house-invitation {
-  display: none;
-}
-#gabby-fi #gf-home[data-destination="home"] .house-invitation {
-  position: relative;
-  z-index: 3;
-  display: table;
-  margin: -12px auto -8px;
-  padding: .3em 1em;
-  border: 2px solid white;
-  border-radius: 999px;
-  background: #fff1fa;
-  color: #652179;
-  font-weight: 900;
-  text-align: center;
-  box-shadow: 0 3px 6px #83336d55;
-}
 #gabby-fi .house-dock {
   max-width: 920px;
   margin: 12px auto 0;
@@ -4436,3 +4373,560 @@ body {
     grid-area: navigation;
   }
 }
+
+/* Raster frames from the home and UI atlases, laid out with the existing DOM controls. */
+#gabby-fi #gf-free-games {
+  max-width: 680px;
+}
+#gabby-fi #gf-free-games .dollhouse-roof.home-house {
+  width: 96%;
+  margin-inline: auto;
+  padding-top: 11%;
+  background:
+    var(--gabby-home-roof_ear_left, none) left 9% bottom 54% / 27% auto no-repeat,
+    var(--gabby-home-roof_ear_right, none) right 9% bottom 54% / 27% auto no-repeat;
+}
+#gabby-fi .dollhouse-roof h1 {
+  inset: 0 auto auto 50%;
+  width: 37%;
+  aspect-ratio: 357 / 197;
+  padding: 0;
+  border: 0;
+  background: var(--gabby-ui-logo_main, none) center / contain no-repeat;
+  box-shadow: none;
+}
+#gabby-fi .dollhouse-roof h1 span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+#gabby-fi .dollhouse-rooms {
+  border: 0;
+  border-radius: 0;
+  padding: 0 clamp(3px, 1vw, 8px) 2%;
+  gap: clamp(4px, 1vw, 8px);
+  background: #f2a9cf;
+  box-shadow: none;
+}
+#gabby-fi .dollhouse-rooms .game-link:not([hidden]) {
+  aspect-ratio: 1.22;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+#gabby-fi .dollhouse-rooms .menu-art {
+  background: none;
+}
+#gabby-fi .dollhouse-rooms .menu-art::after {
+  content: none;
+}
+#gabby-fi .dollhouse-rooms .room-toy {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+}
+#gabby-fi .dollhouse-rooms .game-label {
+  inset: auto 14% 9%;
+  min-height: 21%;
+  border: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-size: clamp(.63rem, 2.5vw, .98rem);
+  line-height: 1;
+}
+#gabby-fi .house-invitation {
+  position: absolute;
+  top: 41%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 70%;
+  margin: 0;
+  padding: .25em .8em;
+  border-radius: 1em;
+  background: #fff5fb;
+  color: #54206b;
+  font-size: clamp(.75rem, 2.3vw, 1.1rem);
+  font-weight: 900;
+}
+#gabby-fi .dollhouse-roof::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 29%;
+  background:
+    var(--gabby-home-heart_whiskers, none) center top / 25% auto no-repeat,
+    var(--gabby-home-facade_trim, none) center bottom / 100% auto no-repeat;
+  pointer-events: none;
+}
+#gabby-fi .house-entrance {
+  display: grid;
+  position: relative;
+  grid-template-columns: 1fr .8fr 1fr;
+  align-items: end;
+  gap: 3%;
+  width: 96%;
+  margin: 0 auto;
+  padding: 0 3% 5%;
+  background: var(--gabby-home-door_mat, none) center bottom / 18% auto no-repeat, #f2a9cf;
+}
+#gabby-fi .house-entrance::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 39%;
+  background:
+    var(--gabby-home-flower_pot_pink, none) left bottom / auto 100% no-repeat,
+    var(--gabby-home-flower_pot_yellow, none) right bottom / auto 100% no-repeat;
+  pointer-events: none;
+}
+#gabby-fi .house-door {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+#gabby-fi .house-locked {
+  display: grid;
+  align-items: end;
+  justify-items: center;
+  aspect-ratio: 204 / 139;
+  padding-bottom: 12%;
+  color: #54206b;
+  font-size: clamp(.68rem, 2vw, .95rem);
+  font-weight: 900;
+  background: var(--gabby-home-room_locked_left, none) center / contain no-repeat;
+}
+#gabby-fi .house-locked:last-child {
+  background-image: var(--gabby-home-room_locked_right, none);
+}
+#gabby-fi #gf-home[data-destination="free"] .house-entrance {
+  display: none;
+}
+@media (max-width: 600px) {
+  #gabby-fi .house-entrance { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #gabby-fi .house-door { display: none; }
+}
+#gabby-fi #gf-home .house-play-actions button {
+  min-width: min(168px, 100%);
+  min-height: 52px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 0;
+  background: var(--button-art) center / contain no-repeat;
+  box-shadow: none;
+  color: white;
+  text-shadow: 0 1px 2px #321442, 0 1px 4px #321442;
+}
+#gabby-fi #gf-campaign-toggle {
+  --button-art: var(--gabby-ui-button_green_large, none);
+}
+#gabby-fi #gf-free-toggle {
+  --button-art: var(--gabby-ui-button_purple_large, none);
+}
+#gabby-fi .house-controls #gf-settings-toggle,
+#gabby-fi .house-controls #gf-sound {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: var(--icon-art) center / contain no-repeat;
+  box-shadow: none;
+  font-size: 0;
+}
+#gabby-fi #gf-settings-toggle { --icon-art: var(--gabby-ui-icon_settings, none); }
+#gabby-fi #gf-sound { --icon-art: var(--gabby-ui-icon_sound, none); }
+#gabby-fi #gf-sound[aria-pressed="false"] .button-glyph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  border-radius: 50%;
+  background: #f9e8ff;
+}
+#gabby-fi #gf-sound[aria-pressed="true"] .button-glyph {
+  display: none;
+}
+#gabby-fi .house-balances .coin-icon {
+  background: var(--gabby-ui-coin, none) center / contain no-repeat;
+  border: 0;
+  box-shadow: none;
+}
+#gabby-fi .house-balances .coin-icon::before,
+#gabby-fi .house-balances .coin-icon::after {
+  content: none;
+}
+#gabby-fi .dollhouse-nav button::before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 2px;
+  background: var(--icon-art) center / contain no-repeat;
+}
+#gabby-fi .dollhouse-nav [data-destination="home"] { --icon-art: var(--gabby-ui-icon_home, none); }
+#gabby-fi .dollhouse-nav [data-destination="free"] { --icon-art: var(--gabby-ui-icon_games, none); }
+#gabby-fi .dollhouse-nav [data-destination="stickers"] { --icon-art: var(--gabby-ui-icon_stickers, none); }
+
+
+#gabby-fi .house-balances .home-sticker-count {
+  min-width: 112px;
+  padding: 12px 10px 12px 41px;
+  border: 0;
+  background: var(--gabby-ui-counter_paw, none) center / contain no-repeat;
+  text-align: center;
+}
+#gabby-fi .dollhouse-nav {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 680px;
+  margin-inline: auto;
+  border-color: #f9c9ed;
+  background: #fff0fa;
+  box-shadow: 0 4px #a94d91;
+}
+#gabby-fi .dollhouse-nav button[aria-pressed="true"] {
+  background: #d93d92;
+  color: white;
+}
+
+#gabby-fi:has(#gf-home:not([hidden])[data-destination="home"]) .house-balances {
+  order: -1;
+}
+@media (max-width: 600px) {
+  #gabby-fi:has(#gf-home:not([hidden])[data-destination="home"]) .house-toolbar {
+    justify-content: space-between;
+    gap: 4px;
+    padding-bottom: 5px;
+  }
+  #gabby-fi:has(#gf-home:not([hidden])[data-destination="home"]) .house-balances {
+    gap: 3px;
+  }
+  #gabby-fi .house-balances strong {
+    padding: 4px;
+    gap: 3px;
+  }
+  #gabby-fi .house-balances .home-sticker-count {
+    min-width: 85px;
+    padding: 8px 5px 8px 30px;
+  }
+}
+
+/* Adventure and celebration textures decorate the existing controls and live result. */
+#gabby-fi #gf-map-title {
+  display: grid;
+  place-items: center;
+  width: min(100%, 310px);
+  aspect-ratio: 2.35;
+  border: 0;
+  box-shadow: none;
+  margin: 0 auto;
+  padding: clamp(15px, 5vw, 27px) 12% 0;
+  background: var(--gabby-adventure-banner_adventure, none) center / contain no-repeat;
+  text-align: center;
+  font-size: clamp(.9rem, 3vw, 1.3rem);
+}
+#gabby-fi #gf-map-back {
+  width: min(210px, 100%);
+  min-height: 61px;
+  padding-inline: 42px 17px;
+  border: 0;
+  background: var(--gabby-adventure-button_back, none) center / contain no-repeat;
+  color: white;
+  box-shadow: none;
+  font-weight: 900;
+}
+#gabby-fi #gf-levels:not([data-game="baking"], [data-game="garden"])::before {
+  inset: 20% 5%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background:
+    var(--gabby-adventure-path_u, none) right center / auto 95% no-repeat,
+    var(--gabby-adventure-path_straight, none) left top / 82% 35% no-repeat,
+    var(--gabby-adventure-path_straight, none) left bottom / 82% 35% no-repeat;
+}
+@media (min-width: 680px) {
+  #gabby-fi #gf-levels:not([data-game="baking"], [data-game="garden"])::before { content: none; }
+}
+#gabby-fi #gf-win .celebration-banner {
+  display: grid;
+  place-items: center;
+  width: min(100%, 550px);
+  min-height: clamp(58px, 14vw, 112px);
+  padding: 8px 14%;
+  border: 0;
+  background: var(--gabby-rewards-banner_complete, none) center / contain no-repeat;
+  line-height: 1;
+}
+#gabby-fi .celebration-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 4px 0;
+}
+#gabby-fi .celebration-stars span {
+  width: clamp(28px, 9vw, 62px);
+  aspect-ratio: 1;
+  background: var(--gabby-rewards-star_empty, none) center / contain no-repeat;
+}
+#gabby-fi .celebration-stars span.earned { background-image: var(--gabby-rewards-star_gold, none); }
+#gabby-fi #gf-coin-reward.coins-earned {
+  min-height: 54px;
+  margin: 8px auto;
+  padding: 13px 12px 13px 66px;
+  background: #ffeda8 var(--gabby-rewards-coin_stack, none) 9px center / 50px auto no-repeat;
+}
+#gabby-fi .reward-rule {
+  width: fit-content;
+  margin: 7px auto 10px;
+  padding: 5px 10px;
+  border-radius: 9px;
+  background: #fff5fc;
+  color: #58316d;
+  font-size: .85rem;
+}
+#gabby-fi #gf-win #gf-next-level,
+#gabby-fi #gf-win #gf-again,
+#gabby-fi #gf-win #gf-other {
+  min-height: 53px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--reward-button) center / contain no-repeat;
+}
+#gabby-fi #gf-win #gf-next-level,
+#gabby-fi #gf-win #gf-again {
+  width: min(100%, 176px);
+  min-height: 65px;
+  margin: 0;
+  padding: 5px 25px 5px 57px;
+  color: white;
+  text-shadow: 0 1px 2px #421258;
+  line-height: 1.1;
+}
+#gabby-fi #gf-next-level { --reward-button: var(--gabby-rewards-button_next, none); }
+#gabby-fi #gf-again { --reward-button: var(--gabby-rewards-button_replay, none); }
+#gabby-fi #gf-other { --reward-button: var(--gabby-rewards-button_home, none); }
+#gabby-fi #gf-win #gf-other .button-glyph { display: none; }
+#gabby-fi #gf-win #gf-next-level[hidden] { display: none; }
+
+/* Native sliders and checkboxes keep their keyboard and touch behavior. */
+#gabby-fi #gf-settings input[type="checkbox"] {
+  appearance: none;
+  vertical-align: middle;
+  width: 48px;
+  height: 27px;
+  border: 0;
+  background:
+    var(--gabby-controls-toggle_knob, none) left 4px center / 21px auto no-repeat,
+    var(--gabby-controls-toggle_off_track, none) center / contain no-repeat;
+}
+#gabby-fi #gf-settings input[type="checkbox"]:checked {
+  background:
+    var(--gabby-controls-toggle_knob, none) right 4px center / 21px auto no-repeat,
+    var(--gabby-controls-toggle_track_on, none) center / contain no-repeat;
+}
+#gabby-fi #gf-volume {
+  appearance: none;
+  min-height: 28px;
+  background:
+    var(--gabby-controls-progress_fill, none) left center / var(--volume-fill, 0%) 9px no-repeat,
+    var(--gabby-controls-progress_track, none) center / 100% 12px no-repeat;
+}
+#gabby-fi #gf-volume::-webkit-slider-thumb {
+  appearance: none;
+  width: 27px;
+  height: 25px;
+  background: var(--gabby-controls-slider_thumb, none) center / contain no-repeat;
+}
+#gabby-fi #gf-volume::-moz-range-thumb {
+  width: 27px;
+  height: 25px;
+  border: 0;
+  background: var(--gabby-controls-slider_thumb, none) center / contain no-repeat;
+}
+#gabby-fi #gf-settings input:focus-visible { outline: 3px solid #50216b; outline-offset: 3px; }
+#gabby-fi #gf-memory .settings button,
+#gabby-fi #gf-puzzle .settings button {
+  border: 0;
+  box-shadow: none;
+  background: var(--gabby-controls-blank_chip, none) center / 100% auto no-repeat;
+}
+#gabby-fi #gf-memory .settings button[aria-pressed="true"],
+#gabby-fi #gf-puzzle .settings button[aria-pressed="true"] {
+  color: #472052;
+  background-image: var(--gabby-controls-chip_selected_large, none);
+}
+
+/* Separate raster layers leave the oven controls usable above the art. */
+#gabby-fi .bakery-bowl,
+#gabby-fi .bakery-bowl[data-added],
+#gabby-fi .bakery-bowl.mixing {
+  border: 0;
+  box-shadow: none;
+  background: var(--bowl-art, var(--gabby-bakery-bowl_empty, none)) center / contain no-repeat;
+}
+#gabby-fi .bakery-bowl[data-ingredient="flour"] { --bowl-art: var(--gabby-bakery-bowl_flour, none); }
+#gabby-fi .bakery-bowl[data-ingredient="egg"] { --bowl-art: var(--gabby-bakery-bowl_egg, none); }
+#gabby-fi .bakery-bowl[data-ingredient="milk"],
+#gabby-fi .bakery-bowl.mixing { --bowl-art: var(--gabby-bakery-bowl_batter, none); }
+#gabby-fi .bakery-spoon {
+  width: 38px;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--gabby-bakery-spoon, none) center / contain no-repeat;
+}
+#gabby-fi .bakery-paper,
+#gabby-fi .bakery-tray,
+#gabby-fi .bakery-tray.lined,
+#gabby-fi .bakery-oven {
+  border: 0;
+  box-shadow: none;
+  background: var(--bakery-art) center / 100% 100% no-repeat;
+}
+#gabby-fi .bakery-paper { --bakery-art: var(--gabby-bakery-parchment, none); }
+#gabby-fi .bakery-tray { --bakery-art: var(--gabby-bakery-tray, none); }
+#gabby-fi .bakery-oven {
+  --bakery-art: var(--gabby-bakery-oven_body, none);
+  height: auto;
+  aspect-ratio: 1.12;
+  padding: 0;
+}
+#gabby-fi .bakery-piece.cookie,
+#gabby-fi .bakery-piece.cupcake {
+  border: 0;
+  border-radius: 0;
+  clip-path: none;
+  background: var(--gabby-bakery-batter_dollop_large, none) center / contain no-repeat;
+}
+#gabby-fi .bakery-piece.cupcake { background-image: var(--gabby-bakery-raw_pink, none); }
+#gabby-fi .bakery-knob {
+  position: absolute;
+  z-index: 2;
+  top: 18%;
+  left: 13%;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: var(--gabby-bakery-temperature_knob, none) center / contain no-repeat;
+}
+#gabby-fi .bakery-knob::after { content: none; }
+#gabby-fi .bakery-temp { top: 20%; right: 12%; }
+#gabby-fi .bakery-cavity {
+  position: absolute;
+  inset: 38% 11% 12%;
+  height: auto;
+  margin: 0;
+  background: var(--gabby-bakery-oven_rack, none) center bottom 8% / 76% auto no-repeat;
+}
+#gabby-fi .bakery-cavity.oven-cooking {
+  background:
+    var(--gabby-bakery-oven_light, none) center top / 78% auto no-repeat,
+    var(--gabby-bakery-oven_rack, none) center bottom 8% / 76% auto no-repeat;
+}
+#gabby-fi .bakery-door {
+  z-index: 2;
+  border: 0;
+  background: var(--gabby-bakery-oven_door_frame, none) center / 100% 100% no-repeat;
+}
+#gabby-fi .bakery-door::before,
+#gabby-fi .bakery-door::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+#gabby-fi .bakery-door::before {
+  z-index: 1;
+  inset: 17% 26% auto;
+  width: auto;
+  height: 12%;
+  margin: 0;
+  background: var(--gabby-bakery-oven_handle, none) center / contain no-repeat;
+}
+#gabby-fi .bakery-door::after {
+  inset: 27% 15% 13%;
+  background: var(--gabby-bakery-oven_glass, none) center / 100% 100% no-repeat;
+  opacity: .44;
+}
+
+/* DOM fallback art and the Phaser sprites share the same card artwork. */
+#gabby-fi .memory-back,
+#gabby-fi .memory-front {
+  border-radius: 0;
+  background: var(--card-frame) center / contain no-repeat;
+}
+#gabby-fi .memory-back { --card-frame: url("../assets/gabby/memory-puzzle/card_back_purple.webp"); }
+#gabby-fi .memory-front { --card-frame: url("../assets/gabby/memory-puzzle/card_front.webp"); }
+#gabby-fi .memory-face-art {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  pointer-events: none;
+}
+#gabby-fi .phaser-memory-ready .memory-inner { visibility: hidden; }
+#gabby-fi .crop { background-repeat: no-repeat; }
+#gabby-fi .slot, #gabby-fi .piece { overflow: hidden; }
+
+#gabby-fi [data-stage="soil"] .garden-tool .garden-shovel,
+#gabby-fi [data-stage="tidy"] .garden-tool .garden-brush,
+#gabby-fi [data-stage="water"] .garden-tool .garden-drops {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  transform: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--garden-tool-art) center / contain no-repeat;
+}
+#gabby-fi .garden-shovel { --garden-tool-art: var(--gabby-garden-shovel, none); }
+#gabby-fi .garden-brush { --garden-tool-art: var(--gabby-garden-leaf_green, none); }
+#gabby-fi .garden-drops { --garden-tool-art: var(--gabby-garden-water_splash, none); }
+#gabby-fi .garden-shovel::after, #gabby-fi .garden-brush::after,
+#gabby-fi .garden-drops::before, #gabby-fi .garden-drops::after { content: none; }
+
+#gabby-fi .free-play-options {
+  max-width: 680px;
+  margin: 0 auto 14px;
+  padding: 10px 18px;
+  border: 2px solid white;
+  border-radius: 18px;
+  background: #f7e8fb;
+  text-align: center;
+}
+#gabby-fi .free-play-options h2 { margin: 0 0 5px; }
+#gabby-fi .free-play-options label { margin-inline-end: 8px; font-weight: 800; }
+#gabby-fi .free-play-options select {
+  min-height: 44px;
+  padding: 4px 12px;
+  border: 1px solid #9760aa;
+  border-radius: 12px;
+  background: #fff7fc;
+  color: #50216b;
+  font: inherit;
+}
+#gabby-fi #gf-free-time-left:not([hidden]) {
+  display: block;
+  width: fit-content;
+  margin: 0 0 8px auto;
+  padding: 5px 11px;
+  border-radius: 12px;
+  background: #f7e8fb;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+#gabby-fi .free-play-expired { padding: 14px; text-align: center; }
+
+#gabby-fi .garden-tool .watering-icon {
+  width: 100%;
+  height: 100%;
+  background: var(--gabby-garden-watering_can, none) center / contain no-repeat;
+}
+
+#gabby-fi .house-dock .dollhouse-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }

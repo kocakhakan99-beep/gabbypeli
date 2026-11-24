@@ -30,7 +30,11 @@ export function awardCampaignLevel() {
         localStorage.setItem(key(activeGame), String(active));
     }
     catch { /* Keep progress for this session. */ }
+    renderCoinBalance();
     return coinReward;
+}
+function renderCoinBalance() {
+    document.querySelector("#gf-coins").textContent = String(campaignGames.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
 }
 export function renderCampaign(game, start) {
     const progress = readProgress(game);
@@ -43,7 +47,7 @@ export function renderCampaign(game, start) {
     meter.setAttribute("aria-label", names[game] + ", eteneminen");
     document.querySelector("#gf-map-progress-label").textContent =
         names[game] + " · " + progress + " / " + levelCount;
-    document.querySelector("#gf-coins").textContent = String(campaignGames.reduce((sum, game) => sum + readProgress(game), 0) * coinReward);
+    renderCoinBalance();
     const map = document.querySelector("#gf-levels");
     map.dataset.game = game;
     map.replaceChildren();
