@@ -5,9 +5,10 @@ async function mutedGame(page) {
   await page.locator("#gf-sound").click();
 }
 
-for (const width of [320, 768, 1100]) {
+for (const width of [320, 390, 768, 1100]) {
   test(`baking is playable at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
+    if (width === 390) await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await mutedGame(page);
@@ -17,7 +18,9 @@ for (const width of [320, 768, 1100]) {
       fullPage: true,
     });
     await page.locator("#gf-open-baking").click();
-    const piparit = width === 320;
+    const piparit = width <= 390;
+    const servings = width === 390 ? 1 : 6;
+    if (servings === 1) await page.getByLabel("Annoksia").selectOption("1");
     await page
       .getByRole("button", { name: piparit ? "Piparit" : "Kuppikakut" })
       .click();
@@ -50,7 +53,7 @@ for (const width of [320, 768, 1100]) {
     for (let i = 0; i < 4; i++)
       await page.locator(".bakery-bowl.mixing").press("Enter");
     for (const [step, count] of piparit
-      ? [["Kauli taikina", 1], ["Paina kissamuottia", 6]]
+      ? [["Kauli taikina", 6], ["Paina kissamuottia", servings * 2]]
       : [["Aseta vuoka", 6], ["Täytä vuoka", 6]]) {
       for (let index = 0; index < count; index++)
         await page.getByRole("button", { name: step }).press("Enter");
@@ -86,7 +89,7 @@ for (const width of [320, 768, 1100]) {
         await page.getByRole("button", { name: "Lisää kuorrute" }).press("Enter");
     }
     const topping = page.getByRole("button", { name: piparit ? "Strösseli" : "Mustikka", exact: true });
-    for (let index = 0; index < 6; index++) await topping.press("Enter");
+    for (let index = 0; index < servings; index++) await topping.press("Enter");
     await expect(page.locator("#gf-win")).toBeVisible();
     const result = page.getByRole("img", { name: piparit ? "Piparit" : "Kuppikakut" });
     await expect(result).toBeVisible();

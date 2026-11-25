@@ -90,8 +90,8 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await expect(page.getByRole("button", { name: "Ota saippuaa" })).toBeDisabled();
   await moveWash("Avaa hana", [[24, 0]]);
   const valve = page.locator(".wash-tap");
-  await expect(valve.locator(".wash-base")).toHaveCSS("rotate", "none");
-  await expect(valve.locator(".wash-head")).toHaveCSS("rotate", "17deg");
+  await expect(page.locator(".wash-fixed-valve")).toHaveCSS("transform", "none");
+  await expect(valve.locator(".wash-head")).toHaveCSS("transform", /^matrix3d/);
   await expect(page.locator(".wash-stream")).toHaveCSS("animation-name", "bakery-water-flow");
   await moveWash("Ota saippuaa", [[0, 20]]);
   await moveWash("Pese kädet", [[30, 0], [-30, 0], [30, 0]]);
@@ -123,12 +123,27 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await swipe(page, [...circle].reverse());
   const roller = page.getByRole("button", { name: "Kauli taikina" });
   await roller.scrollIntoViewIfNeeded();
-  await swipe(page, [
-    await center(roller),
-    await center(page.locator(".bakery-work-target")),
-  ]);
-  for (let index = 0; index < 6; index++)
-    await page.getByRole("button", { name: "Paina kissamuottia" }).press("Enter");
+  const rollingBoard = await page.locator(".cookie-board.rolling").boundingBox();
+  const rollerStart = await center(roller);
+  const low = { x: rollerStart.x, y: rollingBoard.y + rollingBoard.height * .76 };
+  const high = { x: rollerStart.x, y: rollingBoard.y + rollingBoard.height * .24 };
+  await swipe(page, [rollerStart, low, high]);
+  await expect(page.locator(".cookie-roll-count")).toHaveText("2 / 6");
+  await swipe(page, [await center(roller), low, high, low, high]);
+  const cutter = page.getByRole("button", { name: "Paina kissamuottia" });
+  await cutter.scrollIntoViewIfNeeded();
+  const cutBoard = await page.locator(".cookie-cut-board").boundingBox();
+  const cut = { x: cutBoard.x + cutBoard.width * 78 / 360, y: cutBoard.y + cutBoard.height * 78 / 265 };
+  await swipe(page, [await center(cutter), cut]);
+  await expect(cutter).toHaveClass(/holding-dough/);
+  await expect(page.locator("#cookie-holes path")).toHaveCount(1);
+  await swipe(page, [await center(cutter), await center(page.locator(".cookie-plate"))]);
+  await expect(page.locator(".cookie-plate > .bakery-texture")).toHaveCount(1);
+  await swipe(page, [await center(cutter), cut]);
+  await expect(page.locator("#cookie-holes path")).toHaveCount(1);
+  await expect(cutter).not.toHaveClass(/holding-dough/);
+  for (let index = 0; index < 10; index++)
+    await cutter.press("Enter");
   const paper = page.getByRole("button", {
     name: "Aseta leivinpaperi pellille",
   });
@@ -143,6 +158,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
     await center(paper),
     await center(page.locator(".bakery-tray")),
   ]);
+  await expect(page.locator(".bakery-tray")).toHaveClass(/lined/);
   await expect(page.locator(".bakery-slot")).toHaveCount(6);
   for (const portion of await page.locator(".bakery-dough > div").all())
     await portion.press("Enter");
@@ -150,9 +166,17 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await door.scrollIntoViewIfNeeded();
   const handle = await center(door);
   await swipe(page, [handle, { x: handle.x, y: handle.y + 55 }]);
-  await expect(
-    page.getByRole("button", { name: "Siirrä pelti uuniin" }),
-  ).toBeVisible();
+  const bakingTray = page.getByRole("button", { name: "Siirrä pelti uuniin" });
+  await expect(bakingTray).toBeVisible();
+  await bakingTray.press("Enter");
+  await page.getByRole("button", { name: "Sulje uunin luukku" }).press("Enter");
+  for (let i = 0; i < 7; i++) await page.getByRole("slider", { name: "Uunin lämpötila" }).press("ArrowUp");
+  const star = page.getByRole("button", { name: "Tähti", exact: true });
+  await star.scrollIntoViewIfNeeded();
+  const cookie = page.locator(".cookie-decor-piece").first();
+  await swipe(page, [await center(star), await center(cookie)]);
+  await expect(cookie.locator(".cookie-placed-topping")).toHaveClass(/cookie-star-topping/);
+  await expect(page.locator(".bakery-decoration-status")).toHaveText("1 / 6");
 });
 
 

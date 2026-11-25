@@ -43356,7 +43356,7 @@ function Q(e, t) {
 				this.load.atlas("baking", t.texture, t.data);
 			},
 			create() {
-				o && this.textures.get("baking").has("whisk") && (n = this, i = this.add.graphics(), r = this.add.image(150, 150, "baking", "whisk").setOrigin(.5, .25), r.setScale(108 / r.height), e.classList.add("phaser-mixing-ready"), s(a.x, a.y, a.progress));
+				o && this.textures.get("baking").has("spoon-overhead") && (n = this, i = this.add.graphics(), r = this.add.image(150, 150, "baking", "spoon-overhead").setOrigin(.5, .74), r.setScale(108 / r.height), e.classList.add("phaser-mixing-ready"), s(a.x, a.y, a.progress));
 			}
 		}
 	});
@@ -43368,31 +43368,19 @@ function Q(e, t) {
 	};
 }
 function $(e, t, n) {
-	let r, i, a = !0, o = !1, s = /* @__PURE__ */ new Set(), c = /* @__PURE__ */ new Set(), l = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	function u() {
-		if (o = !0, r && i && (i.setVisible(!0), !l)) {
-			let e = i.scaleX, t = i.scaleY;
-			i.setScale(e * .92, t * .92), r.tweens.add({
-				targets: i,
-				scaleX: e,
-				scaleY: t,
-				duration: 250,
-				ease: "Sine.easeOut"
-			});
-		}
-	}
-	function d(e) {
-		if (s.add(e), !r || c.has(e)) return;
-		c.add(e);
-		let t = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, a = r.add.image(t, i, "baking", n), o = Math.min(43 / a.width, 39 / a.height);
-		a.setScale(o), l || (a.setScale(o * .5), r.tweens.add({
-			targets: a,
-			scale: o,
+	let r, i = !0, a = /* @__PURE__ */ new Set(), o = /* @__PURE__ */ new Set(), s = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	function c(e) {
+		if (a.add(e), !r || o.has(e)) return;
+		o.add(e);
+		let t = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, c = r.add.image(t, i, "baking", n), l = Math.min(43 / c.width, 39 / c.height);
+		c.setScale(l), s || (c.setScale(l * .5), r.tweens.add({
+			targets: c,
+			scale: l,
 			duration: 300,
 			ease: "Back.easeOut"
 		}));
 	}
-	let f = new X.Game({
+	let l = new X.Game({
 		type: X.CANVAS,
 		parent: e,
 		transparent: !0,
@@ -43407,15 +43395,14 @@ function $(e, t, n) {
 				this.load.atlas("baking", t.texture, t.data);
 			},
 			create() {
-				a && this.textures.get("baking").has("paper") && this.textures.get("baking").has(n) && (r = this, i = this.add.image(150, 54, "baking", "paper").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), o && u(), s.forEach(d));
+				i && this.textures.get("baking").has(n) && (r = this, e.classList.add("phaser-tray-ready"), a.forEach(c));
 			}
 		}
 	});
 	return {
-		line: u,
-		place: d,
+		place: c,
 		destroy() {
-			a = !1, e.classList.remove("phaser-tray-ready"), f.destroy(!0);
+			i = !1, e.classList.remove("phaser-tray-ready"), l.destroy(!0);
 		}
 	};
 }

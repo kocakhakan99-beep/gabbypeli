@@ -1,3 +1,4 @@
+import { cookieWorkbench } from "./baking-cookie.js";
 import { bakeryFrames } from "./baking-atlas-frames.js";
 import { campaignLevel } from "../campaign.js";
 import { ding, say, unlock } from "../audio.js";
@@ -66,6 +67,7 @@ export function startBaking(): void {
   let stage = 0;
   let total = 1;
   const toppings: string[] = [];
+  const cookieToppings: Array<{ index: number; x: number; y: number; kind: string }> = [];
   const mixingGoal = adventure === undefined ? 4 : [2, 2, 3, 3, 3, 4, 4, 4, 5, 5][adventure - 1];
   heading(
     "cakey",
@@ -106,6 +108,7 @@ export function startBaking(): void {
     item: HTMLElement,
     destination: HTMLElement,
     accept: (point?: Point) => void,
+    visual: HTMLElement = item,
   ): void {
     let start: Point;
     let misses = 0;
@@ -119,11 +122,11 @@ export function startBaking(): void {
         dragged = false;
       },
       move(_from, point) {
-        item.style.translate =
+        visual.style.translate =
           point.x - start.x + "px " + (point.y - start.y) + "px";
       },
       end(point) {
-        item.style.removeProperty("translate");
+        visual.style.removeProperty("translate");
         if (!point || Math.hypot(point.x - start.x, point.y - start.y) < 8)
           return;
         dragged = true;
@@ -161,7 +164,7 @@ export function startBaking(): void {
   };
   const stretchedArt = new Set([
     "wash-tiles", "wash-counter", "wash-basin", "wash-stream",
-    "wash-base", "wash-head", "oven-body-art", "oven-rack-art", "bakery-tray-art",
+    "wash-base", "wash-head", "bakery-parchment-art", "oven-body-art", "oven-rack-art", "bakery-tray-art",
   ]);
   const image = (asset: string, set: ArtSet = selectedRecipe, className = "") => {
     const { width, height, frames } = bakeryFrames[set];
@@ -188,6 +191,10 @@ export function startBaking(): void {
   const usesParchment = () => selectedRecipe === "cookie" || selectedRecipe === "bun";
 
   function prepare(recipe: Recipe): void {
+    if (selectedRecipe === "cookie") {
+      cookieWorkbench({ scene, count: portionCount, show, image, gesture, sound, done: () => tray(recipe) });
+      return;
+    }
     runSteps(recipe.prepare, () => {
       if (usesParchment()) tray(recipe);
       else oven(recipe);
@@ -327,15 +334,17 @@ export function startBaking(): void {
       <div class="baking-wash">
         ${image("wash-tiles", "wash", "wash-tiles")}
         ${image("wash-counter", "wash", "wash-counter")}
-        ${image("wash-spout", "wash", "wash-spout")}
+        <div class="wash-fixture">
+          ${image("wash-spout", "wash", "wash-spout")}
+          ${image("wash-lever-base", "wash", "wash-fixed-valve")}
+          <button type="button" class="wash-tap wash-object" aria-label="Avaa hana">
+            ${image("wash-lever-head", "wash", "wash-head")}
+          </button>
+        </div>
         ${image("wash-water", "wash", "wash-stream")}
         <button type="button" class="wash-soap wash-object" aria-label="Ota saippuaa" disabled>
           ${image("wash-pump-head", "wash", "wash-head")}
           ${image("wash-pump-base", "wash", "wash-base")}
-        </button>
-        <button type="button" class="wash-tap wash-object" aria-label="Avaa hana">
-          ${image("wash-lever-base", "wash", "wash-base")}
-          ${image("wash-lever-head", "wash", "wash-head")}
         </button>
         <div class="wash-hands">${image("sink", "wash", "wash-basin")}
           <button type="button" class="wash-scrub" aria-label="Pese kädet" disabled>
@@ -490,16 +499,16 @@ export function startBaking(): void {
     show(
       "Vedä jauhot, muna ja maito kulhoon.",
       `
-      <div class="bakery-ingredients">
-        <div class="bakery-flour" role="button" tabindex="0" aria-label="Lisää jauhot">${image("flour")}Jauhot</div>
-        <div class="bakery-egg" role="button" tabindex="0" aria-label="Lisää muna">${image("egg")}Muna</div>
-        <div class="bakery-milk" role="button" tabindex="0" aria-label="Lisää maito">${image("milk")}Maito</div>
-      </div>
-      <div class="bakery-bowl" aria-label="Sekoituskulho">${image("bowl", selectedRecipe, "bakery-bowl-art")}</div>`,
+      <div class="bakery-ingredients bakery-worktop">
+        <div class="bakery-flour" role="button" tabindex="0" aria-label="Lisää jauhot">${image("flour")}</div>
+        <div class="bakery-egg" role="button" tabindex="0" aria-label="Lisää muna">${image("egg")}</div>
+        <div class="bakery-milk" role="button" tabindex="0" aria-label="Lisää maito">${image("milk")}</div>
+        <div class="bakery-bowl" aria-label="Sekoituskulho">${image("bowl", selectedRecipe, "bakery-bowl-art")}<span class="bakery-ingredient-contents" aria-hidden="true"></span></div>
+      </div>`,
     );
     const bowl = scene.querySelector<HTMLElement>(".bakery-bowl")!;
     const items = [
-      ...scene.querySelectorAll<HTMLElement>(".bakery-ingredients > div"),
+      ...scene.querySelectorAll<HTMLElement>(".bakery-ingredients > [role=button]"),
     ];
     let added = 0;
     for (const item of items)
@@ -507,14 +516,14 @@ export function startBaking(): void {
         if (item.hidden) return;
         item.hidden = true;
         bowl.dataset.added = String(++added);
-        const ingredient = item.querySelector("svg");
-        if (ingredient) {
-          const marker = ingredient.cloneNode(true) as SVGSVGElement;
-          marker.setAttribute("class", "bakery-texture bakery-ingredient-added bakery-new-result");
-          bowl.append(marker);
-        }
+        const ingredient = document.createElement("span");
+        ingredient.className = `bakery-pour ${item.className}`;
+        bowl.querySelector(".bakery-ingredient-contents")?.append(ingredient);
         sound();
-        if (added === items.length) mix(recipe);
+        if (added === items.length) {
+          bowl.closest(".bakery-worktop")?.classList.add("camera-lift");
+          timer = setTimeout(() => mix(recipe), matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 320);
+        }
       });
   }
 
@@ -522,11 +531,13 @@ export function startBaking(): void {
     show(
       "Sekoita taikina pyörittämällä sormea kulhossa.",
       `
-      <div class="bakery-bowl mixing" role="button" tabindex="0" aria-label="Sekoita taikina">${image("bowl", selectedRecipe, "bakery-bowl-art")}${image("whisk", selectedRecipe, "bakery-spoon")}</div>
-      <progress class="bakery-progress" value="0" max="100" aria-label="Taikina sekoitettu"></progress>`,
+      <div class="bakery-worktop bakery-overhead">
+        <div class="bakery-bowl mixing" role="button" tabindex="0" aria-label="Sekoita taikina">${image("bowl-overhead", selectedRecipe, "bakery-bowl-art")}<span class="bakery-batter" aria-hidden="true"></span>${image("spoon-overhead", selectedRecipe, "bakery-spoon")}</div>
+        <progress class="bakery-progress" value="0" max="100" aria-label="Taikina sekoitettu"></progress>
+      </div>`,
     );
     const bowl = scene.querySelector<HTMLElement>(".bakery-bowl")!;
-    const spoon = scene.querySelector<HTMLElement>(".bakery-spoon")!;
+    const spoon = scene.querySelector<SVGSVGElement>(".bakery-spoon")!;
     const meter = scene.querySelector<HTMLProgressElement>("progress")!;
     let mixedAngle = 0;
     let spoonPosition = { x: 0.5, y: 0.5 };
@@ -542,6 +553,7 @@ export function startBaking(): void {
       mixedAngle += Math.abs(amount);
       meter.value = Math.min(100, (mixedAngle / (Math.PI * mixingGoal) + 1e-12) * 100);
       mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
+      bowl.style.setProperty("--mixed", String(meter.value / 100));
       if (meter.value === 100) prepare(recipe);
     }
     gesture(bowl, {
@@ -589,9 +601,11 @@ export function startBaking(): void {
     show(
       "Vedä leivinpaperi pellille.",
       `
-      <div class="bakery-tray" aria-label="Uunipelti">${image("tray", selectedRecipe, "bakery-tray-art")}<div class="bakery-slots"></div></div>
-      <div class="bakery-paper" tabindex="0" role="button" aria-label="Aseta leivinpaperi pellille">${image("paper")}</div>
-      <div class="bakery-dough" hidden></div>`,
+      <div class="bakery-worktop bakery-tray-stage">
+        <div class="bakery-tray" aria-label="Uunipelti">${image("tray", selectedRecipe, "bakery-tray-art")}<div class="bakery-paper-lining" aria-hidden="true">${image("paper", selectedRecipe, "bakery-parchment-art")}</div><div class="bakery-slots"></div></div>
+        <div class="bakery-paper" tabindex="0" role="button" aria-label="Aseta leivinpaperi pellille"><span class="bakery-paper-roll" aria-hidden="true"></span></div>
+        <div class="bakery-dough cookie-plate"></div>
+      </div>`,
     );
     const pan = scene.querySelector<HTMLElement>(".bakery-tray")!;
     const paper = scene.querySelector<HTMLElement>(".bakery-paper")!;
@@ -601,35 +615,22 @@ export function startBaking(): void {
     void import("../phaser-room.js").then(({ createBakingTrayView }) => {
       if (generation !== mixingGeneration || !pan.isConnected) return;
       trayView = createBakingTrayView(pan, phaserAtlas(), recipe.raw);
-      if (pan.classList.contains("lined")) trayView.line();
       [...slots.children].forEach((slot, index) => {
         if (slot.hasChildNodes()) trayView?.place(index);
       });
     }).catch(() => {
       // The existing tray remains available if the graphics cannot load.
     });
+    for (let i = 0; i < portionCount; i++) {
+      slots.insertAdjacentHTML("beforeend", '<span class="bakery-slot"></span>');
+      dough.insertAdjacentHTML("beforeend", `<div role="button" tabindex="0" aria-label="Siirrä ${recipe.piece} pellille" aria-disabled="true">${piece(recipe)}</div>`);
+    }
     transfer(paper, pan, () => {
       if (paper.hidden) return;
       paper.hidden = true;
       pan.classList.add("lined");
-      trayView?.line();
-      el("instruction").textContent =
-        "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
-      dough.hidden = false;
-      for (let i = 0; i < portionCount; i++) {
-        slots.insertAdjacentHTML(
-          "beforeend",
-          '<span class="bakery-slot"></span>',
-        );
-        dough.insertAdjacentHTML(
-          "beforeend",
-          '<div role="button" tabindex="0" aria-label="Siirrä ' +
-            recipe.piece +
-            ' pellille">' +
-            piece(recipe) +
-            "</div>",
-        );
-      }
+      el("instruction").textContent = "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
+      for (const item of dough.children) item.removeAttribute("aria-disabled");
       const places = [...slots.children] as HTMLElement[];
       let filled = 0;
       for (const item of [...dough.children] as HTMLElement[])
@@ -678,9 +679,9 @@ export function startBaking(): void {
         : last?.image ?? recipe.ready;
     const text = toppings.length ? `Valitsit: ${toppings.join(", ").toLowerCase()}. Hile kiittää avusta.` : "Hile kiittää avusta.";
     finish("Pelti on valmis!", text, "cakey", {
-      src: recipeAsset(result),
+      src: recipeAsset(selectedRecipe === "cookie" ? recipe.ready : result),
       alt: recipe.name,
-      details: toppings.flatMap((name) => {
+      details: selectedRecipe === "cookie" ? [] : toppings.flatMap((name) => {
         const choice = recipe.decorations.find((decoration) => decoration.name === name);
         return choice ? [{
           src: recipeAsset(selectedRecipe === "tart" && "tool" in choice && typeof choice.tool === "string" ? choice.tool : choice.image),
@@ -688,6 +689,61 @@ export function startBaking(): void {
         }] : [];
       }),
     });
+    if (selectedRecipe === "cookie" && cookieToppings.length) {
+      const details = document.querySelector<HTMLElement>("#gf-result-details")!;
+      details.hidden = false;
+      for (let i = 0; i < portionCount; i++) {
+        const topping = cookieToppings.find((entry) => entry.index === i);
+        details.insertAdjacentHTML("beforeend", `<span class="cookie-decor-piece">${image(recipe.ready)}
+          ${topping ? `<span class="cookie-placed-topping ${topping.kind}" style="left:${topping.x * 100}%;top:${topping.y * 100}%"></span>` : ""}</span>`);
+      }
+    }
+  }
+
+  function cookieDecoration(recipe: Recipe): void {
+    show("Vie strösseli tai tähti piparin päälle.", `
+      <div class="bakery-worktop cookie-decor-stage">
+        <div class="bakery-decorations">
+          <button class="cookie-topping-bowl" aria-label="Strösseli"><span class="cookie-sprinkles"></span></button>
+          <button class="cookie-topping-bowl" aria-label="Tähti"><span class="cookie-star-topping"></span></button>
+        </div>
+        <div class="cookie-plate cookie-decor-plate" aria-label="Piparilautanen">${Array.from({ length: portionCount }, () =>
+          `<div class="cookie-decor-piece">${image(recipe.ready)}</div>`).join("")}</div>
+        <output class="bakery-decoration-status" aria-live="polite">0 / ${portionCount}</output>
+      </div>`);
+    const plate = scene.querySelector<HTMLElement>(".cookie-decor-plate")!;
+    const cookies = [...plate.querySelectorAll<HTMLElement>(".cookie-decor-piece")];
+    const status = scene.querySelector<HTMLOutputElement>("output")!;
+    const options = [...scene.querySelectorAll<HTMLButtonElement>(".cookie-topping-bowl")];
+    const occupied = new Set<HTMLElement>();
+    for (const button of options) transfer(button, plate, (point) => {
+      if (button.disabled) return;
+      let x = .5;
+      let y = .52;
+      const cookie = point ? cookies.find((item) => {
+        const bounds = item.getBoundingClientRect();
+        x = (point.x - bounds.left) / bounds.width;
+        y = (point.y - bounds.top) / bounds.height;
+        return ((x - .5) / .43) ** 2 + ((y - .53) / .39) ** 2 <= 1;
+      }) : cookies.find((item) => !occupied.has(item));
+      if (!cookie || occupied.has(cookie)) {
+        feedback("Vie koriste vielä koristelemattoman piparin päälle.");
+        return;
+      }
+      const name = button.getAttribute("aria-label")!;
+      const kind = name === "Tähti" ? "cookie-star-topping" : "cookie-sprinkles";
+      cookie.insertAdjacentHTML("beforeend", `<span class="cookie-placed-topping ${kind}" style="left:${x * 100}%;top:${y * 100}%"></span>`);
+      cookieToppings.push({ index: cookies.indexOf(cookie), x, y, kind });
+      toppings.push(name);
+      occupied.add(cookie);
+      status.value = `${occupied.size} / ${portionCount}`;
+      feedback("");
+      sound();
+      if (occupied.size === portionCount) {
+        options.forEach((option) => { option.disabled = true; });
+        timer = setTimeout(() => complete(recipe), 650);
+      }
+    }, button.querySelector("span")!);
   }
 
   function finishRecipe(recipe: Recipe): void {
@@ -696,6 +752,7 @@ export function startBaking(): void {
         complete(recipe);
         return;
       }
+      if (selectedRecipe === "cookie") { cookieDecoration(recipe); return; }
       const count = order?.toppings ?? (selectedRecipe === "tart" ? 1 : portionCount);
       show("Vedä koriste leivonnaisen päälle.", `
         <div class="bakery-work-target" aria-label="Leivonnainen">${image(recipe.ready)}</div>
@@ -739,9 +796,11 @@ export function startBaking(): void {
   }
 
   function oven(recipe: Recipe): void {
+    const portions = `<span class="oven-portion ${selectedRecipe === "cookie" ? "oven-cookie" : ""}"></span>`.repeat(portionCount);
     show(
       "Vedä uunin luukkua alaspäin.",
       `
+      <div class="bakery-oven-stage">
       <div class="bakery-oven">
         ${image("oven_body", "oven", "oven-body-art")}
         <div class="bakery-knob" role="slider" tabindex="0" aria-label="Uunin lämpötila" aria-valuemin="0" aria-valuemax="225" aria-valuenow="0" aria-disabled="true">${image("temperature_knob", "oven")}</div>
@@ -753,7 +812,7 @@ export function startBaking(): void {
           </div>
         </div>
       </div>
-      <div class="oven-tray oven-transfer" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${"<span></span>".repeat(portionCount)}</div>`,
+      <div class="oven-tray oven-transfer" tabindex="0" role="button" aria-label="Siirrä pelti uuniin" hidden>${portions}</div></div>`,
     );
     const cavity = scene.querySelector<HTMLElement>(".bakery-cavity")!;
     const door = scene.querySelector<HTMLElement>(".bakery-door")!;
@@ -816,7 +875,7 @@ export function startBaking(): void {
       loaded.className = "bakery-loaded";
       loaded.setAttribute("aria-hidden", "true");
       loaded.classList.add("oven-transfer");
-      loaded.innerHTML = "<span></span>".repeat(portionCount);
+      loaded.innerHTML = portions;
       cavity.prepend(loaded);
       door.setAttribute("aria-label", "Sulje uunin luukku");
       el("instruction").textContent = "Vedä luukku ylös kiinni.";

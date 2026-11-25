@@ -138,10 +138,10 @@ export function createMixingView(parent: HTMLElement, atlas: BakingAtlas): Mixin
     scene: {
       preload() { this.load.atlas("baking", atlas.texture, atlas.data); },
       create() {
-        if (!alive || !this.textures.get("baking").has("whisk")) return;
+        if (!alive || !this.textures.get("baking").has("spoon-overhead")) return;
         scene = this;
         trails = this.add.graphics();
-        spoon = this.add.image(150, 150, "baking", "whisk").setOrigin(0.5, 0.25);
+        spoon = this.add.image(150, 150, "baking", "spoon-overhead").setOrigin(0.5, 0.74);
         spoon.setScale(108 / spoon.height);
         parent.classList.add("phaser-mixing-ready");
         move(position.x, position.y, position.progress);
@@ -159,32 +159,17 @@ export function createMixingView(parent: HTMLElement, atlas: BakingAtlas): Mixin
 }
 
 export interface BakingTrayView {
-  line(): void;
   place(index: number): void;
   destroy(): void;
 }
 
-/** Draws the parchment and individual portions on the baking tray. */
+/** Draws individual portions on the baking tray. */
 export function createBakingTrayView(parent: HTMLElement, atlas: BakingAtlas, portionFrame: string): BakingTrayView {
   let scene: Phaser.Scene | undefined;
-  let paper: Phaser.GameObjects.Image | undefined;
   let alive = true;
-  let lined = false;
   const placed = new Set<number>();
   const drawn = new Set<number>();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function line(): void {
-    lined = true;
-    if (!scene || !paper) return;
-    paper.setVisible(true);
-    if (!reducedMotion) {
-      const x = paper.scaleX;
-      const y = paper.scaleY;
-      paper.setScale(x * 0.92, y * 0.92);
-      scene.tweens.add({ targets: paper, scaleX: x, scaleY: y, duration: 250, ease: "Sine.easeOut" });
-    }
-  }
 
   function place(index: number): void {
     placed.add(index);
@@ -213,17 +198,14 @@ export function createBakingTrayView(parent: HTMLElement, atlas: BakingAtlas, po
         this.load.atlas("baking", atlas.texture, atlas.data);
       },
       create() {
-        if (!alive || !this.textures.get("baking").has("paper") || !this.textures.get("baking").has(portionFrame)) return;
+        if (!alive || !this.textures.get("baking").has(portionFrame)) return;
         scene = this;
-        paper = this.add.image(150, 54, "baking", "paper").setDisplaySize(290, 102).setVisible(false);
         parent.classList.add("phaser-tray-ready");
-        if (lined) line();
         placed.forEach(place);
       },
     },
   });
   return {
-    line,
     place,
     destroy() {
       alive = false;

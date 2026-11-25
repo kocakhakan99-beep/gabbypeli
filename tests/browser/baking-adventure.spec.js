@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const recipes = [
-  ["Piparit", [["Kauli taikina", 1], ["Paina kissamuottia", 2]], ["Strösseli", "Tähti"], 175],
+  ["Piparit", [["Kauli taikina", 6], ["Paina kissamuottia", 2]], ["Strösseli", "Tähti"], 175],
   ["Kuppikakut", [["Aseta vuoka", 2], ["Täytä vuoka", 2]], ["Mustikka", "Mansikka"], 200],
   ["Korvapuustit", [["Kauli levy", 1], ["Levitä täyte", 1], ["Rullaa levy", 1], ["Leikkaa viipale", 2]], ["Kuorrute"], 200],
   ["Marjatortut", [["Painele taikina", 1]], ["Mansikka", "Mustikka"], 175],
@@ -50,7 +50,7 @@ test("ten bakery orders progress in Adventure and use the same wash visit", asyn
       for (let index = 0; index < presses; index++) await bowl.press("Enter");
     }
     for (const [step, minimum] of steps)
-      await action(page, step, minimum === 2 || step === "Leikkaa viipale" ? count : minimum);
+      await action(page, step, step === "Paina kissamuottia" ? count * 2 : minimum === 2 || step === "Leikkaa viipale" ? count : minimum);
     if (recipeId === 0 || recipeId === 2) {
       await action(page, "Aseta leivinpaperi pellille");
       for (const portion of await page.locator(".bakery-dough > div").all()) await portion.press("Enter");
