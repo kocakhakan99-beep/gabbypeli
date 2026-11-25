@@ -16,7 +16,6 @@ const W = 360;
 const H = 265;
 const cutterWidth = 82;
 const cutterHeight = 74;
-const doughPath = "M20 32Q28 17 57 17L302 20Q342 21 342 58L342 214Q344 245 304 249L57 247Q19 247 18 215Z";
 const catPath = "M4 48Q3 33 12 25L11 8Q12 0 20 4L32 15Q41 13 50 15L62 4Q70 0 71 8L70 25Q79 33 78 48Q76 70 41 71Q6 70 4 48Z";
 const GRID = 4;
 const template = Array.from({ length: 6 }, (_, i) => ({ x: 80 + i % 3 * 100, y: 80 + Math.floor(i / 3) * 108 }));
@@ -31,6 +30,7 @@ export function cookieWorkbench({ scene, count, show, image, gesture, sound, don
     </div>`);
   const board = scene.querySelector<HTMLElement>(".cookie-board")!;
   const roller = scene.querySelector<HTMLButtonElement>(".cookie-roller")!;
+  const dough = scene.querySelector<HTMLElement>(".rolling-dough")!;
   const counter = scene.querySelector<HTMLOutputElement>("output")!;
   let strokes = 0;
   let edge = 0;
@@ -42,7 +42,10 @@ export function cookieWorkbench({ scene, count, show, image, gesture, sound, don
     strokes++;
     counter.value = `${strokes} / 6`;
     board.dataset.rolled = String(Math.floor(strokes / 2));
-    if (strokes % 2 === 0) sound();
+    if (strokes % 2 === 0) {
+      dough.innerHTML = image(`dough-sheet-${strokes / 2}`);
+      sound();
+    }
     if (strokes === 6) cutting();
   }
 
@@ -87,14 +90,11 @@ export function cookieWorkbench({ scene, count, show, image, gesture, sound, don
         <div class="cookie-board cookie-cut-board">
           <svg class="cookie-dough-sheet" viewBox="0 0 ${W} ${H}" aria-hidden="true">
             <defs>
-              <linearGradient id="cookie-dough-tone" x2=".35" y2="1">
-                <stop stop-color="#ffe1a2"/><stop offset="1" stop-color="#e8ae61"/>
-              </linearGradient>
               <mask id="cookie-holes" maskUnits="userSpaceOnUse">
                 <rect width="${W}" height="${H}" fill="white"/>
               </mask>
             </defs>
-            <path d="${doughPath}" fill="url(#cookie-dough-tone)" mask="url(#cookie-holes)"/>
+            <g mask="url(#cookie-holes)">${image("dough-sheet-3").replace("<svg ", `<svg width="${W}" height="${H}" `)}</g>
             <path class="cookie-cutter-preview" d="${catPath}" visibility="hidden"/>
           </svg>
         </div>

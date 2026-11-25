@@ -14,7 +14,7 @@ async function action(page, name, count = 1) {
 
 async function wash(page) {
   for (const name of ["Avaa hana", "Ota saippuaa", "Pese kädet", "Huuhtele kädet", "Kuivaa kädet"])
-    await action(page, name);
+    await action(page, name, ["Pese kädet", "Kuivaa kädet"].includes(name) ? 4 : 1);
 }
 
 test("ten bakery orders progress in Adventure and use the same wash visit", async ({ page }) => {
@@ -46,13 +46,14 @@ test("ten bakery orders progress in Adventure and use the same wash visit", asyn
     if ([2, 4, 6, 8, 9, 10].includes(level)) {
       for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"]) await action(page, name);
       const bowl = page.locator(".bakery-bowl.mixing");
-      const presses = [2, 2, 3, 3, 3, 4, 4, 4, 5, 5][level - 1];
+      const presses = [3, 3, 4, 4, 4, 5, 5, 5, 6, 6][level - 1];
       for (let index = 0; index < presses; index++) await bowl.press("Enter");
     }
     for (const [step, minimum] of steps)
       await action(page, step, step === "Paina kissamuottia" ? count * 2 : minimum === 2 || step === "Leikkaa viipale" ? count : minimum);
     if (recipeId === 0 || recipeId === 2) {
       await action(page, "Aseta leivinpaperi pellille");
+      await expect(page.locator(".bakery-dough > div").first()).toBeEnabled();
       for (const portion of await page.locator(".bakery-dough > div").all()) await portion.press("Enter");
     }
     await action(page, "Avaa uunin luukku");

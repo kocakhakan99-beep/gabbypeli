@@ -26,9 +26,9 @@ for (const width of [320, 390, 768, 1100]) {
       .click();
     await page.getByRole("button", { name: "Avaa hana" }).press("Enter");
     await page.getByRole("button", { name: "Ota saippuaa" }).press("Enter");
-    await page.getByRole("button", { name: "Pese kädet" }).press("Enter");
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Pese kädet" }).press("Enter");
     await page.getByRole("button", { name: "Huuhtele kädet" }).press("Enter");
-    await page.getByRole("button", { name: "Kuivaa kädet" }).press("Enter");
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Kuivaa kädet" }).press("Enter");
     const ingredients = [
       ["Lisää jauhot", "flour"],
       ["Lisää muna", "egg"],
@@ -45,12 +45,13 @@ for (const width of [320, 390, 768, 1100]) {
     await page.locator(".bakery-ingredients").screenshot({
       path: testInfo.outputPath("bakery-ingredients.png"),
     });
-    for (const [name] of ingredients) {
+    for (const [index, [name]] of ingredients.entries()) {
       const ingredient = page.getByRole("button", { name });
       await ingredient.press("Enter");
       await expect(ingredient).toBeHidden();
+      if (index < 2) await expect(page.locator(".bakery-bowl-art")).toHaveAttribute("data-frame", `bowl-contents-${(1 << (index + 1)) - 1}`);
     }
-    for (let i = 0; i < 4; i++)
+    for (let i = 0; i < 6; i++)
       await page.locator(".bakery-bowl.mixing").press("Enter");
     for (const [step, count] of piparit
       ? [["Kauli taikina", 6], ["Paina kissamuottia", servings * 2]]
@@ -60,6 +61,7 @@ for (const width of [320, 390, 768, 1100]) {
     }
     if (piparit) {
       await page.getByRole("button", { name: "Aseta leivinpaperi pellille" }).press("Enter");
+      await expect(page.locator(".bakery-dough > div").first()).toBeEnabled();
       for (const portion of await page.locator(".bakery-dough > div").all())
         await portion.press("Enter");
     }

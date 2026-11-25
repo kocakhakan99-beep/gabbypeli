@@ -90,20 +90,25 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await expect(page.getByRole("button", { name: "Ota saippuaa" })).toBeDisabled();
   await moveWash("Avaa hana", [[24, 0]]);
   const valve = page.locator(".wash-tap");
-  await expect(page.locator(".wash-fixed-valve")).toHaveCSS("transform", "none");
-  await expect(valve.locator(".wash-head")).toHaveCSS("transform", /^matrix3d/);
+  await expect(page.locator("[data-frame=faucet-housing]")).toBeVisible();
+  await expect(valve.locator("svg.bakery-texture")).toHaveAttribute("data-frame", "faucet-handle-4");
   await expect(page.locator(".wash-stream")).toHaveCSS("animation-name", "bakery-water-flow");
   await moveWash("Ota saippuaa", [[0, 20]]);
-  await moveWash("Pese kädet", [[30, 0], [-30, 0], [30, 0]]);
+  await moveWash("Pese kädet", [[30, 0]]);
+  await expect(page.getByRole("button", { name: "Pese kädet" })).toBeEnabled();
+  await moveWash("Pese kädet", [[30, 0], [-30, 0], [30, 0], [-30, 0], [30, 0], [-30, 0]]);
   await moveWash("Huuhtele kädet", [[24, 0]]);
   await expect(page.locator(".wash-state")).toHaveAttribute("data-frame", "hands-rinse");
   const towel = page.getByRole("button", { name: "Kuivaa kädet" });
   await towel.scrollIntoViewIfNeeded();
   await page.locator(".baking-wash").screenshot({ path: testInfo.outputPath("wash-station.png") });
-  const basin = page.locator(".wash-hands");
-  const handPoint = await center(basin);
+  const handPoint = await center(page.locator(".wash-state"));
   const startTowel = await center(towel);
-  await swipe(page, [startTowel, handPoint, { x: handPoint.x - 10, y: handPoint.y }, startTowel]);
+  await swipe(page, [startTowel, handPoint]);
+  await expect(page.locator(".wash-progress")).toHaveAttribute("value", "0");
+  const left = { x: handPoint.x - 18, y: handPoint.y };
+  const right = { x: handPoint.x + 18, y: handPoint.y };
+  await swipe(page, [startTowel, handPoint, left, right, left, right, left, right]);
   await expect(page.locator(".wash-dry .bakery-texture")).toHaveAttribute("data-frame", "wash-towel-wet");
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
     await page.getByRole("button", { name }).press("Enter");
@@ -120,8 +125,11 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   expect(
     Number(await page.locator(".bakery-progress").getAttribute("value")),
   ).toBeGreaterThan(0);
-  await swipe(page, [...circle].reverse());
   const roller = page.getByRole("button", { name: "Kauli taikina" });
+  for (let pass = 0; pass < 3; pass++) {
+    if (await page.evaluate(() => (document.querySelector("progress.bakery-progress")?.value ?? 100) >= 100)) break;
+    await swipe(page, pass % 2 ? circle : [...circle].reverse());
+  }
   await roller.scrollIntoViewIfNeeded();
   const rollingBoard = await page.locator(".cookie-board.rolling").boundingBox();
   const rollerStart = await center(roller);
@@ -160,6 +168,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   ]);
   await expect(page.locator(".bakery-tray")).toHaveClass(/lined/);
   await expect(page.locator(".bakery-slot")).toHaveCount(6);
+  await expect(page.locator(".bakery-dough > div").first()).toBeEnabled();
   for (const portion of await page.locator(".bakery-dough > div").all())
     await portion.press("Enter");
   const door = page.getByRole("button", { name: "Avaa uunin luukku" });

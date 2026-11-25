@@ -22,12 +22,14 @@ def frames_for(name):
     frames = {path.stem: read(path) for path in sorted((BAKERY / "sets" / name).glob("*.webp"))
               if path.stem != "atlas"}
     if name == "wash":
-        # The handle pivots over the collar. The pump head slides behind its base.
-        for part, cut in (("wash-lever", 63), ("wash-pump", 60)):
-            original = frames.pop(part)
-            width, height = original.size
-            frames[f"{part}-base"] = original.crop((0, cut, width, height))
-            frames[f"{part}-head"] = original.crop((0, 0, width, cut))
+        # Keep the delivered faucet in the library. The station uses a registered
+        # housing and handle sequence. The pump head still slides behind its base.
+        frames.pop("wash-spout")
+        frames.pop("wash-lever")
+        pump = frames.pop("wash-pump")
+        width, height = pump.size
+        frames["wash-pump-base"] = pump.crop((0, 60, width, height))
+        frames["wash-pump-head"] = pump.crop((0, 0, width, 60))
     return frames
 
 

@@ -68,7 +68,7 @@ export function startBaking(): void {
   let total = 1;
   const toppings: string[] = [];
   const cookieToppings: Array<{ index: number; x: number; y: number; kind: string }> = [];
-  const mixingGoal = adventure === undefined ? 4 : [2, 2, 3, 3, 3, 4, 4, 4, 5, 5][adventure - 1];
+  const mixingGoal = adventure === undefined ? 6 : [3, 3, 4, 4, 4, 5, 5, 5, 6, 6][adventure - 1];
   heading(
     "cakey",
     "Hileen leipomo",
@@ -164,7 +164,7 @@ export function startBaking(): void {
   };
   const stretchedArt = new Set([
     "wash-tiles", "wash-counter", "wash-basin", "wash-stream",
-    "wash-base", "wash-head", "bakery-parchment-art", "oven-body-art", "oven-rack-art", "bakery-tray-art",
+    "wash-base", "wash-head", "wash-faucet-art", "bakery-parchment-art", "oven-body-art", "oven-rack-art", "bakery-tray-art",
   ]);
   const image = (asset: string, set: ArtSet = selectedRecipe, className = "") => {
     const { width, height, frames } = bakeryFrames[set];
@@ -335,13 +335,12 @@ export function startBaking(): void {
         ${image("wash-tiles", "wash", "wash-tiles")}
         ${image("wash-counter", "wash", "wash-counter")}
         <div class="wash-fixture">
-          ${image("wash-spout", "wash", "wash-spout")}
-          ${image("wash-lever-base", "wash", "wash-fixed-valve")}
+          ${image("faucet-housing", "wash", "wash-faucet-art")}
           <button type="button" class="wash-tap wash-object" aria-label="Avaa hana">
-            ${image("wash-lever-head", "wash", "wash-head")}
+            ${image("faucet-handle-0", "wash", "wash-faucet-art")}
           </button>
+          ${image("wash-water", "wash", "wash-stream")}
         </div>
-        ${image("wash-water", "wash", "wash-stream")}
         <button type="button" class="wash-soap wash-object" aria-label="Ota saippuaa" disabled>
           ${image("wash-pump-head", "wash", "wash-head")}
           ${image("wash-pump-base", "wash", "wash-base")}
@@ -354,7 +353,8 @@ export function startBaking(): void {
           ${image("soap-foam", "wash", "wash-foam")}
         </div>
         <button type="button" class="wash-dry wash-object" aria-label="Kuivaa kädet" hidden>${image("towel", "wash")}</button>
-      </div>`,
+      </div>
+      <div class="wash-progress-row" hidden><progress class="wash-progress" value="0" max="100" aria-label="Käsien hankaus"></progress><span aria-hidden="true">0 %</span></div>`,
     );
     say("Hei pieni ystävä! Leikitään yhdessä.");
     const soap = scene.querySelector<HTMLButtonElement>(".wash-soap")!;
@@ -363,7 +363,23 @@ export function startBaking(): void {
     const hands = scene.querySelector<SVGSVGElement>(".wash-state")!;
     const scrub = scene.querySelector<HTMLButtonElement>(".wash-scrub")!;
     const dry = scene.querySelector<HTMLButtonElement>(".wash-dry")!;
+    const meter = scene.querySelector<HTMLProgressElement>(".wash-progress")!;
+    const meterRow = meter.parentElement!;
+    const meterText = meterRow.querySelector("span")!;
+    const tapArt = tap.querySelector<SVGSVGElement>("svg")!;
     let waterOn = false;
+    let valveFrame = 0;
+    function valve(position: number): void {
+      const next = Math.round(Math.max(0, Math.min(1, position)) * 4);
+      if (valveFrame === next) return;
+      valveFrame = next;
+      showFrame(tapArt, `faucet-handle-${next}`, "wash");
+    }
+    function addProgress(amount: number): boolean {
+      meter.value = Math.min(100, meter.value + amount);
+      meterText.textContent = `${Math.floor(meter.value)} %`;
+      return meter.value === 100;
+    }
     let handPose = "";
     function pose(asset: string): void {
       if (handPose === asset) return;
@@ -373,24 +389,21 @@ export function startBaking(): void {
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     function handle(
       object: HTMLButtonElement,
-      measure: (start: Point, point: Point, distance: number) => number,
+      measure: (start: Point, point: Point) => number,
       act: () => void,
     ): void {
       let origin: Point;
-      let distance = 0;
       gesture(object, {
-        start(point) { origin = point; distance = 0; },
-        move(from, point) {
-          distance += Math.abs(point.x - from.x);
-          const movement = Math.max(0, Math.min(1, measure(origin, point, distance)));
+        start(point) { origin = point; },
+        move(_from, point) {
+          const movement = Math.max(0, Math.min(1, measure(origin, point)));
           object.style.setProperty("--wash-motion", String(movement));
-          if (object === scrub && !reducedMotion)
-            pose(point.x < from.x ? "hands-scrub-left" : "hands-scrub-right");
+          if (object === tap) valve(movement);
         },
         end(point) {
           object.style.removeProperty("--wash-motion");
-          if (point && !object.disabled && measure(origin, point, distance) >= 1) act();
-          else if (object === scrub) pose("hands-soapy");
+          if (point && !object.disabled && measure(origin, point) >= 1) act();
+          else if (object === tap) valve(0);
         },
       });
       object.onclick = (event) => {
@@ -401,6 +414,7 @@ export function startBaking(): void {
     handle(soap, (start, point) => (point.y - start.y) / 14, () => {
       pose("hands-soapy");
       sink.classList.remove("rinsing", "wash-water-on");
+      valve(0);
       sink.classList.add("soap-dispensing");
       if (!reducedMotion) soap.querySelector("svg")!.animate(
         [{ translate: "0 0" }, { translate: "0 17%" }, { translate: "0 0" }],
@@ -410,23 +424,32 @@ export function startBaking(): void {
       sink.classList.add("soapy");
       soap.disabled = true;
       scrub.disabled = false;
+      meterRow.hidden = false;
       scrub.focus({ preventScroll: true });
       el("instruction").textContent = "Hankaa käsiä edestakaisin.";
     });
-    handle(scrub, (start, point, distance) => Math.max(distance, Math.abs(point.x - start.x)) / 24, () => {
+    function finishScrub(): void {
       scrub.disabled = true;
-      if (!reducedMotion) {
-        pose("hands-scrub-left");
-        timer = setTimeout(() => {
-          if (!tap.disabled) pose("hands-scrub-right");
-        }, 125);
-      }
+      pose("hands-soapy");
       tap.setAttribute("aria-label", "Huuhtele kädet");
       tap.disabled = false;
       tap.focus({ preventScroll: true });
       el("instruction").textContent = "Käännä hanaa huuhdellaksesi kädet.";
+    }
+    gesture(scrub, {
+      start() {},
+      move(from, point) {
+        if (scrub.disabled) return;
+        const width = scrub.getBoundingClientRect().width;
+        if (!reducedMotion && Math.abs(point.x - from.x) > 2)
+          pose(point.x < from.x ? "hands-scrub-left" : "hands-scrub-right");
+        if (addProgress(Math.min(45, 100 * Math.abs(point.x - from.x) / (width * 2)))) finishScrub();
+      },
+      end() { if (!scrub.disabled) pose("hands-soapy"); },
     });
+    scrub.onclick = (event) => { if (event.detail === 0 && !scrub.disabled && addProgress(25)) finishScrub(); };
     handle(tap, (start, point) => Math.abs(point.x - start.x) / 18, () => {
+      valve(1);
       if (!waterOn) {
         waterOn = true;
         sink.classList.add("wash-water-on");
@@ -439,24 +462,30 @@ export function startBaking(): void {
       tap.disabled = true;
       sink.classList.add("rinsing", "wash-water-on");
       pose("hands-rinse");
+      meterRow.hidden = true;
       clearTimeout(timer);
       timer = setTimeout(() => {
         sink.classList.remove("rinsing", "soapy", "wash-water-on");
+        valve(0);
         pose("hands-wet");
         dry.hidden = false;
-        el("instruction").textContent = "Vedä pyyhe käsien päälle.";
+        meter.value = 0;
+        meterText.textContent = "0 %";
+        meter.setAttribute("aria-label", "Käsien kuivaus");
+        meterRow.hidden = false;
+        el("instruction").textContent = "Vedä pyyhe käsille ja hankaa edestakaisin.";
         dry.focus({ preventScroll: true });
       }, 650);
     });
     const towel = dry.querySelector("svg")!;
     let towelOrigin: Point;
-    let wiped = false;
+    let towelGrab: Point;
 
-    function overBasin(point: Point): boolean {
-      const target = scrub.parentElement!.getBoundingClientRect();
-      const inset = 14;
-      return point.x >= target.left - inset && point.x <= target.right + inset &&
-        point.y >= target.top - inset && point.y <= target.bottom + inset;
+    function towelOnHands(point: Point): boolean {
+      const target = hands.getBoundingClientRect();
+      const x = point.x + towelGrab.x;
+      const y = point.y + towelGrab.y;
+      return x >= target.left && x <= target.right && y >= target.top && y <= target.bottom;
     }
 
     function dryHands(): void {
@@ -472,27 +501,30 @@ export function startBaking(): void {
         washed = true;
         if (mixDough()) ingredients(recipe);
         else prepare(recipe);
-      }, 600);
+      }, reducedMotion ? 200 : 1050);
     }
 
     gesture(dry, {
-      start(point) { towelOrigin = point; wiped = false; },
-      move(from, point) {
-        dry.style.translate = `${point.x - towelOrigin.x}px ${point.y - towelOrigin.y}px`;
-        const over = overBasin(point);
-        sink.classList.toggle("wash-drying", over);
-        if (over && Math.hypot(point.x - from.x, point.y - from.y) > 3) wiped = true;
+      start(point) {
+        towelOrigin = point;
+        const box = dry.getBoundingClientRect();
+        towelGrab = { x: box.left + box.width / 2 - point.x, y: box.top + box.height / 2 - point.y };
       },
-      end(point) {
+      move(from, point) {
+        if (dry.disabled) return;
+        dry.style.translate = `${point.x - towelOrigin.x}px ${point.y - towelOrigin.y}px`;
+        const over = towelOnHands(point);
+        sink.classList.toggle("wash-drying", over);
+        if (over && towelOnHands(from) && addProgress(Math.min(35,
+          125 * Math.hypot(point.x - from.x, point.y - from.y) / hands.getBoundingClientRect().width,
+        ))) dryHands();
+      },
+      end() {
         dry.style.removeProperty("translate");
         sink.classList.remove("wash-drying");
-        if (!point) return;
-        if (wiped || overBasin(point)) dryHands();
-        else if (Math.hypot(point.x - towelOrigin.x, point.y - towelOrigin.y) > 10)
-          feedback("Vie pyyhe altaalla olevien käsien päälle.");
       },
     });
-    dry.onclick = (event) => { if (event.detail === 0) dryHands(); };
+    dry.onclick = (event) => { if (event.detail === 0 && !dry.disabled && addProgress(25)) dryHands(); };
   }
 
   function ingredients(recipe: Recipe): void {
@@ -503,7 +535,7 @@ export function startBaking(): void {
         <div class="bakery-flour" role="button" tabindex="0" aria-label="Lisää jauhot">${image("flour")}</div>
         <div class="bakery-egg" role="button" tabindex="0" aria-label="Lisää muna">${image("egg")}</div>
         <div class="bakery-milk" role="button" tabindex="0" aria-label="Lisää maito">${image("milk")}</div>
-        <div class="bakery-bowl" aria-label="Sekoituskulho">${image("bowl", selectedRecipe, "bakery-bowl-art")}<span class="bakery-ingredient-contents" aria-hidden="true"></span></div>
+        <div class="bakery-bowl" aria-label="Sekoituskulho">${image("bowl", selectedRecipe, "bakery-bowl-art")}</div>
       </div>`,
     );
     const bowl = scene.querySelector<HTMLElement>(".bakery-bowl")!;
@@ -511,14 +543,17 @@ export function startBaking(): void {
       ...scene.querySelectorAll<HTMLElement>(".bakery-ingredients > [role=button]"),
     ];
     let added = 0;
-    for (const item of items)
+    let contents = 0;
+    const bowlArt = bowl.querySelector<SVGSVGElement>("svg")!;
+    for (const [index, item] of items.entries())
       transfer(item, bowl, () => {
         if (item.hidden) return;
         item.hidden = true;
         bowl.dataset.added = String(++added);
-        const ingredient = document.createElement("span");
-        ingredient.className = `bakery-pour ${item.className}`;
-        bowl.querySelector(".bakery-ingredient-contents")?.append(ingredient);
+        contents |= 1 << index;
+        showFrame(bowlArt, `bowl-contents-${contents}`);
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+          bowlArt.animate([{ scale: ".99 1.02" }, { scale: "1" }], 220);
         sound();
         if (added === items.length) {
           bowl.closest(".bakery-worktop")?.classList.add("camera-lift");
@@ -532,13 +567,19 @@ export function startBaking(): void {
       "Sekoita taikina pyörittämällä sormea kulhossa.",
       `
       <div class="bakery-worktop bakery-overhead">
-        <div class="bakery-bowl mixing" role="button" tabindex="0" aria-label="Sekoita taikina">${image("bowl-overhead", selectedRecipe, "bakery-bowl-art")}<span class="bakery-batter" aria-hidden="true"></span>${image("spoon-overhead", selectedRecipe, "bakery-spoon")}</div>
+        <div class="bakery-bowl mixing" role="button" tabindex="0" aria-label="Sekoita taikina">${image("bowl-overhead", selectedRecipe, "bakery-bowl-art")}${image("batter-0", selectedRecipe, "bakery-batter")}${image("spoon-overhead", selectedRecipe, "bakery-spoon")}</div>
         <progress class="bakery-progress" value="0" max="100" aria-label="Taikina sekoitettu"></progress>
       </div>`,
     );
     const bowl = scene.querySelector<HTMLElement>(".bakery-bowl")!;
     const spoon = scene.querySelector<SVGSVGElement>(".bakery-spoon")!;
     const meter = scene.querySelector<HTMLProgressElement>("progress")!;
+    const batter = scene.querySelector<SVGSVGElement>(".bakery-batter")!;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let batterFrame = 0;
+    let swirl = 0;
+    let mixDone = false;
+    let stirring = false;
     let mixedAngle = 0;
     let spoonPosition = { x: 0.5, y: 0.5 };
     const generation = mixingGeneration;
@@ -549,15 +590,28 @@ export function startBaking(): void {
     }).catch(() => {
       // The existing spoon remains available if the graphics cannot load.
     });
+    function finishMix(): void {
+      timer = setTimeout(() => prepare(recipe), reducedMotion ? 0 : 280);
+    }
     function add(amount: number): void {
+      if (mixDone) return;
       mixedAngle += Math.abs(amount);
+      swirl += amount * .27;
       meter.value = Math.min(100, (mixedAngle / (Math.PI * mixingGoal) + 1e-12) * 100);
       mixingView?.move(spoonPosition.x, spoonPosition.y, meter.value / 100);
-      bowl.style.setProperty("--mixed", String(meter.value / 100));
-      if (meter.value === 100) prepare(recipe);
+      const frame = Math.min(4, Math.floor(meter.value / 25));
+      if (frame !== batterFrame) {
+        batterFrame = frame;
+        showFrame(batter, `batter-${frame}`);
+      }
+      if (!reducedMotion) batter.style.rotate = `${swirl}rad`;
+      if (meter.value === 100) {
+        mixDone = true;
+        if (!stirring) finishMix();
+      }
     }
     gesture(bowl, {
-      start() {},
+      start() { if (!mixDone) stirring = true; },
       move(from, to) {
         const box = bowl.getBoundingClientRect();
         const x = box.left + box.width / 2;
@@ -588,7 +642,11 @@ export function startBaking(): void {
         const angle = Math.atan2(Math.sin(delta), Math.cos(delta));
         if (Math.abs(angle) < Math.PI / 2) add(angle);
       },
-      end() {},
+      end() {
+        if (!stirring) return;
+        stirring = false;
+        if (mixDone) finishMix();
+      },
     });
     bowl.addEventListener("keydown", (event) => {
       if (event.key !== " " && event.key !== "Enter") return;
@@ -602,8 +660,8 @@ export function startBaking(): void {
       "Vedä leivinpaperi pellille.",
       `
       <div class="bakery-worktop bakery-tray-stage">
-        <div class="bakery-tray" aria-label="Uunipelti">${image("tray", selectedRecipe, "bakery-tray-art")}<div class="bakery-paper-lining" aria-hidden="true">${image("paper", selectedRecipe, "bakery-parchment-art")}</div><div class="bakery-slots"></div></div>
-        <div class="bakery-paper" tabindex="0" role="button" aria-label="Aseta leivinpaperi pellille"><span class="bakery-paper-roll" aria-hidden="true"></span></div>
+        <div class="bakery-tray" aria-label="Uunipelti">${image("tray", selectedRecipe, "bakery-tray-art")}<div class="bakery-paper-lining" aria-hidden="true">${image("paper", selectedRecipe, "bakery-parchment-art")}</div><span class="bakery-paper-edge" aria-hidden="true">${image("paper-curl")}</span><div class="bakery-slots"></div></div>
+        <div class="bakery-paper" tabindex="0" role="button" aria-label="Aseta leivinpaperi pellille">${image("paper-curl", selectedRecipe, "bakery-paper-roll")}</div>
         <div class="bakery-dough cookie-plate"></div>
       </div>`,
     );
@@ -629,6 +687,11 @@ export function startBaking(): void {
       if (paper.hidden) return;
       paper.hidden = true;
       pan.classList.add("lined");
+      el("instruction").textContent = "Levitetään leivinpaperi pellille.";
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      timer = setTimeout(enablePortions, reducedMotion ? 0 : 870);
+    });
+    function enablePortions(): void {
       el("instruction").textContent = "Siirrä leivonnaiset vapaisiin paikkoihin pellille.";
       for (const item of dough.children) item.removeAttribute("aria-disabled");
       const places = [...slots.children] as HTMLElement[];
@@ -658,7 +721,8 @@ export function startBaking(): void {
             else oven(recipe);
           }
         });
-    });
+      (dough.firstElementChild as HTMLElement | null)?.focus({ preventScroll: true });
+    }
   }
 
   function proof(recipe: Recipe): void {
