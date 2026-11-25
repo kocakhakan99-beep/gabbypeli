@@ -3,8 +3,8 @@ export const recipes = {
         name: "Piparit", piece: "pipari", heat: 175, raw: "cat-cutout",
         ready: "baked_cookie_1",
         prepare: [
-            { action: "Kauli taikina", instruction: "Vie kaulin taikinan yli.", image: "dough", tool: "rolling-pin", result: "cookie-sheet" },
-            { action: "Paina kissamuottia", instruction: "Paina kissamuotilla yksi pipari kerrallaan.", image: "cookie-sheet", tool: "cat-cutter", result: "cat-cutout", repeat: true },
+            { action: "Kauli taikina", motion: "roll", instruction: "Vie kaulin taikinan yli.", image: "dough", tool: "rolling-pin", result: "cookie-sheet" },
+            { action: "Paina kissamuottia", motion: "press", instruction: "Paina kissamuotilla yksi pipari kerrallaan.", image: "cookie-sheet", tool: "cat-cutter", result: "cat-cutout", repeat: true },
         ],
         after: [],
         decorations: [
@@ -16,11 +16,11 @@ export const recipes = {
         name: "Kuppikakut", piece: "kuppikakku", heat: 200, raw: "filled-liner",
         ready: "plain_cupcake_pink",
         prepare: [
-            { action: "Aseta vuoka", instruction: "Aseta vuoat pellille yksi kerrallaan.", image: "cupcake-tray", tool: "liner", result: "liner", repeat: true },
-            { action: "Täytä vuoka", instruction: "Annostele taikinaa jokaiseen vuokaan.", image: "liner", result: "filled-liner", repeat: true },
+            { action: "Aseta vuoka", motion: "place", instruction: "Aseta vuoat pellille yksi kerrallaan.", image: "cupcake-tray", tool: "liner", result: "liner", repeat: true },
+            { action: "Täytä vuoka", motion: "pour", instruction: "Annostele taikinaa jokaiseen vuokaan.", image: "liner", result: "filled-liner", repeat: true },
         ],
         after: [
-            { action: "Lisää kuorrute", instruction: "Kuorruta kuppikakut yksi kerrallaan.", image: "plain_cupcake_pink", tool: "piping-bag", result: "frosting", repeat: true },
+            { action: "Lisää kuorrute", motion: "pour", instruction: "Kuorruta kuppikakut yksi kerrallaan.", image: "plain_cupcake_pink", tool: "piping-bag", result: "frosting", repeat: true },
         ],
         decorations: [
             { name: "Mustikka", image: "cupcake-blueberry", tool: "blueberry" },
@@ -31,10 +31,10 @@ export const recipes = {
         name: "Korvapuustit", piece: "korvapuusti", heat: 200, raw: "bun-raw",
         ready: "bun-baked",
         prepare: [
-            { action: "Kauli levy", instruction: "Kauli taikina suorakaiteeksi.", image: "dough", tool: "rolling-pin", result: "bun-sheet" },
-            { action: "Levitä täyte", instruction: "Levitä kanelitäyte levylle.", image: "bun-sheet", result: "bun-filling" },
-            { action: "Rullaa levy", instruction: "Rullaa taikina täytteen ympärille.", image: "bun-filling", result: "bun-log" },
-            { action: "Leikkaa viipale", instruction: "Leikkaa taikinarullasta kierrepaloja.", image: "bun-log", result: "bun-raw", repeat: true },
+            { action: "Kauli levy", motion: "roll", instruction: "Kauli taikina suorakaiteeksi.", image: "dough", tool: "rolling-pin", result: "bun-sheet" },
+            { action: "Levitä täyte", motion: "spread", instruction: "Levitä kanelitäyte levylle.", image: "bun-sheet", result: "bun-filling" },
+            { action: "Rullaa levy", motion: "roll", instruction: "Rullaa taikina täytteen ympärille.", image: "bun-filling", result: "bun-log" },
+            { action: "Leikkaa viipale", motion: "slice", instruction: "Leikkaa taikinarullasta kierrepaloja.", image: "bun-log", result: "bun-raw", repeat: true },
         ],
         after: [],
         decorations: [{ name: "Kuorrute", image: "bun-glazed", tool: "glaze" }],
@@ -43,10 +43,10 @@ export const recipes = {
         name: "Marjatortut", piece: "torttupohja", heat: 175, raw: "tart-raw",
         ready: "tart-shell",
         prepare: [
-            { action: "Painele taikina", instruction: "Painele taikina torttuvuokaan.", image: "tart-pan", tool: "tart-dough", result: "tart-raw" },
+            { action: "Painele taikina", motion: "press", instruction: "Painele taikina torttuvuokaan.", image: "tart-pan", tool: "tart-dough", result: "tart-raw" },
         ],
         after: [
-            { action: "Täytä torttu", instruction: "Lisää täyte paistettuun pohjaan.", image: "tart-shell", tool: "piping-bag", result: "tart-cream" },
+            { action: "Täytä torttu", motion: "pour", instruction: "Lisää täyte paistettuun pohjaan.", image: "tart-shell", tool: "piping-bag", result: "tart-cream" },
         ],
         decorations: [
             { name: "Mansikka", image: "tart-red", tool: "tart-strawberry" },

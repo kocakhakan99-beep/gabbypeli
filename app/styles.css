@@ -2850,7 +2850,7 @@ body {
   border-radius: 20px;
   background: linear-gradient(#fff2e7, #f7d9f0);
 }
-#gabby-fi .baking-wash > img {
+#gabby-fi .baking-wash > .bakery-texture {
   position: absolute;
   object-fit: contain;
   pointer-events: none;
@@ -2869,24 +2869,28 @@ body {
 #gabby-fi .baking-wash .wash-tap { left: 56%; bottom: 53%; width: 19%; height: 25%; }
 #gabby-fi .baking-wash .wash-soap { left: 10%; bottom: 28%; width: 17%; height: 38%; }
 #gabby-fi .baking-wash .wash-dry { right: 5%; bottom: 30%; width: 22%; min-height: 46px; z-index: 6; }
-#gabby-fi .baking-wash .wash-dry img { display: block; height: auto; width: 100%; }
-#gabby-fi .wash-object-base,
-#gabby-fi .wash-object-moving {
+#gabby-fi .baking-wash .wash-dry .bakery-texture { display: block; height: auto; width: 100%; }
+#gabby-fi .baking-wash .wash-object :is(.wash-head, .wash-base) {
   position: absolute;
-  inset: 0;
+  left: 0;
+  width: 100%;
+  object-fit: fill;
   pointer-events: none;
-  background: var(--wash-object) center / 100% 100% no-repeat;
 }
-#gabby-fi .wash-tap { --wash-object: url("../assets/gabby/bakery/sets/wash/wash-lever.webp"); }
-#gabby-fi .wash-tap .wash-object-moving {
-  transform-origin: 28% 72%;
-  rotate: calc(var(--wash-motion, 0) * 32deg);
+#gabby-fi .wash-tap .wash-base { top: 47%; height: 53%; }
+#gabby-fi .wash-tap .wash-head {
+  top: 0;
+  height: 48%;
+  transform-origin: 29% 85%;
+  rotate: calc(var(--wash-motion, 0) * 17deg);
+  transition: rotate 140ms ease-out;
 }
-#gabby-fi .wash-soap { --wash-object: url("../assets/gabby/bakery/sets/wash/wash-pump.webp"); }
-#gabby-fi .wash-soap .wash-object-base { clip-path: inset(24% 0 0); }
-#gabby-fi .wash-soap .wash-object-moving {
-  clip-path: inset(0 0 75%);
-  translate: 0 calc(var(--wash-motion, 0) * 8%);
+#gabby-fi .wash-water-on .wash-tap .wash-head { --wash-motion: 1; }
+#gabby-fi .wash-soap .wash-base { top: 32%; height: 68%; }
+#gabby-fi .wash-soap .wash-head {
+  top: 0;
+  height: 34%;
+  translate: 0 calc(var(--wash-motion, 0) * 17%);
 }
 #gabby-fi .wash-hands {
   position: absolute;
@@ -2896,7 +2900,7 @@ body {
   height: 33%;
   z-index: 2;
 }
-#gabby-fi .wash-hands > img { width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
+#gabby-fi .wash-hands > .wash-basin { width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
 #gabby-fi .bakery-scene .baking-wash .wash-scrub {
   position: absolute;
   inset: 0 11%;
@@ -2906,25 +2910,82 @@ body {
   background: transparent;
   touch-action: none;
 }
-#gabby-fi .baking-wash .wash-scrub img {
+#gabby-fi .baking-wash .wash-scrub .bakery-texture {
   width: 100%;
   height: 100%;
   object-fit: contain;
   translate: calc(var(--wash-motion, 0) * 12%) 0;
 }
-#gabby-fi .wash-stream {
-  position: absolute;
-  left: 47.5%;
-  top: 29%;
-  width: 6%;
-  height: 34%;
+#gabby-fi .baking-wash > .wash-stream {
+  left: 48.5%;
+  top: 42%;
+  width: 5%;
+  height: 22%;
   z-index: 3;
   opacity: 0;
-  pointer-events: none;
-  background: url("../assets/gabby/bakery/sets/wash/wash-water.webp") center / 100% 100% no-repeat;
+  object-fit: fill;
+  transform-origin: top;
 }
-#gabby-fi .wash-water-on .wash-stream { opacity: .82; }
+#gabby-fi .wash-water-on > .wash-stream {
+  opacity: .86;
+  animation: bakery-water-flow 220ms ease-in-out infinite alternate;
+}
+#gabby-fi .wash-hands > :is(.wash-splash, .wash-foam) {
+  position: absolute;
+  inset: 48% 25% auto;
+  width: 50%;
+  height: 38%;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+}
+#gabby-fi .rinsing .wash-splash { animation: bakery-water-splash 320ms ease-out infinite; }
+#gabby-fi .soap-dispensing .wash-foam { animation: bakery-soap-drop 380ms ease-in both; }
 #gabby-fi .wash-drying .wash-hands { filter: drop-shadow(0 0 4px #fff8bb); }
+#gabby-fi .wash-dried .wash-dry { animation: bakery-towel-wipe 420ms ease-out both; }
+#gabby-fi .bakery-proof-stage { position: relative; width: min(100%, 230px); aspect-ratio: 1.6; }
+#gabby-fi .bakery-proof-stage .bakery-texture { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+#gabby-fi .bakery-proof { animation: bakery-proof-fade-in 950ms ease-out both; }
+#gabby-fi .bakery-proof-raw { animation: bakery-proof-fade-out 470ms ease-out both; }
+@keyframes bakery-proof-fade-in {
+  0% { opacity: 0; scale: .75; }
+  40% { opacity: .85; }
+  100% { opacity: 1; scale: 1; }
+}
+@keyframes bakery-proof-fade-out { to { opacity: 0; } }
+#gabby-fi .bakery-new-result { animation: bakery-proof-rise 230ms ease-out both; }
+
+@keyframes bakery-water-flow {
+  from { scale: .83 1; opacity: .72; }
+  to { scale: 1 1.05; opacity: .95; }
+}
+@keyframes bakery-water-splash {
+  0% { scale: .72 .66; opacity: .45; }
+  55% { opacity: .9; }
+  100% { scale: 1.14 1.04; opacity: .2; }
+}
+@keyframes bakery-soap-drop {
+  0% { translate: -135% -110%; scale: .58; opacity: 0; }
+  25% { opacity: .95; }
+  80% { translate: 0; scale: 1; opacity: .8; }
+  100% { opacity: 0; }
+}
+@keyframes bakery-towel-wipe {
+  0% { translate: -130% -18%; rotate: -8deg; }
+  40% { translate: -62% -18%; rotate: 4deg; }
+  70% { translate: -110% -16%; rotate: -4deg; }
+  100% { translate: 0; rotate: 0deg; }
+}
+@keyframes bakery-proof-rise {
+  from { scale: .82; }
+  to { scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .wash-tap .wash-head { transition: none; }
+  #gabby-fi :is(.wash-stream, .wash-splash, .wash-foam, .wash-dry, .bakery-proof, .bakery-proof-raw, .bakery-new-result) {
+    animation-duration: 0s !important;
+  }
+}
 
 #gabby-fi #gf-baking[data-recipe="cookie"] .cupcake {
   width: 44px;
@@ -3043,7 +3104,7 @@ body {
   border-radius: 12px;
   background: #fff8f2;
 }
-#gabby-fi .bakery-ingredients img {
+#gabby-fi .bakery-ingredients .bakery-texture {
   width: 100%;
   height: clamp(38px, 10vw, 65px);
   object-fit: contain;
@@ -3058,8 +3119,8 @@ body {
   object-fit: contain;
   pointer-events: none;
 }
-#gabby-fi .bakery-bowl .bakery-ingredient-added:nth-child(2) { left: 44%; }
-#gabby-fi .bakery-bowl .bakery-ingredient-added:nth-child(3) { left: 58%; }
+#gabby-fi .bakery-bowl .bakery-ingredient-added:nth-of-type(3) { left: 44%; }
+#gabby-fi .bakery-bowl .bakery-ingredient-added:nth-of-type(4) { left: 58%; }
 #gabby-fi .bakery-bowl {
   width: min(100%, 286px);
   aspect-ratio: 1;
@@ -3165,7 +3226,15 @@ body {
   container-type: inline-size;
   width: min(100%, clamp(220px, 50vw, 370px));
   aspect-ratio: 582 / 614;
-  background: url("../assets/gabby/bakery/oven_body.webp") center / contain no-repeat;
+}
+#gabby-fi .oven-body-art,
+#gabby-fi .bakery-door .bakery-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
 }
 #gabby-fi .bakery-oven .bakery-knob {
   position: absolute;
@@ -3175,9 +3244,11 @@ body {
   translate: -50% -50%;
   width: max(44px, 19.24%);
   aspect-ratio: 1;
-  background: url("../assets/gabby/bakery/temperature_knob.webp") center / 19.24cqw auto no-repeat;
+  display: grid;
+  place-items: center;
   rotate: var(--dial, -135deg);
 }
+#gabby-fi .bakery-knob .bakery-texture { width: 19.24cqw; aspect-ratio: 1; object-fit: contain; pointer-events: none; }
 #gabby-fi .bakery-temp {
   position: absolute;
   left: 50.86%;
@@ -3198,12 +3269,31 @@ body {
   top: 43.49%;
   width: 86.94%;
   height: 46.25%;
-  /* Rack position and size relative to the door opening. */
-  --oven-rack: url("../assets/gabby/bakery/oven_rack.webp") 50.5% 74.44% / 80.04% 36.62% no-repeat;
-  background: var(--oven-rack);
+  perspective: 520px;
+}
+#gabby-fi .oven-rack-art {
+  position: absolute;
+  left: 10.08%;
+  top: 47.18%;
+  width: 80.04%;
+  height: 36.62%;
+  object-fit: fill;
+  pointer-events: none;
 }
 #gabby-fi .bakery-cavity.oven-cooking {
-  background: radial-gradient(ellipse at 50% 16%, #ffe9a8b8, transparent 62%), var(--oven-rack);
+  background: radial-gradient(ellipse at 50% 16%, #ffe9a8b8, transparent 62%);
+}
+#gabby-fi .bakery-cavity.oven-cooking::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, #ffc5795c, transparent 68%);
+  animation: bakery-heat-glow 660ms ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes bakery-heat-glow { from { opacity: .2; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  #gabby-fi .bakery-cavity.oven-cooking::before { animation: none; }
 }
 #gabby-fi .bakery-cavity::after {
   content: "";
@@ -3221,16 +3311,12 @@ body {
   z-index: 2;
   width: 100%;
   height: 100%;
-  background:
-    url("../assets/gabby/bakery/oven_handle.webp") center / 100% 100% no-repeat,
-    url("../assets/gabby/bakery/oven_door_frame.webp") center / 100% 100% no-repeat,
-    url("../assets/gabby/bakery/oven_glass.webp") center / 100% 100% no-repeat;
-  transform-origin: bottom;
-  transform: scaleY(var(--door-scale, 1));
+  transform-origin: bottom center;
+  transform: rotateX(var(--door-angle, 0deg));
   transition: transform 250ms ease;
 }
 #gabby-fi .door-open .bakery-door {
-  transform: scaleY(var(--door-scale, .22));
+  transform: rotateX(var(--door-angle, -76deg));
 }
 #gabby-fi .oven-tray {
   display: flex;
@@ -4762,7 +4848,7 @@ body {
 #gabby-fi .bakery-bowl.mixing {
   border: 0;
   box-shadow: none;
-  background: var(--bowl-art, none) center / contain no-repeat;
+  background: none;
 }
 #gabby-fi .bakery-spoon {
   clip-path: none;
@@ -4774,7 +4860,7 @@ body {
 #gabby-fi .bakery-tray.lined {
   border: 0;
   box-shadow: none;
-  background: var(--bakery-art, none) center / 100% 100% no-repeat;
+  background: none;
 }
 
 /* DOM fallback art and the Phaser sprites share the same card artwork. */
@@ -4861,15 +4947,15 @@ body {
 #gabby-fi .bakery-recipes .bakery-recipe {
   width: min(44%, 170px);
 }
-#gabby-fi .bakery-scene > img,
-#gabby-fi .bakery-work-target img {
+#gabby-fi .bakery-scene > .bakery-texture,
+#gabby-fi .bakery-work-target .bakery-texture {
   display: block;
   width: 150px;
   max-width: 100%;
   height: 105px;
   object-fit: contain;
 }
-#gabby-fi .bakery-scene button img {
+#gabby-fi .bakery-scene button .bakery-texture {
   width: 65px;
   max-width: 100%;
   height: 58px;
@@ -4895,7 +4981,7 @@ body {
   gap: 4px;
   min-height: 48px;
 }
-#gabby-fi .bakery-step-results img {
+#gabby-fi .bakery-step-results .bakery-texture {
   width: 42px;
   height: 42px;
   object-fit: contain;
@@ -4906,12 +4992,12 @@ body {
   color: #572b49;
   font-weight: 800;
 }
-#gabby-fi .bakery-piece:has(img) {
+#gabby-fi .bakery-piece:has(.bakery-texture) {
   display: inline-grid;
   place-items: center;
   background: none;
 }
-#gabby-fi .bakery-piece img {
+#gabby-fi .bakery-piece .bakery-texture {
   width: 100%;
   height: 100%;
   max-height: 38px;
@@ -5084,7 +5170,7 @@ body {
   background: transparent;
   cursor: grab;
 }
-#gabby-fi .bakery-work-target img { translate: var(--work-offset, 0) 0; pointer-events: none; }
+#gabby-fi .bakery-work-target .bakery-texture { translate: var(--work-offset, 0) 0; pointer-events: none; }
 #gabby-fi .bakery-work-target[role="button"] { touch-action: none; }
 
 #gabby-fi .garden-crop-tool {
@@ -5232,9 +5318,9 @@ body {
   min-width: 0;
   padding: clamp(6px, 2vw, 14px);
 }
-#gabby-fi .bakery-recipes .bakery-recipe img { width: min(100%, 95px); height: clamp(48px, 12vw, 100px); }
+#gabby-fi .bakery-recipes .bakery-recipe .bakery-texture { width: min(100%, 95px); height: clamp(48px, 12vw, 100px); }
 #gabby-fi .bakery-work-target { width: min(100%, clamp(200px, 38vw, 330px)); min-height: 100px; }
-#gabby-fi .bakery-work-target img { width: min(100%, 210px); height: clamp(95px, 23vw, 145px); }
+#gabby-fi .bakery-work-target .bakery-texture { width: min(100%, 210px); height: clamp(95px, 23vw, 145px); }
 @media (min-width: 820px) {
   #gabby-fi .bakery-recipes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   #gabby-fi .bakery-scene:has(.bakery-ingredients),
@@ -5242,3 +5328,15 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+#gabby-fi :is(.bakery-bowl-art, .bakery-tray-art) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+#gabby-fi .bakery-tray-art { object-fit: fill; }
+#gabby-fi .bakery-paper .bakery-texture { width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
+#gabby-fi .bakery-spoon { object-fit: contain; pointer-events: none; }

@@ -89,9 +89,14 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   await page.getByRole("button", { name: "Avaa hana", exact: true }).tap();
   await expect(page.getByRole("button", { name: "Ota saippuaa" })).toBeDisabled();
   await moveWash("Avaa hana", [[24, 0]]);
+  const valve = page.locator(".wash-tap");
+  await expect(valve.locator(".wash-base")).toHaveCSS("rotate", "none");
+  await expect(valve.locator(".wash-head")).toHaveCSS("rotate", "17deg");
+  await expect(page.locator(".wash-stream")).toHaveCSS("animation-name", "bakery-water-flow");
   await moveWash("Ota saippuaa", [[0, 20]]);
   await moveWash("Pese kädet", [[30, 0], [-30, 0], [30, 0]]);
   await moveWash("Huuhtele kädet", [[24, 0]]);
+  await expect(page.locator(".wash-state")).toHaveAttribute("data-frame", "hands-rinse");
   const towel = page.getByRole("button", { name: "Kuivaa kädet" });
   await towel.scrollIntoViewIfNeeded();
   await page.locator(".baking-wash").screenshot({ path: testInfo.outputPath("wash-station.png") });
@@ -99,7 +104,7 @@ test("a finger circles the bowl, drags paper onto the tray and opens the oven", 
   const handPoint = await center(basin);
   const startTowel = await center(towel);
   await swipe(page, [startTowel, handPoint, { x: handPoint.x - 10, y: handPoint.y }, startTowel]);
-  await expect(page.locator(".wash-dry img")).toHaveAttribute("src", /wash-towel-wet/);
+  await expect(page.locator(".wash-dry .bakery-texture")).toHaveAttribute("data-frame", "wash-towel-wet");
   for (const name of ["Lisää jauhot", "Lisää muna", "Lisää maito"])
     await page.getByRole("button", { name }).press("Enter");
   const bowl = page.locator(".bakery-bowl.mixing");

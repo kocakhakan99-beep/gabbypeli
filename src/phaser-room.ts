@@ -102,8 +102,10 @@ export interface MixingView {
   destroy(): void;
 }
 
+type BakingAtlas = { texture: string; data: string };
+
 /** Draws the spoon and batter as the player stirs the mixing bowl. */
-export function createMixingView(parent: HTMLElement, whiskImage: string): MixingView {
+export function createMixingView(parent: HTMLElement, atlas: BakingAtlas): MixingView {
   let scene: Phaser.Scene | undefined;
   let spoon: Phaser.GameObjects.Image | undefined;
   let trails: Phaser.GameObjects.Graphics | undefined;
@@ -134,12 +136,12 @@ export function createMixingView(parent: HTMLElement, whiskImage: string): Mixin
     height: 300,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: {
-      preload() { this.load.image("baking-whisk", whiskImage); },
+      preload() { this.load.atlas("baking", atlas.texture, atlas.data); },
       create() {
-        if (!alive || !this.textures.exists("baking-whisk")) return;
+        if (!alive || !this.textures.get("baking").has("whisk")) return;
         scene = this;
         trails = this.add.graphics();
-        spoon = this.add.image(150, 150, "baking-whisk").setOrigin(0.5, 0.25);
+        spoon = this.add.image(150, 150, "baking", "whisk").setOrigin(0.5, 0.25);
         spoon.setScale(108 / spoon.height);
         parent.classList.add("phaser-mixing-ready");
         move(position.x, position.y, position.progress);
@@ -163,7 +165,7 @@ export interface BakingTrayView {
 }
 
 /** Draws the parchment and individual portions on the baking tray. */
-export function createBakingTrayView(parent: HTMLElement, portionImage: string, paperImage: string): BakingTrayView {
+export function createBakingTrayView(parent: HTMLElement, atlas: BakingAtlas, portionFrame: string): BakingTrayView {
   let scene: Phaser.Scene | undefined;
   let paper: Phaser.GameObjects.Image | undefined;
   let alive = true;
@@ -190,7 +192,7 @@ export function createBakingTrayView(parent: HTMLElement, portionImage: string, 
     drawn.add(index);
     const x = 50 + (index % 3) * 100;
     const y = 27 + Math.floor(index / 3) * 54;
-    const portion = scene.add.image(x, y, "baking-portion");
+    const portion = scene.add.image(x, y, "baking", portionFrame);
     const scale = Math.min(43 / portion.width, 39 / portion.height);
     portion.setScale(scale);
     if (!reducedMotion) {
@@ -208,13 +210,12 @@ export function createBakingTrayView(parent: HTMLElement, portionImage: string, 
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: {
       preload() {
-        this.load.image("baking-paper", paperImage);
-        this.load.image("baking-portion", portionImage);
+        this.load.atlas("baking", atlas.texture, atlas.data);
       },
       create() {
-        if (!alive || !this.textures.exists("baking-paper") || !this.textures.exists("baking-portion")) return;
+        if (!alive || !this.textures.get("baking").has("paper") || !this.textures.get("baking").has(portionFrame)) return;
         scene = this;
-        paper = this.add.image(150, 54, "baking-paper").setDisplaySize(290, 102).setVisible(false);
+        paper = this.add.image(150, 54, "baking", "paper").setDisplaySize(290, 102).setVisible(false);
         parent.classList.add("phaser-tray-ready");
         if (lined) line();
         placed.forEach(place);

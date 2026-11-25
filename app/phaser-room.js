@@ -43353,10 +43353,10 @@ function Q(e, t) {
 		},
 		scene: {
 			preload() {
-				this.load.image("baking-whisk", t);
+				this.load.atlas("baking", t.texture, t.data);
 			},
 			create() {
-				o && this.textures.exists("baking-whisk") && (n = this, i = this.add.graphics(), r = this.add.image(150, 150, "baking-whisk").setOrigin(.5, .25), r.setScale(108 / r.height), e.classList.add("phaser-mixing-ready"), s(a.x, a.y, a.progress));
+				o && this.textures.get("baking").has("whisk") && (n = this, i = this.add.graphics(), r = this.add.image(150, 150, "baking", "whisk").setOrigin(.5, .25), r.setScale(108 / r.height), e.classList.add("phaser-mixing-ready"), s(a.x, a.y, a.progress));
 			}
 		}
 	});
@@ -43384,10 +43384,10 @@ function $(e, t, n) {
 	function d(e) {
 		if (s.add(e), !r || c.has(e)) return;
 		c.add(e);
-		let t = 50 + e % 3 * 100, n = 27 + Math.floor(e / 3) * 54, i = r.add.image(t, n, "baking-portion"), a = Math.min(43 / i.width, 39 / i.height);
-		i.setScale(a), l || (i.setScale(a * .5), r.tweens.add({
-			targets: i,
-			scale: a,
+		let t = 50 + e % 3 * 100, i = 27 + Math.floor(e / 3) * 54, a = r.add.image(t, i, "baking", n), o = Math.min(43 / a.width, 39 / a.height);
+		a.setScale(o), l || (a.setScale(o * .5), r.tweens.add({
+			targets: a,
+			scale: o,
 			duration: 300,
 			ease: "Back.easeOut"
 		}));
@@ -43404,10 +43404,10 @@ function $(e, t, n) {
 		},
 		scene: {
 			preload() {
-				this.load.image("baking-paper", n), this.load.image("baking-portion", t);
+				this.load.atlas("baking", t.texture, t.data);
 			},
 			create() {
-				a && this.textures.exists("baking-paper") && this.textures.exists("baking-portion") && (r = this, i = this.add.image(150, 54, "baking-paper").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), o && u(), s.forEach(d));
+				a && this.textures.get("baking").has("paper") && this.textures.get("baking").has(n) && (r = this, i = this.add.image(150, 54, "baking", "paper").setDisplaySize(290, 102).setVisible(!1), e.classList.add("phaser-tray-ready"), o && u(), s.forEach(d));
 			}
 		}
 	});

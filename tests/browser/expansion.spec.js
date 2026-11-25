@@ -34,9 +34,10 @@ for (const width of [320, 768, 1100]) {
     for (const [name, frame] of ingredients) {
       const ingredient = page.getByRole("button", { name });
       await expect(ingredient).toBeVisible();
-      const sprite = ingredient.locator("img");
-      await expect(sprite).toHaveAttribute("src", `./assets/gabby/bakery/sets/${piparit ? "cookie" : "cupcake"}/${frame}.webp`);
-      await expect.poll(() => sprite.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0);
+      const sprite = ingredient.locator(".bakery-texture");
+      await expect(sprite.locator("image")).toHaveAttribute("href", `./assets/gabby/bakery/sets/${piparit ? "cookie" : "cupcake"}/atlas.webp`);
+      await expect(sprite).toHaveAttribute("data-frame", frame);
+      await expect(sprite).toBeVisible();
     }
     await page.locator(".bakery-ingredients").screenshot({
       path: testInfo.outputPath("bakery-ingredients.png"),
@@ -60,7 +61,7 @@ for (const width of [320, 768, 1100]) {
         await portion.press("Enter");
     }
     const oven = page.locator(".bakery-oven");
-    await expect(oven).toHaveCSS("background-image", /gabby\/bakery\/oven_body\.webp/);
+    await expect(oven.locator('[data-frame="oven_body"] image')).toHaveAttribute("href", /sets\/oven\/atlas\.webp/);
     await expect(oven.locator(".bakery-temp")).toHaveText("0 °C");
     await page
       .getByRole("button", { name: "Avaa uunin luukku" })
